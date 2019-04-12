@@ -5,4 +5,5 @@ export * from './CardSection';
 export * from './AlbumArt';
 export * from './TrackDetails';
 export * from './SeekBar';
+export * from './PlaybackControl';
 

@@ -8,14 +8,14 @@ const Header = ({ message, onDownPress, onQueuePress, onMessagePress }) => {
         <View style={containerStyle}>
             <TouchableOpacity onPress={onDownPress}>
                 <Image style={buttonStyle}
-                    source={require('../img/baseline_keyboard_arrow_down_white_18dp.png')} />
+                    source={require('../img/ic_keyboard_arrow_down_white.png')} />
             </TouchableOpacity>
             <Text onPress={onMessagePress} style={textStyle} >
                 {message.toUpperCase()}
             </Text>
             <TouchableOpacity onPress={onDownPress}>
                 <Image style={buttonStyle}
-                    source={require('../img/baseline_queue_music_white_18dp.png')} />
+                    source={require('../img/ic_queue_music_white.png')} />
             </TouchableOpacity>
         </View>
     );

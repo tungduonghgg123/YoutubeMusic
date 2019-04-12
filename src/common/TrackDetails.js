@@ -15,7 +15,7 @@ const TrackDetails = ({ title, onMorePress, onAddPress, onCheckPress }) => {
                 <Text style={textStyle}>{title}</Text>
             </View>
             <TouchableOpacity onPress = {onMorePress}>
-                <Image source={require('../img/baseline_more_vert_white_18dp.png')}
+                <Image source={require('../img/ic_more_horiz_white.png')}
                     style={buttonStyle}
                 />
             </TouchableOpacity>
@@ -23,7 +23,9 @@ const TrackDetails = ({ title, onMorePress, onAddPress, onCheckPress }) => {
         </View>
     )
 }
-
+function changeAddButton(params) {
+    
+}
 const styles = {
     buttonStyle: {
         opacity: 0.72,
@@ -41,7 +43,7 @@ const styles = {
         textAlign: 'center',
         color: 'rgba(255, 255, 255, 0.72)',
         fontWeight: 'bold',
-        fontSize: 15,
+        fontSize: 15
     },
 }
 export { TrackDetails };

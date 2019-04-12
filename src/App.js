@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
-import { Header, AlbumArt, TrackDetails, SeekBar } from './common'
+import { Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl } from './common'
 import { Text, View} from 'react-native';
 
 
 export default class App extends Component {
   render() {
     return (
-      <View style={{backgroundColor: 'black', flex: 1}}>
+      <View style={{backgroundColor: 'brown', flex: 1}}>
         <Header 
           message= "playing from your library"
           onMessagePress={() => console.log('ahihi')}
@@ -19,6 +19,7 @@ export default class App extends Component {
           trackLength={180}
           currentPosition={120}
         />
+        <PlaybackControl/>
       </View>
 
     );
