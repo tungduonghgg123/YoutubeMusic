@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import { Header, AlbumArt, TrackDetails, SeekBar } from './common'
 import { Text, View} from 'react-native';
+import Music from './music';
 
 
 export default class App extends Component {
@@ -19,8 +20,8 @@ export default class App extends Component {
           trackLength={180}
           currentPosition={120}
         />
+      <Music></Music>
       </View>
-
     );
   }
 }

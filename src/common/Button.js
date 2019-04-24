@@ -1,7 +1,7 @@
 import React from 'react'
 import { View, Text, TouchableOpacity } from 'react-native'
 
-const Button = ( props ) => {
+const CustomButton = ( props ) => {
     const { textStyle, buttonStyle } = styles
     return (
         <TouchableOpacity onPress={props.whenPressed} style={buttonStyle}>
@@ -29,4 +29,4 @@ const styles = {
     },
     
 }
-export  {Button}
+export  {CustomButton}
