@@ -39,7 +39,7 @@ export default class Music extends Component {
   }
   
   render() {
-    return (
+    return (``
       <View>
         <Header 
           message= "playing from your library"
