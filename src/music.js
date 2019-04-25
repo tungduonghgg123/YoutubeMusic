@@ -5,7 +5,7 @@ import { Text, View, TextInput, Button} from 'react-native';
 
 
 export default class Music extends Component {
-  state = {paused: true, text: 'Wr21LZPVPrw', length: 0}
+  state = {paused: true, text: 'SA9XeqMFL44', duration: 0}
 
   onPressPause() {
     this.setState({paused: true});
@@ -13,7 +13,6 @@ export default class Music extends Component {
   }
   onPressPlay() {
     this.setState({paused: false})
-    console.log('play')
     TrackPlayer.play();
   }
   
@@ -29,9 +28,10 @@ export default class Music extends Component {
       // artwork: require('../ava1.jpg'), // Load artwork from the app bundle
     };
     TrackPlayer.setupPlayer().then(async (result) => {
-      TrackPlayer.add([track]).then(() => {
-        console.log(TrackPlayer.getDuration())
-        console.log('working')
+      TrackPlayer.add([track]).then(async () => {
+        let duration = await TrackPlayer.getDuration();
+        this.setState({duration: Math.round(duration)})
+        console.log(typeof duration)
         // alert('wtf')
         this.onPressPlay();
       });
@@ -45,7 +45,7 @@ export default class Music extends Component {
     return (
       <View>
         <Header 
-          message= "playing from your home"
+          message= "playing from your library"
           onMessagePress={() => console.log('ahihi')}
         />
         <AlbumArt/>
@@ -53,7 +53,7 @@ export default class Music extends Component {
           title = 'Sunflower'
         />
         <SeekBar 
-          trackLength={this.state.length}
+          trackLength={this.state.duration}
           currentPosition={0}
         />
         <PlaybackControl 
