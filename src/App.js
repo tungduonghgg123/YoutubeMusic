@@ -20,8 +20,8 @@ export default class App extends Component {
           trackLength={180}
           currentPosition={120}
         />
-        <PlaybackControl/>
-      <Music></Music>
+        <PlaybackControl />
+        <Music></Music>
       </View>
     );
   }
