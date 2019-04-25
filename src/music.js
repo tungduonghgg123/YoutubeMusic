@@ -5,7 +5,7 @@ import { Text, View, TextInput, Button} from 'react-native';
 
 
 export default class Music extends Component {
-  state = {paused: true, text: null}
+  state = {paused: true, text: 'Wr21LZPVPrw', length: 0}
 
   onPressPause() {
     this.setState({paused: true});
@@ -29,6 +29,10 @@ export default class Music extends Component {
     };
     TrackPlayer.setupPlayer().then(async (result) => {
       TrackPlayer.add([track]);
+      // this.setState({length: TrackPlayer.getDuration()}).then(() => {
+      //   alert(this.state.length)
+      // })
+      alert(TrackPlayer.getDuration())
       this.onPressPlay();
     });
     
@@ -46,8 +50,8 @@ export default class Music extends Component {
           title = 'Sunflower'
         />
         <SeekBar 
-          trackLength={180}
-          currentPosition={120}
+          trackLength={this.state.length}
+          currentPosition={0}
         />
         <PlaybackControl 
           paused={this.state.paused}
