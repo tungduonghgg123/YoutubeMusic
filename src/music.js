@@ -31,7 +31,7 @@ export default class Music extends Component {
     TrackPlayer.setupPlayer().then(async (result) => {
       TrackPlayer.add([track]).then(() => {
         console.log(TrackPlayer.getDuration())
-        console.log('fuck')
+        console.log('working')
         // alert('wtf')
         this.onPressPlay();
       });
@@ -45,7 +45,7 @@ export default class Music extends Component {
     return (
       <View>
         <Header 
-          message= "playing from your library"
+          message= "playing from your home"
           onMessagePress={() => console.log('ahihi')}
         />
         <AlbumArt/>
