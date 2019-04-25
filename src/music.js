@@ -5,13 +5,15 @@ import { Text, View, TextInput, Button} from 'react-native';
 
 
 export default class Music extends Component {
-  state = {paused: false, text: null}
+  state = {paused: true, text: null}
 
   onPressPause() {
-    this.setState({paused: true})
+    this.setState({paused: true});
+    TrackPlayer.pause();
   }
   onPressPlay() {
     this.setState({paused: false})
+    TrackPlayer.play();
   }
   
   onPressSubmit () {
@@ -27,8 +29,9 @@ export default class Music extends Component {
     };
     TrackPlayer.setupPlayer().then(async (result) => {
       TrackPlayer.add([track]);
+      this.onPressPlay();
     });
-    TrackPlayer.play()
+    
   }
   
   render() {
@@ -62,18 +65,6 @@ export default class Music extends Component {
           color="#841584"
           accessibilityLabel="Play music"
         />
-        <CustomButton whenPressed={() => TrackPlayer.play()}>
-          Play
-        </CustomButton>
-        {/* <CustomButton whenPressed={() => TrackPlayer.stop()}>
-          Stop
-        </CustomButton> */}
-        <CustomButton whenPressed={() => TrackPlayer.pause()}>
-          Pause
-        </CustomButton>
-        <CustomButton whenPressed={() => TrackPlayer.reset()}>
-          Reset
-        </CustomButton>
       </View>
 
     );

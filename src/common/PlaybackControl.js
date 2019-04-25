@@ -26,7 +26,7 @@ const PlaybackControl = ({
         source={require('../img/ic_shuffle_white.png')}/>
     </TouchableOpacity>
     <View style={{width: 40}} />
-    <TouchableOpacity onPress={onBack}>
+    <TouchableOpacity  onPress={onBack}>
       <Image source={require('../img/ic_skip_previous_white_36pt.png')}/>
     </TouchableOpacity>
     <View style={{width: 20}} />
@@ -43,7 +43,7 @@ const PlaybackControl = ({
       </TouchableOpacity>
     }
     <View style={{width: 20}} />
-    <TouchableOpacity onPress={onForward}
+    <TouchableOpacity  onPress={onForward}
       disabled={forwardDisabled}>
       <Image style={[forwardDisabled && {opacity: 0.3}]}
         source={require('../img/ic_skip_next_white_36pt.png')}/>
