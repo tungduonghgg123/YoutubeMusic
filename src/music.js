@@ -1,23 +1,23 @@
 import React, { Component } from 'react';
 import TrackPlayer from 'react-native-track-player';
-import { CustomButton } from './common'
-import { TextInput, View, Button } from 'react-native';
-
+import { Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl,CustomButton } from './common'
+import { Text, View, TextInput, Button} from 'react-native';
 
 
 export default class Music extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      text: null
-    }
+  state = {paused: false, text: null}
+
+  onPressPause() {
+    this.setState({paused: true})
+  }
+  onPressPlay() {
+    this.setState({paused: false})
   }
   
   onPressSubmit () {
     var track = {
       id: 'unique track id', // Must be a string, required
       url: `https://youtubemusicbackend.herokuapp.com/play/${this.state.text}`, // Load media from heroku
-      // url: `http://localhost:3000/play/${this.state.text}`, // Load media from localhost
       title: 'Avaritia',
       artist: 'deadmau5',
       album: 'while(1<2)',
@@ -26,14 +26,7 @@ export default class Music extends Component {
       // artwork: require('../ava1.jpg'), // Load artwork from the app bundle
     };
     TrackPlayer.setupPlayer().then(async (result) => {
-      // The player is ready to be used
-      console.log(result)
-      TrackPlayer.add([track]).then(async function () {
-        let trackId = await TrackPlayer.getCurrentTrack();
-        let duration = await TrackPlayer.getDuration();
-        console.log(trackId)
-        console.log(duration)
-      });
+      TrackPlayer.add([track]);
     });
     TrackPlayer.play()
   }
@@ -41,6 +34,24 @@ export default class Music extends Component {
   render() {
     return (
       <View>
+        <Header 
+          message= "playing from your library"
+          onMessagePress={() => console.log('ahihi')}
+        />
+        <AlbumArt/>
+        <TrackDetails 
+          title = 'Sunflower'
+        />
+        <SeekBar 
+          trackLength={180}
+          currentPosition={120}
+        />
+        <PlaybackControl 
+          paused={this.state.paused}
+          onPressPause={this.onPressPause.bind(this)}
+          onPressPlay={this.onPressPlay.bind(this)}
+
+        />
         <TextInput
           style={{ height: 40, borderColor: 'gray', borderWidth: 3, color: "white" }}
           onChangeText={(text) => this.setState({ text })}
