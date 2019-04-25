@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import { Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl } from './common'
 import { Text, View} from 'react-native';
+import Music from './music';
 
 
 export default class App extends Component {
@@ -20,8 +21,8 @@ export default class App extends Component {
           currentPosition={120}
         />
         <PlaybackControl/>
+      <Music></Music>
       </View>
-
     );
   }
 }
