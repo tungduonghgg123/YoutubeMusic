@@ -13,6 +13,7 @@ export default class Music extends Component {
   }
   onPressPlay() {
     this.setState({paused: false})
+    console.log('play')
     TrackPlayer.play();
   }
   
@@ -28,18 +29,20 @@ export default class Music extends Component {
       // artwork: require('../ava1.jpg'), // Load artwork from the app bundle
     };
     TrackPlayer.setupPlayer().then(async (result) => {
-      TrackPlayer.add([track]);
-      // this.setState({length: TrackPlayer.getDuration()}).then(() => {
-      //   alert(this.state.length)
-      // })
-      alert(TrackPlayer.getDuration())
-      this.onPressPlay();
+      TrackPlayer.add([track]).then(() => {
+        console.log(TrackPlayer.getDuration())
+        console.log('fuck')
+        // alert('wtf')
+        this.onPressPlay();
+      });
+      
+      
     });
     
   }
   
   render() {
-    return (``
+    return (
       <View>
         <Header 
           message= "playing from your library"
