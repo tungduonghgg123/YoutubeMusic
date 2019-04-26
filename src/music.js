@@ -7,20 +7,24 @@ import { Text, View, TextInput, Button} from 'react-native';
 export default class Music extends Component {
   state = {paused: true, text: 'SA9XeqMFL44', duration: 0}
 
-  onPressPause() {
+   onPressPause() {
     this.setState({paused: true});
     TrackPlayer.pause();
+
   }
-  onPressPlay() {
+   onPressPlay() {
     this.setState({paused: false})
     TrackPlayer.play();
+
   }
-  
+
+ 
+
   onPressSubmit () {
     var track = {
       id: 'unique track id', // Must be a string, required
       // url: `https://youtubemusicbackend.herokuapp.com/play/${this.state.text}`, // Load media from heroku
-      
+      url: require('../WhoAreYou.mp3'),
       title: 'Avaritia',
       artist: 'deadmau5',
       album: 'while(1<2)',
@@ -32,8 +36,6 @@ export default class Music extends Component {
       TrackPlayer.add([track]).then(async () => {
         let duration = await TrackPlayer.getDuration();
         this.setState({duration: Math.round(duration)})
-        console.log(typeof duration)
-        // alert('wtf')
         this.onPressPlay();
       });
       
@@ -41,13 +43,11 @@ export default class Music extends Component {
     });
     
   }
-  
   render() {
     return (
       <View>
         <Header 
-          message= "playing from your library"
-          onMessagePress={() => console.log('ahihi')}
+          message= "playing from Youtube"  
         />
         <AlbumArt/>
         <TrackDetails 
@@ -55,7 +55,6 @@ export default class Music extends Component {
         />
         <SeekBar 
           trackLength={this.state.duration}
-          currentPosition={0}
         />
         <PlaybackControl 
           paused={this.state.paused}
@@ -73,6 +72,8 @@ export default class Music extends Component {
           color="#841584"
           accessibilityLabel="Play music"
         />
+        
+
       </View>
 
     );
