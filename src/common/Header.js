@@ -1,6 +1,5 @@
-/* eslint-disable import/prefer-default-export */
 import React from 'react';
-import { View, Text, TouchableOpacity, Image} from 'react-native';
+import { View, Text, TouchableOpacity, Image } from 'react-native';
 
 const Header = ({ message, onDownPress, onQueuePress, onMessagePress }) => {
     const { textStyle, containerStyle, buttonStyle } = styles;
@@ -30,17 +29,16 @@ const styles = {
         fontSize: 10,
     },
     containerStyle: {
-        height: 72,
         justifyContent: 'space-between',
         alignItems: 'center',
         flexDirection: 'row',
-        paddingTop: 20,
         paddingLeft: 12,
         paddingRight: 12,
+        marginBottom: 20
     },
     buttonStyle: {
         opacity: 0.72,
-
     }
 }
+
 export { Header };

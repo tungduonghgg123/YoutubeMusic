@@ -1,17 +1,18 @@
-import React, {Component} from 'react';
-import { Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl } from './common'
-import { Text, View} from 'react-native';
+import React, { Component } from 'react';
+import { Text, View, SafeAreaView } from 'react-native';
 import Music from './Music';
-
+import Search from './Search'
 
 export default class App extends Component {
-  
+
   render() {
     return (
-      <View style={{backgroundColor: 'brown', flex: 1}}>
-        <Music></Music>
-      </View>
+      <SafeAreaView style={{ flex: 1, backgroundColor: 'gray' }}>
+        <View>
+          <Music/>
+          {/* <Search/> */}
+        </View>
+      </SafeAreaView>
     );
   }
 }
-
