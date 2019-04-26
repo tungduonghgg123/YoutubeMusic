@@ -19,7 +19,8 @@ export default class Music extends Component {
   onPressSubmit () {
     var track = {
       id: 'unique track id', // Must be a string, required
-      url: `https://youtubemusicbackend.herokuapp.com/play/${this.state.text}`, // Load media from heroku
+      // url: `https://youtubemusicbackend.herokuapp.com/play/${this.state.text}`, // Load media from heroku
+      
       title: 'Avaritia',
       artist: 'deadmau5',
       album: 'while(1<2)',
