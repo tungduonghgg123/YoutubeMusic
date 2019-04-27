@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
-import { View, ScrollView, Image } from 'react-native';
+import { ScrollView, Image, SafeAreaView } from 'react-native';
 import { ListItem, SearchBar } from "react-native-elements"
 import axios from 'axios';
 
-export default class Search extends Component {
+export default class SearchScreen extends Component {
   state = {
     search: '',
     isLoading: false,
@@ -46,7 +46,7 @@ export default class Search extends Component {
 
   render() {
     return (
-      <View style={{ height: '100%' }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: 'gray', height: '100%' }}>
         <SearchBar
           placeholder="Search Youtube Music"
           containerStyle={{ backgroundColor: null, borderTopWidth: 0, borderBottomWidth: 0, paddingTop: 0, paddingBottom: 2 }}
@@ -63,7 +63,7 @@ export default class Search extends Component {
         <ScrollView
           style={{ paddingTop: 7 }}
           onScroll={({ nativeEvent }) => {
-            if (this.isCloseToBottom(nativeEvent) && this.state.listItem.length < 50) {
+            if (this.isCloseToBottom(nativeEvent) && this.state.listItem.length < 50 && this.state.listItem.length != 0) {
               this.onSearch(this.state.search, this.state.nextPageToken)
             }
           }}
@@ -87,11 +87,12 @@ export default class Search extends Component {
                 subtitle={item.snippet.channelTitle}
                 subtitleProps={{ numberOfLines: 2 }}
                 pad={10}
+                onPress={() => this.props.navigation.navigate('Play')}
               />
             )
           })}
         </ScrollView>
-      </View >
+      </SafeAreaView >
     );
   }
 }

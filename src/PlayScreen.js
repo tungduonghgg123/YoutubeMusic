@@ -1,26 +1,23 @@
 import React, { Component } from 'react';
 import TrackPlayer from 'react-native-track-player';
-import { Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl,CustomButton } from './common'
-import { Text, View, TextInput, Button} from 'react-native';
+import { Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl } from './common'
+import { TextInput, Button, SafeAreaView } from 'react-native';
 
+export default class PlayScreen extends Component {
+  state = { paused: true, text: 'SA9XeqMFL44', duration: 0 }
 
-export default class Music extends Component {
-  state = {paused: true, text: 'SA9XeqMFL44', duration: 0}
-
-   onPressPause() {
-    this.setState({paused: true});
+  onPressPause() {
+    this.setState({ paused: true });
     TrackPlayer.pause();
 
   }
-   onPressPlay() {
-    this.setState({paused: false})
-    TrackPlayer.play();
 
+  onPressPlay() {
+    this.setState({ paused: false })
+    TrackPlayer.play();
   }
 
- 
-
-  onPressSubmit () {
+  onPressSubmit() {
     var track = {
       id: 'unique track id', // Must be a string, required
       // url: `https://youtubemusicbackend.herokuapp.com/play/${this.state.text}`, // Load media from heroku
@@ -32,35 +29,33 @@ export default class Music extends Component {
       date: '2014-05-20T07:00:00+00:00', // RFC 3339
       // artwork: require('../ava1.jpg'), // Load artwork from the app bundle
     };
+
     TrackPlayer.setupPlayer().then(async (result) => {
       TrackPlayer.add([track]).then(async () => {
         let duration = await TrackPlayer.getDuration();
-        this.setState({duration: Math.round(duration)})
+        this.setState({ duration: Math.round(duration) })
         this.onPressPlay();
       });
-      
-      
     });
-    
   }
+
   render() {
     return (
-      <View>
-        <Header 
-          message= "playing from Youtube"  
+      <SafeAreaView style={{ flex: 1, backgroundColor: 'gray' }}>
+        <Header
+          message="playing from Youtube"
         />
-        <AlbumArt/>
-        <TrackDetails 
-          title = 'Sunflower'
+        <AlbumArt />
+        <TrackDetails
+          title='Sunflower'
         />
-        <SeekBar 
+        <SeekBar
           trackLength={this.state.duration}
         />
-        <PlaybackControl 
+        <PlaybackControl
           paused={this.state.paused}
           onPressPause={this.onPressPause.bind(this)}
           onPressPlay={this.onPressPlay.bind(this)}
-
         />
         <TextInput
           style={{ height: 40, borderColor: 'gray', borderWidth: 3, color: "white" }}
@@ -72,11 +67,7 @@ export default class Music extends Component {
           color="#841584"
           accessibilityLabel="Play music"
         />
-        
-
-      </View>
-
+      </SafeAreaView>
     );
   }
 }
-
