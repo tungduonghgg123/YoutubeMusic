@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import TrackPlayer from 'react-native-track-player';
-import { Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl } from './common'
-import { TextInput, Button, SafeAreaView } from 'react-native';
+import { Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl, Spinner } from './common'
+import { TextInput, Button, SafeAreaView, Text } from 'react-native';
 
 export default class PlayScreen extends Component {
   state = {
     videoId: this.props.navigation.state.params.videoId,
     paused: true,
-    duration: 0
+    duration: 0,
+    isLoading: true
   }
 
   onPressPause() {
@@ -38,6 +39,7 @@ export default class PlayScreen extends Component {
     this.onPressPlay();
     TrackPlayer.setupPlayer().then(async (result) => {
       TrackPlayer.add(track).then(async () => {
+        this.setState({isLoading: false})
         let duration = await TrackPlayer.getDuration();
         this.setState({ duration: Math.round(duration) })
       });
@@ -63,6 +65,7 @@ export default class PlayScreen extends Component {
     this.onPressPlay();
     TrackPlayer.setupPlayer().then(async (result) => {
       TrackPlayer.add(track).then(async () => {
+        this.setState({isLoading: false})
         let duration = await TrackPlayer.getDuration();
         this.setState({ duration: Math.round(duration) })
       });
@@ -88,6 +91,12 @@ export default class PlayScreen extends Component {
           onPressPause={this.onPressPause.bind(this)}
           onPressPlay={this.onPressPlay.bind(this)}
         />
+        {this.state.isLoading?
+          <Spinner/> :
+          <Text>
+            loading done
+          </Text>
+        }
       </SafeAreaView>
     );
   }
