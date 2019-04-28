@@ -15,6 +15,7 @@ const minutesAndSeconds = (position) => ([
 
 
 class SeekBar extends TrackPlayer.ProgressComponent {
+
   render() {
       const { trackLength, currentPosition, onSeek, onSlidingStart} = this.props;
       const position = Math.round(this.state.position);
@@ -34,9 +35,10 @@ class SeekBar extends TrackPlayer.ProgressComponent {
           </View>
           <Slider
             maximumValue={trackLength}
-            onSlidingComplete={ value => {
-              TrackPlayer.seekTo(value)
+            onSlidingComplete={ async value => {
+              await TrackPlayer.seekTo(value)
             }}
+
             value={this.state.position}
 
             style={styles.slider}

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-
+import TrackPlayer from 'react-native-track-player';
 import {
   View,
   Text,
@@ -8,6 +8,9 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
+function onForward() {
+  TrackPlayer.skipToNext();
+}
 const PlaybackControl = ({
   paused,
   shuffleOn,
