@@ -1,7 +1,9 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import { ScrollView, Image, SafeAreaView } from 'react-native';
-import { ListItem, SearchBar } from "react-native-elements"
+import { ListItem, SearchBar } from "react-native-elements";
 import axios from 'axios';
+
+const YOUTUBE_API_KEY = "AIzaSyBeIS0TakspKCNGxdxWj1eeczRDTT17mNo";
 
 export default class SearchScreen extends Component {
   state = {
@@ -11,7 +13,7 @@ export default class SearchScreen extends Component {
     listItem: []
   };
 
-  onSearch(text, pageToken) {
+  onSearchSubmit(text) {
     this.setState({ isLoading: true, search: text })
     axios.get('https://www.googleapis.com/youtube/v3/search', {
       params: {
@@ -20,10 +22,32 @@ export default class SearchScreen extends Component {
         type: "video",
         maxResults: 10,
         safeSearch: "strict",
+        key: YOUTUBE_API_KEY
+      }
+    }).then((response) => {
+      console.log(response)
+      this.setState({
+        listItem: response.data.items,
+        nextPageToken: response.data.nextPageToken,
+        isLoading: false
+      })
+      console.log(this.state.listItem.length)
+    }).catch((error) => {
+      console.log(error);
+    });
+  }
+
+  onSearchNext(text, pageToken) {
+    this.setState({ isLoading: true, search: text })
+    axios.get('https://www.googleapis.com/youtube/v3/search', {
+      params: {
+        part: "snippet",
+        q: text,
+        type: "video",
+        maxResults: 5,
+        safeSearch: "strict",
         pageToken: pageToken,
-        key: "AIzaSyBeIS0TakspKCNGxdxWj1eeczRDTT17mNo"
-        // key: "AIzaSyDzP76efMfCi4BrzcEVNg2N4aBNpl_wrmE"
-        // key: "AIzaSyAj-0GyBrQ39mh57ho6WYMPVhWlL8rY0tg"
+        key: YOUTUBE_API_KEY
       }
     }).then((response) => {
       console.log(response)
@@ -57,14 +81,14 @@ export default class SearchScreen extends Component {
           showLoading={this.state.isLoading}
           value={this.state.searchInput}
           onChangeText={searchInput => this.setState({ searchInput })}
-          onSubmitEditing={event => this.onSearch(event.nativeEvent.text)}
+          onSubmitEditing={event => this.onSearchSubmit(event.nativeEvent.text)}
         />
 
         <ScrollView
           style={{ paddingTop: 7 }}
           onScroll={({ nativeEvent }) => {
             if (this.isCloseToBottom(nativeEvent) && this.state.listItem.length < 50 && this.state.listItem.length != 0) {
-              this.onSearch(this.state.search, this.state.nextPageToken)
+              this.onSearchNext(this.state.search, this.state.nextPageToken)
             }
           }}
           scrollEventThrottle={5000}
@@ -87,7 +111,7 @@ export default class SearchScreen extends Component {
                 subtitle={item.snippet.channelTitle}
                 subtitleProps={{ numberOfLines: 2 }}
                 pad={10}
-                onPress={() => this.props.navigation.navigate('Play')}
+                onPress={() => this.props.navigation.navigate('Play', { videoId: item.id.videoId })}
               />
             )
           })}

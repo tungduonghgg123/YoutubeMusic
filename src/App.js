@@ -3,8 +3,6 @@ import Navigation from 'react-navigation'
 import PlayScreen from './PlayScreen';
 import SearchScreen from './SearchScreen'
 
-
-
 const TabNavigator = Navigation.createBottomTabNavigator({
   Search: { screen: SearchScreen },
   Play: { screen: PlayScreen }

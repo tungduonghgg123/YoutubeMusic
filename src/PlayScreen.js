@@ -4,24 +4,27 @@ import { Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl } from './comm
 import { TextInput, Button, SafeAreaView } from 'react-native';
 
 export default class PlayScreen extends Component {
-  state = { paused: true, text: 'SA9XeqMFL44', duration: 0 }
+  state = {
+    videoId: this.props.navigation.state.params.videoId,
+    paused: true,
+    duration: 0
+  }
 
   onPressPause() {
     this.setState({ paused: true });
     TrackPlayer.pause();
-
   }
 
   onPressPlay() {
     this.setState({ paused: false })
     TrackPlayer.play();
   }
-
-  onPressSubmit() {
+  
+  componentDidMount() {
     var track = {
       id: 'unique track id', // Must be a string, required
-      // url: `https://youtubemusicbackend.herokuapp.com/play/${this.state.text}`, // Load media from heroku
-      url: require('../WhoAreYou.mp3'),
+      url: `https://youtubemusicbackend.herokuapp.com/play/${this.props.navigation.getParam('videoId')}`, // Load media from heroku
+      // url: require('../WhoAreYou.mp3'),
       title: 'Avaritia',
       artist: 'deadmau5',
       album: 'while(1<2)',
@@ -30,16 +33,44 @@ export default class PlayScreen extends Component {
       // artwork: require('../ava1.jpg'), // Load artwork from the app bundle
     };
 
+    console.log(track)
+
+    this.onPressPlay();
     TrackPlayer.setupPlayer().then(async (result) => {
-      TrackPlayer.add([track]).then(async () => {
+      TrackPlayer.add(track).then(async () => {
         let duration = await TrackPlayer.getDuration();
         this.setState({ duration: Math.round(duration) })
-        this.onPressPlay();
+      });
+    });
+  }
+
+  componentWillReceiveProps() {
+    // this.setState({videoId: this.props.navigation.state.params.videoId})
+    var track = {
+      id: 'unique track id', // Must be a string, required
+      url: `https://youtubemusicbackend.herokuapp.com/play/${this.props.navigation.getParam('videoId')}`, // Load media from heroku
+      // url: require('../WhoAreYou.mp3'),
+      title: 'Avaritia',
+      artist: 'deadmau5',
+      album: 'while(1<2)',
+      genre: 'Progressive House, Electro House',
+      date: '2014-05-20T07:00:00+00:00', // RFC 3339
+      // artwork: require('../ava1.jpg'), // Load artwork from the app bundle
+    };
+
+    console.log(track)
+
+    this.onPressPlay();
+    TrackPlayer.setupPlayer().then(async (result) => {
+      TrackPlayer.add(track).then(async () => {
+        let duration = await TrackPlayer.getDuration();
+        this.setState({ duration: Math.round(duration) })
       });
     });
   }
 
   render() {
+    console.log(this.props.navigation.state.params.videoId)
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: 'gray' }}>
         <Header
@@ -56,16 +87,6 @@ export default class PlayScreen extends Component {
           paused={this.state.paused}
           onPressPause={this.onPressPause.bind(this)}
           onPressPlay={this.onPressPlay.bind(this)}
-        />
-        <TextInput
-          style={{ height: 40, borderColor: 'gray', borderWidth: 3, color: "white" }}
-          onChangeText={(text) => this.setState({ text })}
-          placeholder="Enter video id here"
-        />
-        <Button onPress={this.onPressSubmit.bind(this)}
-          title="Submit"
-          color="#841584"
-          accessibilityLabel="Play music"
         />
       </SafeAreaView>
     );
