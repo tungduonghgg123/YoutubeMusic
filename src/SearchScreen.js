@@ -3,8 +3,6 @@ import { ScrollView, Image, SafeAreaView } from 'react-native';
 import { ListItem, SearchBar } from "react-native-elements";
 import axios from 'axios';
 
-const YOUTUBE_API_KEY = "AIzaSyBeIS0TakspKCNGxdxWj1eeczRDTT17mNo";
-
 export default class SearchScreen extends Component {
   state = {
     search: '',
@@ -14,8 +12,6 @@ export default class SearchScreen extends Component {
   };
 
   onSearchSubmit(text) {
-    console.log(process.env.KEY)
-
     this.setState({ isLoading: true, search: text })
     axios.get('https://www.googleapis.com/youtube/v3/search', {
       params: {
@@ -23,16 +19,14 @@ export default class SearchScreen extends Component {
         q: text,
         type: "video",
         maxResults: 10,
-        key: YOUTUBE_API_KEY
+        key: process.env.YOUTUBE_API_KEY
       }
     }).then((response) => {
-      console.log(response)
       this.setState({
         listItem: response.data.items,
         nextPageToken: response.data.nextPageToken,
         isLoading: false
       })
-      console.log(this.state.listItem.length)
     }).catch((error) => {
       console.log(error);
     });
@@ -47,16 +41,14 @@ export default class SearchScreen extends Component {
         type: "video",
         maxResults: 5,
         pageToken: pageToken,
-        key: YOUTUBE_API_KEY
+        key: process.env.YOUTUBE_API_KEY
       }
     }).then((response) => {
-      console.log(response)
       this.setState({
         listItem: [...this.state.listItem, ...response.data.items],
         nextPageToken: response.data.nextPageToken,
         isLoading: false
       })
-      console.log(this.state.listItem.length)
     }).catch((error) => {
       console.log(error);
     });
@@ -112,7 +104,6 @@ export default class SearchScreen extends Component {
                 subtitleProps={{ numberOfLines: 2 }}
                 pad={10}
                 onPress={() => this.props.navigation.navigate('Play', { videoId: item.id.videoId })}
-                
               />
             )
           })}

@@ -1,15 +1,15 @@
 import React from 'react';
 import { View, Image, TouchableOpacity, Dimensions } from 'react-native'
 
-const AlbumArt = ({onPress, url, path }) => {
-    const {container, image} = styles;
-    return (
-        <View>
-            <TouchableOpacity onPress={onPress} style={container}>
-                <Image style= {image}source = {require('../img/Spiderman.jpg')} />
-            </TouchableOpacity>
-        </View>
-    )
+const AlbumArt = ({ onPress, url, path }) => {
+  const { container, image } = styles;
+  return (
+    <View>
+      <TouchableOpacity onPress={onPress} style={container}>
+        <Image style={image} source={{ uri: url }} resizeMode={'contain'} />
+      </TouchableOpacity>
+    </View>
+  )
 }
 const { width, height } = Dimensions.get('window');
 const imageSize = width - 48;
