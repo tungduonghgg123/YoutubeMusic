@@ -21,7 +21,6 @@ export default class SearchScreen extends Component {
         q: text,
         type: "video",
         maxResults: 10,
-        safeSearch: "strict",
         key: YOUTUBE_API_KEY
       }
     }).then((response) => {
@@ -45,7 +44,6 @@ export default class SearchScreen extends Component {
         q: text,
         type: "video",
         maxResults: 5,
-        safeSearch: "strict",
         pageToken: pageToken,
         key: YOUTUBE_API_KEY
       }
