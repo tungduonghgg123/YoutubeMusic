@@ -112,6 +112,7 @@ export default class SearchScreen extends Component {
                 subtitleProps={{ numberOfLines: 2 }}
                 pad={10}
                 onPress={() => this.props.navigation.navigate('Play', { videoId: item.id.videoId })}
+                
               />
             )
           })}

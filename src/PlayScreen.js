@@ -1,79 +1,71 @@
 import React, { Component } from 'react';
 import TrackPlayer from 'react-native-track-player';
 import { Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl, Spinner } from './common'
-import { TextInput, Button, SafeAreaView, Text } from 'react-native';
+import { TextInput, Button, SafeAreaView, Text, View } from 'react-native';
 
 export default class PlayScreen extends Component {
-  state = {
-    videoId: this.props.navigation.state.params.videoId,
-    paused: true,
-    duration: 0,
-    isLoading: true
+  constructor(props) {
+    super(props);
+    this.state = {
+      paused: true,
+      duration: 0,
+      isLoading: true,
+      message: ''
+    };
   }
-
   onPressPause() {
     this.setState({ paused: true });
     TrackPlayer.pause();
   }
-
   onPressPlay() {
     this.setState({ paused: false })
     TrackPlayer.play();
   }
-  
+  initializeTrack(id, url) {
+    return {
+      id: id, // Must be a string, required
+      url: url, // Load media from heroku
+      // url: require('../WhoAreYou.mp3'),
+      title: 'Avaritia',
+      artist: 'deadmau5',
+      album: 'while(1<2)',
+      genre: 'Progressive House, Electro House',
+      date: '2014-05-20T07:00:00+00:00', // RFC 3339
+    };
+  }
+  addAndPlay(track) {
+    TrackPlayer.add(track).then(async () => {
+      let state = await TrackPlayer.getState();
+      this.setState({isLoading: false})
+      let duration = await TrackPlayer.getDuration();
+      this.setState({ duration: Math.round(duration) })
+    });
+    this.onPressPlay();
+  }
+  componentDidUpdate(prevProps) {
+    if(prevProps.navigation.getParam('videoId') === this.props.navigation.getParam('videoId'))
+      return;
+    this.setState({isLoading: true})
+    let track = this.initializeTrack(
+      'unique track id',
+      `https://youtubemusicbackend.herokuapp.com/play/${this.props.navigation.getParam('videoId')}`
+    )
+    this.addAndPlay(track);
+    
+  }
   componentDidMount() {
-    var track = {
-      id: 'unique track id', // Must be a string, required
-      url: `https://youtubemusicbackend.herokuapp.com/play/${this.props.navigation.getParam('videoId')}`, // Load media from heroku
-      // url: require('../WhoAreYou.mp3'),
-      title: 'Avaritia',
-      artist: 'deadmau5',
-      album: 'while(1<2)',
-      genre: 'Progressive House, Electro House',
-      date: '2014-05-20T07:00:00+00:00', // RFC 3339
-      // artwork: require('../ava1.jpg'), // Load artwork from the app bundle
-    };
-
-    console.log(track)
-
-    this.onPressPlay();
-    TrackPlayer.setupPlayer().then(async (result) => {
-      TrackPlayer.add(track).then(async () => {
-        this.setState({isLoading: false})
-        let duration = await TrackPlayer.getDuration();
-        this.setState({ duration: Math.round(duration) })
-      });
-    });
+    this.setState({isLoading: true})
+    let track = this.initializeTrack(
+      'unique track id',
+      `https://youtubemusicbackend.herokuapp.com/play/${this.props.navigation.getParam('videoId')}`
+    )
+    this.addAndPlay(track);
   }
-
-  componentWillReceiveProps() {
-    // this.setState({videoId: this.props.navigation.state.params.videoId})
-    var track = {
-      id: 'unique track id', // Must be a string, required
-      url: `https://youtubemusicbackend.herokuapp.com/play/${this.props.navigation.getParam('videoId')}`, // Load media from heroku
-      // url: require('../WhoAreYou.mp3'),
-      title: 'Avaritia',
-      artist: 'deadmau5',
-      album: 'while(1<2)',
-      genre: 'Progressive House, Electro House',
-      date: '2014-05-20T07:00:00+00:00', // RFC 3339
-      // artwork: require('../ava1.jpg'), // Load artwork from the app bundle
-    };
-
-    console.log(track)
-
-    this.onPressPlay();
-    TrackPlayer.setupPlayer().then(async (result) => {
-      TrackPlayer.add(track).then(async () => {
-        this.setState({isLoading: false})
-        let duration = await TrackPlayer.getDuration();
-        this.setState({ duration: Math.round(duration) })
-      });
-    });
+  async getTheTrackQueue() {
+    let tracks = await TrackPlayer.getQueue();
+    console.log(tracks)
   }
-
   render() {
-    console.log(this.props.navigation.state.params.videoId)
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: 'gray' }}>
         <Header
@@ -92,10 +84,7 @@ export default class PlayScreen extends Component {
           onPressPlay={this.onPressPlay.bind(this)}
         />
         {this.state.isLoading?
-          <Spinner/> :
-          <Text>
-            loading done
-          </Text>
+          <Spinner/> : <View/>
         }
       </SafeAreaView>
     );
