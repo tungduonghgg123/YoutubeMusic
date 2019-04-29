@@ -14,6 +14,8 @@ export default class SearchScreen extends Component {
   };
 
   onSearchSubmit(text) {
+    console.log(process.env.KEY)
+
     this.setState({ isLoading: true, search: text })
     axios.get('https://www.googleapis.com/youtube/v3/search', {
       params: {
