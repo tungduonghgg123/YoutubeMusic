@@ -15,7 +15,26 @@ const minutesAndSeconds = (position) => ([
 
 
 class SeekBar extends TrackPlayer.ProgressComponent {
-
+  constructor(props){
+    super(props);
+    this.state = {duration: 0}
+  }
+  // componentDidMount(){
+  //   this.onSkip = TrackPlayer.addEventListener('remote-skip', async () => {
+  //     let duration = await TrackPlayer.getDuration();
+  //     await this.setState({ duration: Math.round(duration) })
+  //   })
+  //   // this.getDuration()
+  // }
+  // componentWillUnmount() {
+  //   this.onSkip.remove();
+// }
+  // componentDidUpdate(prevProps){
+  //   let videoId = this.props.navigation.getParam('videoId');
+  //   if(prevProps.navigation.getParam('videoId') === videoId)
+  //     return;
+  //   // this.getDuration()
+  // }
   render() {
       const { trackLength, currentPosition, onSeek, onSlidingStart} = this.props;
       const position = Math.round(this.state.position);

@@ -3,13 +3,35 @@ import TrackPlayer from 'react-native-track-player';
 import { Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl, Spinner } from './common'
 import { TextInput, Button, SafeAreaView, Text, View } from 'react-native';
 
+let HARDCODEtracks = [
+  {
+    id: "4ZbQffYdhj0", // Must be a string, required
+    url: "https://youtubemusicbackend.herokuapp.com/play/4ZbQffYdhj0", // Load media from heroku
+    // url: require('../WhoAreYou.mp3'),
+    title: 'Avaritia',
+    artist: 'deadmau5',
+    album: 'while(1<2)',
+    genre: 'Progressive House, Electro House',
+    date: '2014-05-20T07:00:00+00:00', // RFC 3339
+  },
+  {
+    id: '6KJrNWC0tfw', // Must be a string, required
+    url: "https://youtubemusicbackend.herokuapp.com/play/6KJrNWC0tfw", // Load media from heroku
+    // url: require('../WhoAreYou.mp3'),
+    title: 'Avaritia',
+    artist: 'deadmau5',
+    album: 'while(1<2)',
+    genre: 'Progressive House, Electro House',
+    date: '2014-05-20T07:00:00+00:00', // RFC 3339
+  },
+]
 export default class PlayScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
       paused: true,
       duration: 0,
-      isLoading: true,
+      isLoading: false,
       message: ''
     };
   }
@@ -40,26 +62,32 @@ export default class PlayScreen extends Component {
       let duration = await TrackPlayer.getDuration();
       this.setState({ duration: Math.round(duration) })
     });
+    TrackPlayer.skip(track.id).then(() => console.log('success'))
     this.onPressPlay();
   }
   componentDidUpdate(prevProps) {
-    if(prevProps.navigation.getParam('videoId') === this.props.navigation.getParam('videoId'))
+    let videoId = this.props.navigation.getParam('videoId');
+    if(prevProps.navigation.getParam('videoId') === videoId)
+      return;
+    TrackPlayer.pause();
+    this.setState({isLoading: true})
+    let track = this.initializeTrack(
+      videoId,
+      `https://youtubemusicbackend.herokuapp.com/play/${videoId}`
+    )
+    this.addAndPlay(track);
+  }
+  componentDidMount() {
+    if(!this.props.navigation.getParam('videoId'))
       return;
     this.setState({isLoading: true})
     let track = this.initializeTrack(
-      'unique track id',
+      this.props.navigation.getParam('videoId'),
       `https://youtubemusicbackend.herokuapp.com/play/${this.props.navigation.getParam('videoId')}`
     )
-    this.addAndPlay(track);
-    
-  }
-  componentDidMount() {
-    this.setState({isLoading: true})
-    let track = this.initializeTrack(
-      'unique track id',
-      `https://youtubemusicbackend.herokuapp.com/play/${this.props.navigation.getParam('videoId')}`
-    )
-    this.addAndPlay(track);
+    this.addAndPlay(track)
+    // this.addAndPlay(HARDCODEtracks);
+
   }
   async getTheTrackQueue() {
     let tracks = await TrackPlayer.getQueue();
@@ -77,15 +105,20 @@ export default class PlayScreen extends Component {
         />
         <SeekBar
           trackLength={this.state.duration}
+          
         />
         <PlaybackControl
           paused={this.state.paused}
           onPressPause={this.onPressPause.bind(this)}
           onPressPlay={this.onPressPlay.bind(this)}
+          onForward={() => {TrackPlayer.skipToNext().then((result) => console.log('skip success'))}}
+          onBack={() => {TrackPlayer.skipToPrevious().then((result) => console.log('skip success'))}}
+
         />
         {this.state.isLoading?
           <Spinner/> : <View/>
         }
+    
       </SafeAreaView>
     );
   }
