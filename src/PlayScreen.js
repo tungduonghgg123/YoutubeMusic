@@ -3,6 +3,7 @@ import TrackPlayer from 'react-native-track-player';
 import { Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl, Spinner } from './common'
 import { TextInput, Button, SafeAreaView, Text, View } from 'react-native';
 import axios from 'axios';
+import { tsParameterProperty } from '@babel/types';
 
 let HARDCODEtracks = [
   {
@@ -34,7 +35,6 @@ export default class PlayScreen extends Component {
       paused: true,
       duration: 0,
       isLoading: false,
-      message: ''
     };
   }
   onPressPause() {
@@ -45,8 +45,7 @@ export default class PlayScreen extends Component {
     this.setState({ paused: false })
     TrackPlayer.play();
   }
-
-  initializeTrack(videoId, url) {
+  initializeTrack(videoId) {
     return axios.get('https://www.googleapis.com/youtube/v3/videos', {
       params: {
         part: 'snippet',
@@ -56,30 +55,30 @@ export default class PlayScreen extends Component {
     }).then(response => {
       const track = {
         id: videoId,
-        url: url, // Load media from heroku
+        url: `https://youtubemusicbackend.herokuapp.com/play/${videoId}`, // Load media from heroku
         title: response.data.items[0].snippet.title,
         artist: response.data.items[0].snippet.channelTitle,
         description: response.data.items[0].snippet.description,
         date: response.data.items[0].snippet.publishedAt,
         thumbnail: {
-          url: response.data.items[0].snippet.thumbnails.maxres.url
+          url: response.data.items[0].snippet.thumbnails.medium.url
         }
       };
-      this.setState({ track })
       return track;
     })
       .catch(error => console.log(error))
   }
-
-  addAndPlay(track) {
+  async addAndPlay(track) {
     TrackPlayer.add(track).then(async () => {
-      let state = await TrackPlayer.getState();
-      this.setState({ isLoading: false })
-      let duration = await TrackPlayer.getDuration();
-      this.setState({ duration: Math.round(duration) })
+      /**
+       * PURPOSE: wait until track player have finished loading
+       */
+      TrackPlayer.getState().then(() => this.setState({ isLoading: false }))  
+      
     });
-    TrackPlayer.skip(track.id).then(() => console.log('success'))
+    TrackPlayer.skip(track.id).then(() => console.log('skip to track id successfully'))
     this.onPressPlay();
+
   }
   async componentDidUpdate(prevProps) {
     let videoId = this.props.navigation.getParam('videoId');
@@ -87,20 +86,34 @@ export default class PlayScreen extends Component {
       return;
     TrackPlayer.pause();
     this.setState({ isLoading: true })
-    let track = await this.initializeTrack(
-      videoId,
-      `https://youtubemusicbackend.herokuapp.com/play/${videoId}`
-    )
+    let track = await this.initializeTrack(videoId)
     this.addAndPlay(track);
   }
+  componentWillUnmount() {
+    // Removes the event handler
+    this.onTrackChange.remove();
+    this.onQueueEnded.remove();
+    this.onRemotePause.remove();
+    this.onRemotePlay.remove();
+}
   async componentDidMount() {
-    if (!this.props.navigation.getParam('videoId'))
+    this.onTrackChange = TrackPlayer.addEventListener('playback-track-changed', async (data) => {
+      const track = await TrackPlayer.getTrack(data.nextTrack);
+      this.setState({track});
+      let duration = await TrackPlayer.getDuration();
+      this.setState({ duration: Math.round(duration) })
+  });
+    this.onQueueEnded = TrackPlayer.addEventListener('playback-queue-ended', async (data) => {
+      console.log('queue ended')
+      TrackPlayer.stop()
+      this.setState({ paused: true });
+  });
+
+    let videoId = this.props.navigation.getParam('videoId');
+    if (!videoId)
       return;
     this.setState({ isLoading: true })
-    let track = await this.initializeTrack(
-      this.props.navigation.getParam('videoId'),
-      `https://youtubemusicbackend.herokuapp.com/play/${this.props.navigation.getParam('videoId')}`
-    )
+    let track = await this.initializeTrack(videoId)
     this.addAndPlay(track)
     // this.addAndPlay(HARDCODEtracks);
 
@@ -114,6 +127,7 @@ export default class PlayScreen extends Component {
       <SafeAreaView style={{ flex: 1, backgroundColor: 'gray' }}>
         <Header
           message="playing from Youtube"
+          onQueuePress={this.getTheTrackQueue.bind(this)}
         />
         <AlbumArt url={!this.state.track ? "" : this.state.track.thumbnail.url} />
         <TrackDetails

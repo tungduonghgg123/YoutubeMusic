@@ -12,7 +12,7 @@ const Header = ({ message, onDownPress, onQueuePress, onMessagePress }) => {
             <Text onPress={onMessagePress} style={textStyle} >
                 {message.toUpperCase()}
             </Text>
-            <TouchableOpacity onPress={onDownPress}>
+            <TouchableOpacity onPress={onQueuePress}>
                 <Image style={buttonStyle}
                     source={require('../img/ic_queue_music_white.png')} />
             </TouchableOpacity>

@@ -12,7 +12,11 @@ const minutesAndSeconds = (position) => ([
   pad(Math.floor(position / 60), 2),
   pad(position % 60, 2),
 ]);
-
+function convert(seconds) {
+  var date = new Date(null);
+  date.setSeconds(seconds); // specify value for SECONDS here
+  return date.toISOString().substr(11, 8);
+}
 
 class SeekBar extends TrackPlayer.ProgressComponent {
   constructor(props){
