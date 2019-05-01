@@ -78,16 +78,14 @@ export default class PlayScreen extends Component {
     });
     TrackPlayer.skip(track.id).then(() => console.log('skip to track id successfully'))
     this.onPressPlay();
-
   }
   async componentDidUpdate(prevProps) {
     let videoId = this.props.navigation.getParam('videoId');
-    if (prevProps.navigation.getParam('videoId') === videoId)
+    if (prevProps.navigation.getParam('videoId') === videoId) {
       return;
+    }
     TrackPlayer.pause();
-    this.setState({ isLoading: true })
-    let track = await this.initializeTrack(videoId)
-    this.addAndPlay(track);
+    this.load(videoId);
   }
   componentWillUnmount() {
     // Removes the event handler
@@ -98,7 +96,7 @@ export default class PlayScreen extends Component {
 }
   async componentDidMount() {
     this.onTrackChange = TrackPlayer.addEventListener('playback-track-changed', async (data) => {
-      const track = await TrackPlayer.getTrack(data.nextTrack);
+      let track = await TrackPlayer.getTrack(data.nextTrack);
       this.setState({track});
       let duration = await TrackPlayer.getDuration();
       this.setState({ duration: Math.round(duration) })
@@ -107,16 +105,20 @@ export default class PlayScreen extends Component {
       console.log('queue ended')
       TrackPlayer.stop()
       this.setState({ paused: true });
+
   });
 
     let videoId = this.props.navigation.getParam('videoId');
     if (!videoId)
       return;
+    this.load(videoId);
+    // this.addAndPlay(HARDCODEtracks);
+
+  }
+  async load(videoId) {
     this.setState({ isLoading: true })
     let track = await this.initializeTrack(videoId)
     this.addAndPlay(track)
-    // this.addAndPlay(HARDCODEtracks);
-
   }
   async getTheTrackQueue() {
     let tracks = await TrackPlayer.getQueue();
@@ -135,7 +137,6 @@ export default class PlayScreen extends Component {
         />
         <SeekBar
           trackLength={this.state.duration}
-
         />
         <PlaybackControl
           paused={this.state.paused}
@@ -143,12 +144,10 @@ export default class PlayScreen extends Component {
           onPressPlay={this.onPressPlay.bind(this)}
           onForward={() => { TrackPlayer.skipToNext().then((result) => console.log('skip success')) }}
           onBack={() => { TrackPlayer.skipToPrevious().then((result) => console.log('skip success')) }}
-
         />
         {this.state.isLoading ?
           <Spinner /> : <View />
         }
-
       </SafeAreaView>
     );
   }

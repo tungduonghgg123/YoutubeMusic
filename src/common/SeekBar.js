@@ -8,52 +8,37 @@ function pad(n, width, z=0) {
   return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
 }
 
-const minutesAndSeconds = (position) => ([
-  pad(Math.floor(position / 60), 2),
-  pad(position % 60, 2),
-]);
-function convert(seconds) {
-  var date = new Date(null);
-  date.setSeconds(seconds); // specify value for SECONDS here
-  return date.toISOString().substr(11, 8);
-}
+const minutesAndSecondsAndHours = (position) => {
+  if(position > 3600 ){
+    return [
+      pad(Math.floor(position / 3600), 2),
+      pad(Math.floor(position % 3600 / 60), 2),
+      pad(position  % 3600 % 60, 2),
+    ]
+  };
+  return [
+    pad(Math.floor(position / 60), 2),
+    pad(position % 60, 2),
+  ]
+};
+
 
 class SeekBar extends TrackPlayer.ProgressComponent {
-  constructor(props){
-    super(props);
-    this.state = {duration: 0}
-  }
-  // componentDidMount(){
-  //   this.onSkip = TrackPlayer.addEventListener('remote-skip', async () => {
-  //     let duration = await TrackPlayer.getDuration();
-  //     await this.setState({ duration: Math.round(duration) })
-  //   })
-  //   // this.getDuration()
-  // }
-  // componentWillUnmount() {
-  //   this.onSkip.remove();
-// }
-  // componentDidUpdate(prevProps){
-  //   let videoId = this.props.navigation.getParam('videoId');
-  //   if(prevProps.navigation.getParam('videoId') === videoId)
-  //     return;
-  //   // this.getDuration()
-  // }
   render() {
       const { trackLength, currentPosition, onSeek, onSlidingStart} = this.props;
       const position = Math.round(this.state.position);
-      const elapsed = minutesAndSeconds(position);
-      const total = minutesAndSeconds(trackLength);
+      const elapsed = minutesAndSecondsAndHours(position);
+      const total = minutesAndSecondsAndHours(trackLength);
 
       return (
         <View style={styles.container}>
           <View style={{flexDirection: 'row'}}>
             <Text style={styles.text}>
-              {elapsed[0] + ":" + elapsed[1]}
+              {elapsed.length === 3? elapsed[0] + ":" + elapsed[1] + ":" + elapsed[2]:elapsed[0] + ":" + elapsed[1]}
             </Text>
             <View style={{flex: 1}} />
-            <Text style={[styles.text, {width: 40}]}>
-              {trackLength > 1 &&  total[0] + ":" + total[1]}
+            <Text style={[styles.text]}>
+              {total.length === 3?  total[0] + ":" + total[1]+ ":" + total[2]:total[0] + ":" + total[1]}
             </Text>
           </View>
           <Slider
