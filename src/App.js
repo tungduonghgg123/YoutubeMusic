@@ -2,14 +2,14 @@ import React, { Component } from 'react';
 import Navigation from 'react-navigation'
 import PlayScreen from './PlayScreen';
 import SearchScreen from './SearchScreen'
+import HomeScreen from './HomeScreen';
 import TrackPlayer from 'react-native-track-player';
 import { YellowBox } from 'react-native';
 YellowBox.ignoreWarnings(['Remote debugger']);
 const TabNavigator = Navigation.createBottomTabNavigator({
+  Home: { screen: HomeScreen },
   Search: { screen: SearchScreen },
-  Play: { screen: PlayScreen },
-  
-  
+  Play: { screen: PlayScreen }
 })
 
 const AppSwitchNavigator = Navigation.createSwitchNavigator({

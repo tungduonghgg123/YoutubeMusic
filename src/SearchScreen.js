@@ -127,12 +127,11 @@ export default class SearchScreen extends Component {
                 titleProps={{ numberOfLines: 3 }}
                 subtitle={
                   <View>
-                    <Text>{item.snippet.channelTitle}</Text>
+                    <Text numberOfLines={1} >{item.snippet.channelTitle}</Text>
                     <Text>{item.statistics.viewCount + ' views'}</Text>
                   </View>
                 }
                 subtitleStyle={{ color: 'black', fontSize: 11 }}
-                subtitleProps={{ numberOfLines: 2 }}
                 pad={10}
                 onPress={() => this.props.navigation.navigate('Play', { videoId: item.id })}
               />
