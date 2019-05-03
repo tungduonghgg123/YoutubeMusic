@@ -21,8 +21,6 @@ const minutesAndSecondsAndHours = (position) => {
     pad(position % 60, 2),
   ]
 };
-
-
 class SeekBar extends TrackPlayer.ProgressComponent {
   render() {
       const { trackLength, currentPosition, onSeek, onSlidingStart} = this.props;
@@ -46,9 +44,7 @@ class SeekBar extends TrackPlayer.ProgressComponent {
             onSlidingComplete={ async value => {
               await TrackPlayer.seekTo(value)
             }}
-
             value={this.state.position}
-
             style={styles.slider}
             minimumTrackTintColor='#fff'
             maximumTrackTintColor='rgba(255, 255, 255, 0.14)'

@@ -3,7 +3,6 @@ import TrackPlayer from 'react-native-track-player';
 import { Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl, Spinner } from './common'
 import { TextInput, Button, SafeAreaView, Text, View } from 'react-native';
 import axios from 'axios';
-import { tsParameterProperty } from '@babel/types';
 
 let HARDCODEtracks = [
   {
@@ -18,8 +17,8 @@ let HARDCODEtracks = [
   },
   {
     id: '6KJrNWC0tfw', // Must be a string, required
-    url: "https://youtubemusicbackend.herokuapp.com/play/6KJrNWC0tfw", // Load media from heroku
-    // url: require('../WhoAreYou.mp3'),
+    // url: "https://youtubemusicbackend.herokuapp.com/play/6KJrNWC0tfw", // Load media from heroku
+    url: require('../WhoAreYou.mp3'),
     title: 'Avaritia',
     artist: 'deadmau5',
     album: 'while(1<2)',
@@ -35,6 +34,8 @@ export default class PlayScreen extends Component {
       paused: true,
       duration: 0,
       isLoading: false,
+      shuffleOn: false,
+      repeatOn: true
     };
   }
   onPressPause() {
@@ -44,6 +45,18 @@ export default class PlayScreen extends Component {
   onPressPlay() {
     this.setState({ paused: false })
     TrackPlayer.play();
+  }
+  onPressRepeat() {
+    this.setState((state) => {
+      return {repeatOn: !this.state.repeatOn}
+    })
+    
+  }
+  async onPressBack() {
+    await TrackPlayer.skipToPrevious();
+  }
+  async onPressForward() {
+    await TrackPlayer.skipToNext();
   }
   initializeTrack(videoId) {
     return axios.get('https://www.googleapis.com/youtube/v3/videos', {
@@ -79,6 +92,16 @@ export default class PlayScreen extends Component {
     TrackPlayer.skip(track.id).then(() => console.log('skip to track id successfully'))
     this.onPressPlay();
   }
+  async load(videoId) {
+    this.setState({ isLoading: true })
+    let track = await this.initializeTrack(videoId)
+    this.addAndPlay(track)
+  }
+  async getTheTrackQueue() {
+    let tracks = await TrackPlayer.getQueue();
+    console.log(tracks)
+    TrackPlayer.getState().then((result) => console.log(result))
+  }
   async componentDidUpdate(prevProps) {
     let videoId = this.props.navigation.getParam('videoId');
     if (prevProps.navigation.getParam('videoId') === videoId) {
@@ -96,34 +119,38 @@ export default class PlayScreen extends Component {
 }
   async componentDidMount() {
     this.onTrackChange = TrackPlayer.addEventListener('playback-track-changed', async (data) => {
+      console.log('track was changed!')
+      // if(this.state.repeatOn) {
+      //   await TrackPlayer.skip(this.state.track.id);
+      // }
       let track = await TrackPlayer.getTrack(data.nextTrack);
       this.setState({track});
       let duration = await TrackPlayer.getDuration();
-      this.setState({ duration: Math.round(duration) })
+      this.setState({ duration: Math.floor(duration) })
   });
     this.onQueueEnded = TrackPlayer.addEventListener('playback-queue-ended', async (data) => {
       console.log('queue ended')
-      TrackPlayer.stop()
+      if(this.state.repeatOn) {
+        TrackPlayer.seekTo(0);
+        this.onPressPlay()
+        return;
+      }
+      // TrackPlayer.stop()
       this.setState({ paused: true });
-
   });
 
     let videoId = this.props.navigation.getParam('videoId');
+    /**
+     * hard code video id for faster development
+     */
+    // let videoId = "Llw9Q6akRo4"
     if (!videoId)
       return;
     this.load(videoId);
-    // this.addAndPlay(HARDCODEtracks);
+    // this.addAndPlay(HARDCODEtracks[0]);
 
   }
-  async load(videoId) {
-    this.setState({ isLoading: true })
-    let track = await this.initializeTrack(videoId)
-    this.addAndPlay(track)
-  }
-  async getTheTrackQueue() {
-    let tracks = await TrackPlayer.getQueue();
-    console.log(tracks)
-  }
+  
   render() {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: 'gray' }}>
@@ -140,14 +167,21 @@ export default class PlayScreen extends Component {
         />
         <PlaybackControl
           paused={this.state.paused}
+          shuffleOn={this.state.shuffleOn}
+          repeatOn={this.state.repeatOn}
           onPressPause={this.onPressPause.bind(this)}
           onPressPlay={this.onPressPlay.bind(this)}
-          onForward={() => { TrackPlayer.skipToNext().then((result) => console.log('skip success')) }}
-          onBack={() => { TrackPlayer.skipToPrevious().then((result) => console.log('skip success')) }}
+          onPressRepeat={this.onPressRepeat.bind(this)}
+          forwardDisabled={false}
+          backwardDisabled={false}
+          shuffleDisabled={true}
+          onForward={this.onPressForward.bind(this)}
+          onBack={this.onPressBack.bind(this)}
         />
         {this.state.isLoading ?
           <Spinner /> : <View />
         }
+
       </SafeAreaView>
     );
   }
