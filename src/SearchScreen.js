@@ -110,14 +110,15 @@ export default class SearchScreen extends Component {
             return (
               <ListItem
                 key={key}
-                containerStyle={{ alignItems: 'flex-start', backgroundColor: null, paddingTop: 7, paddingBottom: 7 }}
+                containerStyle={{ alignItems: 'flex-start', backgroundColor: null, paddingTop: 2, paddingBottom: 2 }}
                 leftElement={
                   <View style={{}}>
                     <Image
-                      style={{ width: item.snippet.thumbnails.medium.width / 2, height: item.snippet.thumbnails.medium.height / 2 }}
+                      resizeMode='contain'
+                      style={{ width: 160, height: 100 }}
                       source={{ uri: item.snippet.thumbnails.medium.url }}
                     />
-                    <Text style={{ position: 'absolute', bottom: 5, right: 5, backgroundColor: 'black', color: 'white', opacity: 0.7, padding: 2, borderRadius: 2, overflow: 'hidden', fontSize: 12 }}>
+                    <Text style={{ position: 'absolute', bottom: 7, right: 5, backgroundColor: 'black', color: 'white', opacity: 0.7, padding: 2, borderRadius: 2, overflow: 'hidden', fontSize: 12 }}>
                       {item.contentDetails.duration}
                     </Text>
                   </View>
