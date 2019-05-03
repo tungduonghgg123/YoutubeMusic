@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ScrollView, Image, SafeAreaView, Text, View } from 'react-native';
+import { ScrollView, Image, SafeAreaView, Text, View, ActivityIndicator } from 'react-native';
 import { ListItem, SearchBar } from "react-native-elements";
 import axios from 'axios';
 import moment from 'moment';
@@ -36,7 +36,7 @@ export default class SearchScreen extends Component {
         key: process.env.YOUTUBE_API_KEY
       }
     }).then((response) => {
-      return response.data.items[0]
+      return response.data.items
     }).catch((error) => {
       console.log(error);
     });
@@ -57,12 +57,14 @@ export default class SearchScreen extends Component {
         key: process.env.YOUTUBE_API_KEY
       }
     }).then((response) => {
-      response.data.items.map(async item => {
-        const video = await this.getVideoDetails(item.id.videoId);
-        const duration = moment(moment.duration(video.contentDetails.duration)._data)
-        video.contentDetails.duration = duration.isBefore(1, 'h') ? duration.format("m:ss") : duration.format("H:mm:ss")
-        video.statistics.viewCount = numberFormatter(video.statistics.viewCount);
-        this.setState({ listItem: [...this.state.listItem, video] })
+      const videoIds = response.data.items.map(item => item.id.videoId)
+      this.getVideoDetails(videoIds.join()).then(videos => {
+        videos.map(video => {
+          const duration = moment(moment.duration(video.contentDetails.duration)._data)
+          video.contentDetails.duration = duration.isBefore(1, 'h') ? duration.format("m:ss") : duration.format("H:mm:ss")
+          video.statistics.viewCount = numberFormatter(video.statistics.viewCount);
+          this.setState({ listItem: [...this.state.listItem, video] })
+        })
       })
       this.setState({
         nextPageToken: response.data.nextPageToken,
@@ -98,14 +100,13 @@ export default class SearchScreen extends Component {
         <ScrollView
           style={{ paddingTop: 7 }}
           onScroll={({ nativeEvent }) => {
-            if (this.isCloseToBottom(nativeEvent) && this.state.listItem.length < 50 && this.state.listItem.length != 0) {
+            if (this.isCloseToBottom(nativeEvent) && !this.state.isLoading && this.state.listItem.length < 50 && this.state.listItem.length != 0) {
               this.onSearch(this.state.search, 5, this.state.nextPageToken)
             }
           }}
           scrollEventThrottle={5000}
         >
           {this.state.listItem.map((item, key) => {
-            console.log(item)
             return (
               <ListItem
                 key={key}
@@ -137,6 +138,7 @@ export default class SearchScreen extends Component {
               />
             )
           })}
+          <ActivityIndicator size='large' animating={this.state.isLoading} />
         </ScrollView>
       </SafeAreaView >
     );
