@@ -105,6 +105,7 @@ export default class SearchScreen extends Component {
           scrollEventThrottle={5000}
         >
           {this.state.listItem.map((item, key) => {
+            console.log(item)
             return (
               <ListItem
                 key={key}
@@ -132,7 +133,7 @@ export default class SearchScreen extends Component {
                 subtitleStyle={{ color: 'black', fontSize: 11 }}
                 subtitleProps={{ numberOfLines: 2 }}
                 pad={10}
-                onPress={() => this.props.navigation.navigate('Play', { videoId: item.id.videoId })}
+                onPress={() => this.props.navigation.navigate('Play', { videoId: item.id })}
               />
             )
           })}
