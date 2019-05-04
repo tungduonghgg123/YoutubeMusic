@@ -1,30 +1,20 @@
 import React, { Component } from 'react';
 import { ScrollView, Image, SafeAreaView, Text, View, ActivityIndicator } from 'react-native';
-import { ListItem, SearchBar } from "react-native-elements";
+import { ListItem } from 'react-native-elements';
 import axios from 'axios';
 import moment from 'moment';
 
-function numberFormatter(num, digits) {
-  var si = [
-    { value: 1, symbol: "" },
-    { value: 1E3, symbol: "K" },
-    { value: 1E6, symbol: "M" },
-    { value: 1E9, symbol: "B" }
-  ];
-  for (var i = si.length - 1; i > 0; i--) {
-    if (num >= si[i].value) {
-      break;
-    }
-  }
-  var rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
-  return (num / si[i].value).toFixed(digits).replace(rx, "$1") + si[i].symbol;
-}
-export default class SearchScreen extends Component {
+export default class HomeScreen extends Component {
   state = {
-    search: '',
-    isLoading: false,
     nextPageToken: '',
+    isLoading: false,
     listItem: []
+  }
+
+  isCloseToBottom({ layoutMeasurement, contentOffset, contentSize }) {
+    const paddingToBottom = 20;
+    return layoutMeasurement.height + contentOffset.y >=
+      contentSize.height - paddingToBottom;
   };
 
   getVideoDetails(videoId) {
@@ -42,22 +32,19 @@ export default class SearchScreen extends Component {
     });
   }
 
-  onSearch(text, maxResults, pageToken) {
-    if (!pageToken) {
-      this.setState({ listItem: [] })
-    }
-    this.setState({ isLoading: true, search: text })
-    axios.get('https://www.googleapis.com/youtube/v3/search', {
+  onGetVideos(maxResults, pageToken) {
+    this.setState({isLoading: true})
+    axios.get('https://www.googleapis.com/youtube/v3/videos', {
       params: {
-        part: "snippet",
-        q: text,
-        type: "video",
+        part: 'snippet',
+        chart: 'mostPopular',
         maxResults: maxResults,
         pageToken: pageToken,
+        regionCode: 'VN',
         key: process.env.YOUTUBE_API_KEY
       }
-    }).then((response) => {
-      const videoIds = response.data.items.map(item => item.id.videoId)
+    }).then(response => {
+      const videoIds = response.data.items.map(item => item.id)
       this.getVideoDetails(videoIds.join()).then(videos => {
         videos.map(video => {
           const duration = moment(moment.duration(video.contentDetails.duration)._data)
@@ -70,38 +57,22 @@ export default class SearchScreen extends Component {
         nextPageToken: response.data.nextPageToken,
         isLoading: false
       })
-    }).catch((error) => {
-      console.log(error);
-    });
-  }
-
-  isCloseToBottom({ layoutMeasurement, contentOffset, contentSize }) {
-    const paddingToBottom = 20;
-    return layoutMeasurement.height + contentOffset.y >=
-      contentSize.height - paddingToBottom;
+    })
   };
+
+  componentDidMount() {
+    this.onGetVideos(7);
+  }
 
   render() {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: 'gray', height: '100%' }}>
-        <SearchBar
-          placeholder="Search Youtube Music"
-          containerStyle={{ backgroundColor: null, borderTopWidth: 0, borderBottomWidth: 0, paddingTop: 0, paddingBottom: 2 }}
-          round={true}
-          autoFocus={true}
-          autoCorrect={false}
-          autoCapitalize="none"
-          showLoading={this.state.isLoading}
-          value={this.state.searchInput}
-          onChangeText={searchInput => this.setState({ searchInput })}
-          onSubmitEditing={event => this.onSearch(event.nativeEvent.text, 7)}
-        />
-
+        <Text style={{ margin: 5, fontSize: 15, fontWeight: 'bold', textAlign: 'center' }}>Home</Text>
         <ScrollView
           style={{ paddingTop: 7 }}
           onScroll={({ nativeEvent }) => {
             if (this.isCloseToBottom(nativeEvent) && !this.state.isLoading && this.state.listItem.length < 50 && this.state.listItem.length != 0) {
-              this.onSearch(this.state.search, 5, this.state.nextPageToken)
+              this.onGetVideos(5, this.state.nextPageToken)
             }
           }}
           scrollEventThrottle={5000}
@@ -146,4 +117,20 @@ export default class SearchScreen extends Component {
       </SafeAreaView >
     );
   }
+}
+
+function numberFormatter(num, digits) {
+  var si = [
+    { value: 1, symbol: "" },
+    { value: 1E3, symbol: "K" },
+    { value: 1E6, symbol: "M" },
+    { value: 1E9, symbol: "B" }
+  ];
+  for (var i = si.length - 1; i > 0; i--) {
+    if (num >= si[i].value) {
+      break;
+    }
+  }
+  var rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
+  return (num / si[i].value).toFixed(digits).replace(rx, "$1") + si[i].symbol;
 }
