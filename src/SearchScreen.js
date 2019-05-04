@@ -134,7 +134,10 @@ export default class SearchScreen extends Component {
                 }
                 subtitleStyle={{ color: 'black', fontSize: 11 }}
                 pad={10}
-                onPress={() => this.props.navigation.navigate('Play', { videoId: item.id })}
+                onPress={() => {
+                  global.videoId = item.id
+                  this.props.navigation.navigate('Play', { videoId: item.id })
+                }}
               />
             )
           })}

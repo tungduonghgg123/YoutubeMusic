@@ -4,7 +4,7 @@ import { ListItem } from 'react-native-elements';
 import axios from 'axios';
 import moment from 'moment';
 
-export default class HomeScreen extends Component {
+export default class NextScreen extends Component {
   state = {
     nextPageToken: '',
     isLoading: false,
@@ -26,26 +26,30 @@ export default class HomeScreen extends Component {
         key: process.env.YOUTUBE_API_KEY
       }
     }).then((response) => {
+      console.log(response)
       return response.data.items
     }).catch((error) => {
       console.log(error);
     });
   }
 
-  onGetVideos(maxResults, pageToken) {
+  onGetVideos(relatedToVideoId, maxResults, pageToken) {
     this.setState({isLoading: true})
-    axios.get('https://www.googleapis.com/youtube/v3/videos', {
+    axios.get('https://www.googleapis.com/youtube/v3/search', {
       params: {
         part: 'snippet',
-        chart: 'mostPopular',
         maxResults: maxResults,
+        type: 'video',
+        relatedToVideoId: relatedToVideoId,
         pageToken: pageToken,
-        regionCode: 'VN',
         key: process.env.YOUTUBE_API_KEY
       }
     }).then(response => {
-      const videoIds = response.data.items.map(item => item.id)
+      console.log(response)
+      const videoIds = response.data.items.map(item => item.id.videoId)
+      console.log(videoIds)
       this.getVideoDetails(videoIds.join()).then(videos => {
+        console.log(videos)
         videos.map(video => {
           const duration = moment(moment.duration(video.contentDetails.duration)._data)
           video.contentDetails.duration = duration.isBefore(1, 'h') ? duration.format("m:ss") : duration.format("H:mm:ss")
@@ -61,23 +65,24 @@ export default class HomeScreen extends Component {
   };
 
   componentDidMount() {
-    this.onGetVideos(7);
+    this.onGetVideos(global.videoId, 7);
   }
 
   render() {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: 'gray', height: '100%' }}>
-        <Text style={{ margin: 5, fontSize: 15, fontWeight: 'bold', textAlign: 'center' }}>Home</Text>
+        <Text style={{ margin: 5, fontSize: 15, fontWeight: 'bold', textAlign: 'center' }}>Next</Text>
         <ScrollView
           style={{ paddingTop: 7 }}
           onScroll={({ nativeEvent }) => {
             if (this.isCloseToBottom(nativeEvent) && !this.state.isLoading && this.state.listItem.length < 50 && this.state.listItem.length != 0) {
-              this.onGetVideos(5, this.state.nextPageToken)
+              this.onGetVideos(global.videoId, 5, this.state.nextPageToken)
             }
           }}
           scrollEventThrottle={5000}
         >
           {this.state.listItem.map((item, key) => {
+            console.log(item)
             return (
               <ListItem
                 key={key}
