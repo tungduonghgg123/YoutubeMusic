@@ -45,14 +45,12 @@ export default class NextScreen extends Component {
         key: process.env.YOUTUBE_API_KEY
       }
     }).then(response => {
-      console.log(response)
       const videoIds = response.data.items.map(item => item.id.videoId)
-      console.log(videoIds)
       this.getVideoDetails(videoIds.join()).then(videos => {
         console.log(videos)
         videos.map(video => {
-          const duration = moment(moment.duration(video.contentDetails.duration)._data)
-          video.contentDetails.duration = duration.isBefore(1, 'h') ? duration.format("m:ss") : duration.format("H:mm:ss")
+          const duration = moment.duration(video.contentDetails.duration)
+          video.contentDetails.duration = duration.asHours() < 1 ? moment(duration._data).format("m:ss") : moment(duration._data).format("H:mm:ss")
           video.statistics.viewCount = numberFormatter(video.statistics.viewCount);
           this.setState({ listItem: [...this.state.listItem, video] })
         })
@@ -82,7 +80,6 @@ export default class NextScreen extends Component {
           scrollEventThrottle={5000}
         >
           {this.state.listItem.map((item, key) => {
-            console.log(item)
             return (
               <ListItem
                 key={key}
