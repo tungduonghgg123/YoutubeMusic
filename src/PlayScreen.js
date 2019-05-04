@@ -4,6 +4,7 @@ import { Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl, Spinner } fro
 import { TextInput, Button, SafeAreaView, Text, View } from 'react-native';
 import axios from 'axios';
 import memoize from "memoize-one";
+import moment from 'moment';
 
 let HARDCODEtracks = [
   {
@@ -51,7 +52,6 @@ export default class PlayScreen extends Component {
     this.setState((state) => {
       return {repeatOn: !this.state.repeatOn}
     })
-    
   }
   async onPressBack() {
     await TrackPlayer.skipToPrevious();
@@ -62,11 +62,13 @@ export default class PlayScreen extends Component {
   initializeTrack(videoId) {
     return axios.get('https://www.googleapis.com/youtube/v3/videos', {
       params: {
-        part: 'snippet',
+        part: 'snippet,statistics,contentDetails',
         id: videoId,
+        fields: 'items(id,snippet,statistics(viewCount),contentDetails(duration))',
         key: process.env.YOUTUBE_API_KEY
       }
     }).then(response => {
+      let duration = response.data.items[0].contentDetails.duration;
       const track = {
         id: videoId,
         url: `https://youtubemusicbackend.herokuapp.com/play/${videoId}`, // Load media from heroku
@@ -76,18 +78,23 @@ export default class PlayScreen extends Component {
         date: response.data.items[0].snippet.publishedAt,
         thumbnail: {
           url: response.data.items[0].snippet.thumbnails.medium.url
-        }
+        },
+        duration: moment.duration(duration).asSeconds()
       };
       return track;
     })
       .catch(error => console.log(error))
   }
   async addAndPlay(track) {
-    TrackPlayer.add(track).then(async () => {
+    TrackPlayer.add(track).then(async (result) => {
       /**
        * PURPOSE: wait until track player have finished loading
        */
-      TrackPlayer.getState().then(() => this.setState({ isLoading: false }))  
+      console.log('add track result:' + result);
+      TrackPlayer.getState().then((playerState) => {
+        console.log('track state' + playerState)
+        this.setState({ isLoading: false })
+      })  
       
     });
     TrackPlayer.skip(track.id).then(() => console.log('skip to track id successfully'))
@@ -125,9 +132,6 @@ export default class PlayScreen extends Component {
       // }
       let track = await TrackPlayer.getTrack(data.nextTrack);
       this.setState({track});
-      let duration = await TrackPlayer.getDuration();
-      this.setState({ duration: Math.floor(duration) })
-      console.log(duration)
       this.setState({ paused: false });
   });
     this.onQueueEnded = TrackPlayer.addEventListener('playback-queue-ended', async (data) => {
@@ -143,6 +147,7 @@ export default class PlayScreen extends Component {
   }
   
   render() {
+    console.log(this.state.track)
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: 'gray' }}>
         <Header
@@ -154,7 +159,7 @@ export default class PlayScreen extends Component {
           title={!this.state.track ? "" : this.state.track.title.slice(0, 30)}
         />
         <SeekBar
-          trackLength={this.state.duration}
+          trackLength={!this.state.track ? 0 :this.state.track.duration}
         />
         <PlaybackControl
           paused={this.state.paused}
@@ -172,6 +177,9 @@ export default class PlayScreen extends Component {
         {this.state.isLoading ?
           <Spinner /> : <View />
         }
+        <Button title='get duration' onPress={async() => {
+          console.log(await TrackPlayer.getDuration())
+        }}/>
 
       </SafeAreaView>
     );
