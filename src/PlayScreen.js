@@ -3,6 +3,7 @@ import TrackPlayer from 'react-native-track-player';
 import { Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl, Spinner } from './common'
 import { TextInput, Button, SafeAreaView, Text, View } from 'react-native';
 import axios from 'axios';
+import memoize from "memoize-one";
 
 let HARDCODEtracks = [
   {
@@ -92,23 +93,22 @@ export default class PlayScreen extends Component {
     TrackPlayer.skip(track.id).then(() => console.log('skip to track id successfully'))
     this.onPressPlay();
   }
-  async load(videoId) {
+  memoizedLoad = memoize(async (videoId) => {
+    if(!videoId)
+      return;
+    TrackPlayer.pause();
     this.setState({ isLoading: true })
     let track = await this.initializeTrack(videoId)
     this.addAndPlay(track)
-  }
+  })
+  
   async getTheTrackQueue() {
     let tracks = await TrackPlayer.getQueue();
     console.log(tracks)
     TrackPlayer.getState().then((result) => console.log(result))
   }
-  async componentDidUpdate(prevProps) {
-    let videoId = this.props.navigation.getParam('videoId');
-    if (prevProps.navigation.getParam('videoId') === videoId) {
-      return;
-    }
-    TrackPlayer.pause();
-    this.load(videoId);
+  async componentDidUpdate() {
+    this.memoizedLoad(this.props.navigation.getParam('videoId'));
   }
   componentWillUnmount() {
     // Removes the event handler
@@ -127,6 +127,8 @@ export default class PlayScreen extends Component {
       this.setState({track});
       let duration = await TrackPlayer.getDuration();
       this.setState({ duration: Math.floor(duration) })
+      console.log(duration)
+      this.setState({ paused: false });
   });
     this.onQueueEnded = TrackPlayer.addEventListener('playback-queue-ended', async (data) => {
       console.log('queue ended')
@@ -135,20 +137,9 @@ export default class PlayScreen extends Component {
         this.onPressPlay()
         return;
       }
-      // TrackPlayer.stop()
       this.setState({ paused: true });
   });
-
-    let videoId = this.props.navigation.getParam('videoId');
-    /**
-     * hard code video id for faster development
-     */
-    // let videoId = "Llw9Q6akRo4"
-    if (!videoId)
-      return;
-    this.load(videoId);
-    // this.addAndPlay(HARDCODEtracks[0]);
-
+    this.memoizedLoad(this.props.navigation.getParam('videoId'));
   }
   
   render() {
