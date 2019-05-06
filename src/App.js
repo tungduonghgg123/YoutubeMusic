@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Navigation from 'react-navigation'
+import LoginScreen from './LoginScreen';
 import PlayScreen from './PlayScreen';
 import SearchScreen from './SearchScreen'
 import HomeScreen from './HomeScreen';
@@ -9,12 +10,13 @@ import { YellowBox } from 'react-native';
 YellowBox.ignoreWarnings(['Remote debugger']);
 
 const TabNavigator = Navigation.createBottomTabNavigator({
+  Login: {screen: LoginScreen},
   Home: { screen: HomeScreen },
   Search: { screen: SearchScreen },
   Play: { screen: PlayScreen },
   Next: { screen: NextScreen },
 }, {
-  initialRouteName: 'Play'
+  initialRouteName: 'Login'
 })
 
 const AppSwitchNavigator = Navigation.createSwitchNavigator({
