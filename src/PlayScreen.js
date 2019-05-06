@@ -5,7 +5,7 @@ import { TextInput, Button, SafeAreaView, Text, View } from 'react-native';
 import axios from 'axios';
 import memoize from "memoize-one";
 import moment from 'moment';
-
+import Example from '/Users/duongtung/Workspace/YoutubeMusic/playground/runningText.js'
 let HARDCODEtracks = [
   {
     id: "4ZbQffYdhj0", // Must be a string, required
@@ -90,14 +90,14 @@ export default class PlayScreen extends Component {
       /**
        * PURPOSE: wait until track player have finished loading
        */
-      console.log('add track result:' + result);
+      console.log('add track result: ' + result);
       TrackPlayer.getState().then((playerState) => {
-        console.log('track state' + playerState)
+        console.log('track state ' + playerState)
         this.setState({ isLoading: false })
       })  
       
     });
-    TrackPlayer.skip(track.id).then(() => console.log('skip to track id successfully'))
+    await TrackPlayer.skip(track.id)
     this.onPressPlay();
   }
   memoizedLoad = memoize(async (videoId) => {
@@ -126,7 +126,6 @@ export default class PlayScreen extends Component {
 }
   async componentDidMount() {
     this.onTrackChange = TrackPlayer.addEventListener('playback-track-changed', async (data) => {
-      console.log('track was changed!')
       // if(this.state.repeatOn) {
       //   await TrackPlayer.skip(this.state.track.id);
       // }
@@ -147,7 +146,6 @@ export default class PlayScreen extends Component {
   }
   
   render() {
-    console.log(this.state.track)
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: 'gray' }}>
         <Header
@@ -177,9 +175,18 @@ export default class PlayScreen extends Component {
         {this.state.isLoading ?
           <Spinner /> : <View />
         }
-        <Button title='get duration' onPress={async() => {
+        {/* <Example text = "zxgvjhbasdljgabsgkasjhgasukdghalsiughasiudhgakshgkajshbgkjashglkjashg"/> */}
+        {/* <Button title='get duration' onPress={async() => {
           console.log(await TrackPlayer.getDuration())
         }}/>
+        <Button title='force play' onPress={async() => {
+          await TrackPlayer.remove(this.state.track.id)
+          TrackPlayer.skip(this.state.track.id)
+        }}/>
+        <Button title='remove current' onPress={async() => {
+          await TrackPlayer.remove(this.state.track.id)
+
+        }}/> */}
 
       </SafeAreaView>
     );

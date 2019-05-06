@@ -1,20 +1,21 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Image} from 'react-native';
+import { View, Text, TouchableOpacity, Image } from 'react-native';
+import TextTicker from 'react-native-text-ticker'
 
 const TrackDetails = ({ title, onMorePress, onAddPress, onCheckPress }) => {
-    const {buttonStyle, containerStyle, textStyle} = styles;
+    const { buttonStyle, containerStyle, textStyle } = styles;
     return (
         <View style={containerStyle}>
-            <TouchableOpacity onPress = {onAddPress}>
-                <Image 
+            <TouchableOpacity onPress={onAddPress}>
+                <Image
                     source={require('../img/baseline_add_white_18dp.png')}
                     style={buttonStyle}
-                    />
+                />
             </TouchableOpacity>
-            <View>
+            <View style={textStyle}>
                 <Text style={textStyle}>{title}</Text>
             </View>
-            <TouchableOpacity onPress = {onMorePress}>
+            <TouchableOpacity onPress={onMorePress}>
                 <Image source={require('../img/ic_more_horiz_white.png')}
                     style={buttonStyle}
                 />
@@ -24,12 +25,12 @@ const TrackDetails = ({ title, onMorePress, onAddPress, onCheckPress }) => {
     )
 }
 function changeAddButton(params) {
-    
+
 }
 const styles = {
     buttonStyle: {
         opacity: 0.72,
-    }, 
+    },
     containerStyle: {
         justifyContent: 'space-between',
         alignItems: 'center',
