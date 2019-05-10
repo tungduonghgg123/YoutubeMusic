@@ -8,66 +8,137 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-const PlaybackControl = ({
-  paused,
-  shuffleOn,
-  repeatOn,
-  onPressPlay,
-  onPressPause,
-  onBack,
-  onForward,
-  onPressShuffle,
-  onPressRepeat,
-  forwardDisabled,
-  backwardDisabled,
-  shuffleDisabled
-}) => (
-  <View style={styles.container}>
-    <TouchableOpacity activeOpacity={0.0} onPress={onPressShuffle} disabled={shuffleDisabled}>
-      <Image style={[styles.secondaryControl, shuffleOn ? [] : styles.off]}
-        source={require('../img/ic_shuffle_white.png')}/>
-    </TouchableOpacity>
+class PlaybackControl extends TrackPlayer.ProgressComponent {
+  render() {
+    const { paused,
+      shuffleOn,
+      repeatOn,
+      onPressPlay,
+      onPressPause,
+      onBack,
+      onForward,
+      onPressShuffle,
+      onPressRepeat,
+      forwardDisabled,
+      backwardDisabled,
+      shuffleDisabled } = this.props;
+    return (
+      <View style={styles.container}>
+      {/* Shuffle */}
+        <TouchableOpacity activeOpacity={0.0} onPress={onPressShuffle} disabled={shuffleDisabled}>
+          <Image style={[styles.secondaryControl, shuffleOn ? [] : styles.off]}
+            source={require('../img/ic_shuffle_white.png')} />
+        </TouchableOpacity>
 
-    <View style={{width: 40}} />
+        <View style={{ width: 40 }} />
+      {/* Backward */}
+        <TouchableOpacity onPress= {() => {
+          /**
+          * repeat track when if it reached the 4th second
+          else use the onBack() method are passed from the parent component.
+          *  */ 
+          this.state.position > 3 ? TrackPlayer.seekTo(0): onBack() 
+        }} 
+        
+        disabled={backwardDisabled}>
+          <Image style={[backwardDisabled && { opacity: 0.3 }]}
+            source={require('../img/ic_skip_previous_white_36pt.png')} />
+        </TouchableOpacity>
 
-    <TouchableOpacity  onPress={onBack} disabled={backwardDisabled}>
-      <Image style={[backwardDisabled && {opacity: 0.3}]}
-      source={require('../img/ic_skip_previous_white_36pt.png')}/>
-    </TouchableOpacity>
+        <View style={{ width: 20 }} />
+      {/* Play/pause */}
+        {!paused ?
+          <TouchableOpacity onPress={onPressPause}>
+            <View style={styles.playButton}>
+              <Image source={require('../img/ic_pause_white_48pt.png')} />
+            </View>
+          </TouchableOpacity> :
+          <TouchableOpacity onPress={onPressPlay}>
+            <View style={styles.playButton}>
+              <Image source={require('../img/ic_play_arrow_white_48pt.png')} />
+            </View>
+          </TouchableOpacity>
+        }
 
-    <View style={{width: 20}} />
+        <View style={{ width: 20 }} />
+        {/* Forward */}
+        <TouchableOpacity onPress={onForward}
+          disabled={forwardDisabled}>
+          <Image style={[forwardDisabled && { opacity: 0.3 }]}
+            source={require('../img/ic_skip_next_white_36pt.png')} />
+        </TouchableOpacity>
 
-    {!paused ?
-      <TouchableOpacity onPress={onPressPause}>
-        <View style={styles.playButton}>
-          <Image source={require('../img/ic_pause_white_48pt.png')}/>
-        </View>
-      </TouchableOpacity> :
-      <TouchableOpacity onPress={onPressPlay}>
-        <View style={styles.playButton}>
-          <Image source={require('../img/ic_play_arrow_white_48pt.png')}/>
-        </View>
-      </TouchableOpacity>
-    }
+        <View style={{ width: 40 }} />
+        {/* Repeat */}
+        <TouchableOpacity activeOpacity={0.0} onPress={onPressRepeat}>
+          <Image style={[styles.secondaryControl, repeatOn ? [] : styles.off]}
+            source={require('../img/ic_repeat_white.png')} />
+        </TouchableOpacity>
+      </View>
+    )
+  }
+}
 
-    <View style={{width: 20}} />
+// const PlaybackControl = ({
+//   paused,
+//   shuffleOn,
+//   repeatOn,
+//   onPressPlay,
+//   onPressPause,
+//   onBack,
+//   onForward,
+//   onPressShuffle,
+//   onPressRepeat,
+//   forwardDisabled,
+//   backwardDisabled,
+//   shuffleDisabled
+// }) => (
+//     <View style={styles.container}>
+//       <TouchableOpacity activeOpacity={0.0} onPress={onPressShuffle} disabled={shuffleDisabled}>
+//         <Image style={[styles.secondaryControl, shuffleOn ? [] : styles.off]}
+//           source={require('../img/ic_shuffle_white.png')} />
+//       </TouchableOpacity>
 
-    <TouchableOpacity  onPress={onForward}
-      disabled={forwardDisabled}>
-      <Image style={[forwardDisabled && {opacity: 0.3}]}
-        source={require('../img/ic_skip_next_white_36pt.png')}/>
-    </TouchableOpacity>
+//       <View style={{ width: 40 }} />
 
-    <View style={{width: 40}} />
+//       <TouchableOpacity onPress={onBack} disabled={backwardDisabled}>
+//         <Image style={[backwardDisabled && { opacity: 0.3 }]}
+//           source={require('../img/ic_skip_previous_white_36pt.png')} />
+//       </TouchableOpacity>
 
-    <TouchableOpacity activeOpacity={0.0} onPress={onPressRepeat}>
-      <Image style={[styles.secondaryControl, repeatOn ? [] : styles.off]}
-        source={require('../img/ic_repeat_white.png')}/>
-    </TouchableOpacity>
-  </View>
-);
+//       <View style={{ width: 20 }} />
 
-export {PlaybackControl};
+//       {!paused ?
+//         <TouchableOpacity onPress={onPressPause}>
+//           <View style={styles.playButton}>
+//             <Image source={require('../img/ic_pause_white_48pt.png')} />
+//           </View>
+//         </TouchableOpacity> :
+//         <TouchableOpacity onPress={onPressPlay}>
+//           <View style={styles.playButton}>
+//             <Image source={require('../img/ic_play_arrow_white_48pt.png')} />
+//           </View>
+//         </TouchableOpacity>
+//       }
+
+//       <View style={{ width: 20 }} />
+
+//       <TouchableOpacity onPress={onForward}
+//         disabled={forwardDisabled}>
+//         <Image style={[forwardDisabled && { opacity: 0.3 }]}
+//           source={require('../img/ic_skip_next_white_36pt.png')} />
+//       </TouchableOpacity>
+
+//       <View style={{ width: 40 }} />
+
+//       <TouchableOpacity activeOpacity={0.0} onPress={onPressRepeat}>
+//         <Image style={[styles.secondaryControl, repeatOn ? [] : styles.off]}
+//           source={require('../img/ic_repeat_white.png')} />
+//       </TouchableOpacity>
+//     </View>
+//   );
+
+export { PlaybackControl };
 
 const styles = StyleSheet.create({
   container: {

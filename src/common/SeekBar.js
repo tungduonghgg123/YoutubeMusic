@@ -22,6 +22,7 @@ const minutesAndSecondsAndHours = (position) => {
   ]
 };
 class SeekBar extends TrackPlayer.ProgressComponent {
+  
   render() {
       const { trackLength, currentPosition, onSeek, onSlidingStart} = this.props;
       const position = Math.round(this.state.position);

@@ -9,6 +9,13 @@ import TrackPlayer from 'react-native-track-player';
 import { YellowBox } from 'react-native';
 YellowBox.ignoreWarnings(['Remote debugger']);
 
+/**
+ * RedBoxes and YellowBoxes are automatically disabled in release (production) builds.
+For now, just let yellow box on
+ */
+// YellowBox.ignoreWarnings( ['Possible Unhandled Promise Rejection']);
+
+
 const TabNavigator = Navigation.createBottomTabNavigator({
   // Login: {screen: LoginScreen},
   Home: { screen: HomeScreen },

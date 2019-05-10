@@ -38,21 +38,7 @@ export default class PlayScreen extends Component {
     })
   }
   async onPressBack() {
-    // await TrackPlayer.skipToPrevious();
-
-
-      TrackPlayer.skipToPrevious().then(res => {
-        console.log('success')
-      }).catch((err) => {
-        Alert.alert(
-          "Oppp :(",
-          "Không có bài liền trước",
-          [
-            { text: "OK", onPress: () => console.log("OK Pressed") }
-          ],
-          { cancelable: true }
-        );
-      });
+    await TrackPlayer.skipToPrevious();
 
   }
   async onPressForward() {
@@ -125,8 +111,9 @@ export default class PlayScreen extends Component {
         console.log('helper track ON')
         return;
       }
-      console.log('---------------------')
-      // console.log('track changed')
+      // console.log('---------------------')
+      console.log('track changed')
+      this.getTheTrackQueue()
       let track = await TrackPlayer.getTrack(data.nextTrack);
       this.setState({ track });
       this.setState({ paused: false});
@@ -142,25 +129,25 @@ export default class PlayScreen extends Component {
     });
     this.onPlaybackStateChange = TrackPlayer.addEventListener('playback-state', async (playbackState) => {
       
-      console.log(JSON.stringify(playbackState));
+      // console.log(JSON.stringify(playbackState));
       switch (playbackState.state) {
         case 'playing':
           this.setState({isLoading: false})
           break;
         case 'loading':
           
-          if(this.prevPlaybackState === 'playing'){
-            let helperTrack = {
-              id: 'helperTrack', 
-              url: 'somellink',
-              title: 'helper Title', 
-              artist: 'tung duong',
-            }
-            await TrackPlayer.add(helperTrack)
-            await TrackPlayer.skip(helperTrack.id);
-            await TrackPlayer.skipToPrevious();
-            await TrackPlayer.remove(helperTrack.id)
-          }
+          // if(this.prevPlaybackState === 'playing'){
+          //   let helperTrack = {
+          //     id: 'helperTrack', 
+          //     url: 'somellink',
+          //     title: 'helper Title', 
+          //     artist: 'tung duong',
+          //   }
+          //   await TrackPlayer.add(helperTrack)
+          //   await TrackPlayer.skip(helperTrack.id);
+          //   await TrackPlayer.skipToPrevious();
+          //   await TrackPlayer.remove(helperTrack.id)
+          // }
             
           break;
         default:
