@@ -1,33 +1,15 @@
 import React, { Component } from 'react';
 import TrackPlayer from 'react-native-track-player';
 import { Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl, Spinner } from './common'
-import { TextInput, Button, SafeAreaView, Text, View } from 'react-native';
+import { TextInput, Button, SafeAreaView, Text, View,Alert } from 'react-native';
 import axios from 'axios';
 import memoize from "memoize-one";
 import moment from 'moment';
 import Example from '/Users/duongtung/Workspace/YoutubeMusic/playground/runningText.js'
-let HARDCODEtracks = [
-  {
-    id: "4ZbQffYdhj0", // Must be a string, required
-    url: "https://youtubemusicbackend.herokuapp.com/play/4ZbQffYdhj0", // Load media from heroku
-    // url: require('../WhoAreYou.mp3'),
-    title: 'Avaritia',
-    artist: 'deadmau5',
-    album: 'while(1<2)',
-    genre: 'Progressive House, Electro House',
-    date: '2014-05-20T07:00:00+00:00', // RFC 3339
-  },
-  {
-    id: '6KJrNWC0tfw', // Must be a string, required
-    // url: "https://youtubemusicbackend.herokuapp.com/play/6KJrNWC0tfw", // Load media from heroku
-    url: require('../WhoAreYou.mp3'),
-    title: 'Avaritia',
-    artist: 'deadmau5',
-    album: 'while(1<2)',
-    genre: 'Progressive House, Electro House',
-    date: '2014-05-20T07:00:00+00:00', // RFC 3339
-  },
-]
+import localTracks from './storage/tracks'
+
+
+
 export default class PlayScreen extends Component {
   constructor(props) {
     super(props);
@@ -37,8 +19,10 @@ export default class PlayScreen extends Component {
       duration: 0,
       isLoading: false,
       shuffleOn: false,
-      repeatOn: true
+      repeatOn: true,
+      mode: 'youtube'
     };
+
   }
   onPressPause() {
     this.setState({ paused: true });
@@ -50,15 +34,59 @@ export default class PlayScreen extends Component {
   }
   onPressRepeat() {
     this.setState((state) => {
-      return {repeatOn: !this.state.repeatOn}
+      return { repeatOn: !this.state.repeatOn }
     })
   }
   async onPressBack() {
-    await TrackPlayer.skipToPrevious();
+    // await TrackPlayer.skipToPrevious();
+
+
+      TrackPlayer.skipToPrevious().then(res => {
+        console.log('success')
+      }).catch((err) => {
+        Alert.alert(
+          "Oppp :(",
+          "Không có bài liền trước",
+          [
+            { text: "OK", onPress: () => console.log("OK Pressed") }
+          ],
+          { cancelable: true }
+        );
+      });
+
   }
   async onPressForward() {
     await TrackPlayer.skipToNext();
   }
+  async getTheTrackQueue() {
+    let tracks = await TrackPlayer.getQueue();
+    console.log(tracks)
+    // TrackPlayer.getState().then((result) => console.log(result))
+
+  }
+  memoizedLoad = memoize(async (videoId) => {
+    if (!videoId)
+      return;
+    /**
+     * pause Track Player before loading and playing new Track.
+     *  */  
+    TrackPlayer.pause();
+    this.setState({ isLoading: true })
+    let track = await this.initializeTrack(videoId)
+    this.addAndPlay(track)
+  })
+  async addAndPlay(track) {
+    await TrackPlayer.add(track)
+    /**
+     * skip to this `track` by using `track id`
+     */
+    await TrackPlayer.skip(track.id)
+    this.onPressPlay();
+  }
+  /**
+   * 
+   * @param {youtube video id} videoId 
+   */
   initializeTrack(videoId) {
     return axios.get('https://www.googleapis.com/youtube/v3/videos', {
       params: {
@@ -85,37 +113,79 @@ export default class PlayScreen extends Component {
     })
       .catch(error => console.log(error))
   }
-  async addAndPlay(track) {
-    TrackPlayer.add(track).then(async (result) => {
-      /**
-       * PURPOSE: wait until track player have finished loading
-       */
-      console.log('add track result: ' + result);
-      TrackPlayer.getState().then((playerState) => {
-        console.log('track state ' + playerState)
-        this.setState({ isLoading: false })
-      })  
-      
-    });
-    await TrackPlayer.skip(track.id)
-    this.onPressPlay();
-  }
-  memoizedLoad = memoize(async (videoId) => {
-    if(!videoId)
-      return;
-    TrackPlayer.pause();
-    this.setState({ isLoading: true })
-    let track = await this.initializeTrack(videoId)
-    this.addAndPlay(track)
-  })
   
-  async getTheTrackQueue() {
-    let tracks = await TrackPlayer.getQueue();
-    console.log(tracks)
-    TrackPlayer.getState().then((result) => console.log(result))
-  }
+  
   async componentDidUpdate() {
+    this.playFromYoutube()
+  }
+
+  async componentDidMount() {
+    this.onTrackChange = TrackPlayer.addEventListener('playback-track-changed', async (data) => {
+      if(data.nextTrack === 'helperTrack') {
+        console.log('helper track ON')
+        return;
+      }
+      console.log('---------------------')
+      // console.log('track changed')
+      let track = await TrackPlayer.getTrack(data.nextTrack);
+      this.setState({ track });
+      this.setState({ paused: false});
+    });
+    this.onQueueEnded = TrackPlayer.addEventListener('playback-queue-ended', async (data) => {
+      console.log('queue ended')
+      if (this.state.repeatOn) {
+        TrackPlayer.seekTo(0);
+        this.onPressPlay()
+        return;
+      }
+      this.setState({ paused: true });
+    });
+    this.onPlaybackStateChange = TrackPlayer.addEventListener('playback-state', async (playbackState) => {
+      
+      console.log(JSON.stringify(playbackState));
+      switch (playbackState.state) {
+        case 'playing':
+          this.setState({isLoading: false})
+          break;
+        case 'loading':
+          
+          if(this.prevPlaybackState === 'playing'){
+            let helperTrack = {
+              id: 'helperTrack', 
+              url: 'somellink',
+              title: 'helper Title', 
+              artist: 'tung duong',
+            }
+            await TrackPlayer.add(helperTrack)
+            await TrackPlayer.skip(helperTrack.id);
+            await TrackPlayer.skipToPrevious();
+            await TrackPlayer.remove(helperTrack.id)
+          }
+            
+          break;
+        default:
+          break;
+        
+      }
+      this.prevPlaybackState = playbackState.state;
+
+
+    })
+    this.playFromYoutube()
+    
+  }
+  playFromYoutube() {
     this.memoizedLoad(this.props.navigation.getParam('videoId'));
+  }
+  /**
+   * not working at the moment.
+   */
+  playFromLocal() {
+    TrackPlayer.add(localTracks).then(() => {
+      console.log('track added');
+      this.onPressPlay()
+    })
+
   }
   componentWillUnmount() {
     // Removes the event handler
@@ -123,28 +193,8 @@ export default class PlayScreen extends Component {
     this.onQueueEnded.remove();
     this.onRemotePause.remove();
     this.onRemotePlay.remove();
-}
-  async componentDidMount() {
-    this.onTrackChange = TrackPlayer.addEventListener('playback-track-changed', async (data) => {
-      // if(this.state.repeatOn) {
-      //   await TrackPlayer.skip(this.state.track.id);
-      // }
-      let track = await TrackPlayer.getTrack(data.nextTrack);
-      this.setState({track});
-      this.setState({ paused: false });
-  });
-    this.onQueueEnded = TrackPlayer.addEventListener('playback-queue-ended', async (data) => {
-      console.log('queue ended')
-      if(this.state.repeatOn) {
-        TrackPlayer.seekTo(0);
-        this.onPressPlay()
-        return;
-      }
-      this.setState({ paused: true });
-  });
-    this.memoizedLoad(this.props.navigation.getParam('videoId'));
+    this.onPlaybackStateChange.remove();
   }
-  
   render() {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: 'gray' }}>
@@ -157,7 +207,7 @@ export default class PlayScreen extends Component {
           title={!this.state.track ? "" : this.state.track.title.slice(0, 30)}
         />
         <SeekBar
-          trackLength={!this.state.track ? 0 :this.state.track.duration}
+          trackLength={!this.state.track ? 0 : this.state.track.duration}
         />
         <PlaybackControl
           paused={this.state.paused}
@@ -175,16 +225,10 @@ export default class PlayScreen extends Component {
         {this.state.isLoading ?
           <Spinner /> : <View />
         }
-        {/* <Example text = "zxgvjhbasdljgabsgkasjhgasukdghalsiughasiudhgakshgkajshbgkjashglkjashg"/> */}
-        {/* <Button title='get duration' onPress={async() => {
-          console.log(await TrackPlayer.getDuration())
-        }}/>
-        <Button title='force play' onPress={async() => {
-          await TrackPlayer.remove(this.state.track.id)
-          TrackPlayer.skip(this.state.track.id)
-        }}/>
+        {/* <Example text = "zxgvjhbasdljgabsgkasjhgasukdghalsiughasiudhgakshgkajshbgkjashglkjashg"/>
+
         <Button title='remove current' onPress={async() => {
-          await TrackPlayer.remove(this.state.track.id)
+          await TrackPlayer.remove("Llw9Q6akRo4")
 
         }}/> */}
 

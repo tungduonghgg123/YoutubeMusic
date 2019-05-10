@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { ScrollView, Image, SafeAreaView, Text, View, ActivityIndicator } from 'react-native';
 import { ListItem, SearchBar } from "react-native-elements";
+import { YoutubeSearchItem, YoutubeSeachScroll } from './common'
 import axios from 'axios';
 import moment from 'moment';
 
@@ -21,7 +22,7 @@ function numberFormatter(num, digits) {
 }
 export default class SearchScreen extends Component {
   state = {
-    search: '',
+    searchInput: '',
     isLoading: false,
     nextPageToken: '',
     listItem: []
@@ -46,7 +47,7 @@ export default class SearchScreen extends Component {
     if (!pageToken) {
       this.setState({ listItem: [] })
     }
-    this.setState({ isLoading: true, search: text })
+    this.setState({ isLoading: true, searchInput: text })
     axios.get('https://www.googleapis.com/youtube/v3/search', {
       params: {
         part: "snippet",
@@ -83,10 +84,13 @@ export default class SearchScreen extends Component {
 
   render() {
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: 'gray', height: '100%' }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#FBCD17', height: '100%' }}>
         <SearchBar
           placeholder="Search Youtube Music"
           containerStyle={{ backgroundColor: null, borderTopWidth: 0, borderBottomWidth: 0, paddingTop: 0, paddingBottom: 2 }}
+          inputContainerStyle={{backgroundColor: 'white'}}
+          inputStyle={{color: '#4F0645'}}
+          placeholderTextColor= '#4F0645'
           round={true}
           autoFocus={true}
           autoCorrect={false}
@@ -97,53 +101,30 @@ export default class SearchScreen extends Component {
           onSubmitEditing={event => this.onSearch(event.nativeEvent.text, 7)}
         />
 
-        <ScrollView
-          style={{ paddingTop: 7 }}
-          onScroll={({ nativeEvent }) => {
-            if (this.isCloseToBottom(nativeEvent) && !this.state.isLoading && this.state.listItem.length < 50 && this.state.listItem.length != 0) {
-              this.onSearch(this.state.search, 5, this.state.nextPageToken)
-            }
-          }}
-          scrollEventThrottle={5000}
+        <YoutubeSeachScroll
+          onSearch={this.onSearch.bind(this)} 
+          searchInput={this.state.searchInput}
+          isLoading={this.state.isLoading}
+          listItem= {this.state.listItem}
+          nextPageToken={this.state.nextPageToken}
         >
-          {this.state.listItem.map((item, key) => {
+          {this.state.listItem.map((item, itemKey) => {
             return (
-              <ListItem
-                key={key}
-                containerStyle={{ alignItems: 'flex-start', backgroundColor: null, paddingTop: 2, paddingBottom: 2 }}
-                leftElement={
-                  <View style={{}}>
-                    <Image
-                      resizeMode='contain'
-                      style={{ width: 160, height: 100 }}
-                      source={{ uri: item.snippet.thumbnails.medium.url }}
-                    />
-                    <Text style={{ position: 'absolute', bottom: 7, right: 5, backgroundColor: 'black', color: 'white', opacity: 0.7, padding: 2, borderRadius: 2, overflow: 'hidden', fontSize: 12 }}>
-                      {item.contentDetails.duration}
-                    </Text>
-                  </View>
-                }
-                title={item.snippet.title}
-                titleStyle={{ color: 'white' }}
-                titleProps={{ numberOfLines: 3 }}
-                subtitle={
-                  <View>
-                    <Text numberOfLines={1} >{item.snippet.channelTitle}</Text>
-                    <Text>{item.statistics.viewCount + ' views'}</Text>
-                  </View>
-                }
-                subtitleStyle={{ color: 'black', fontSize: 11 }}
-                pad={10}
+              <YoutubeSearchItem
+                item={item}
+                key={itemKey}
                 onPress={() => {
-                  global.videoId = item.id
                   this.props.navigation.navigate('Play', { videoId: item.id })
                 }}
               />
             )
           })}
-          <ActivityIndicator size='large' animating={this.state.isLoading} />
-        </ScrollView>
+        </YoutubeSeachScroll>
       </SafeAreaView >
     );
   }
+}
+
+const styles = {
+
 }

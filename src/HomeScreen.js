@@ -106,7 +106,7 @@ export default class HomeScreen extends Component {
                 subtitleStyle={{ color: 'black', fontSize: 11 }}
                 pad={10}
                 onPress={() => {
-                  global.videoId = item.id
+                  // global.videoId = item.id
                   this.props.navigation.navigate('Play', { videoId: item.id })
                 }}
               />

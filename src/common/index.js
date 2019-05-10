@@ -7,3 +7,5 @@ export * from './TrackDetails';
 export * from './SeekBar';
 export * from './PlaybackControl';
 export * from './Spinner';
+export * from './YoutubeSearchItem';
+export * from './YoutubeSeachScroll';
