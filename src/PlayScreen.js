@@ -95,6 +95,7 @@ export default class PlayScreen extends Component {
         },
         duration: moment.duration(duration).asSeconds()
       };
+      this.setState({ track });
       return track;
     })
       .catch(error => console.log(error))
