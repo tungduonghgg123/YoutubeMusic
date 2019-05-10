@@ -5,7 +5,7 @@ import { TextInput, Button, SafeAreaView, Text, View,Alert } from 'react-native'
 import axios from 'axios';
 import memoize from "memoize-one";
 import moment from 'moment';
-import Example from '/Users/duongtung/Workspace/YoutubeMusic/playground/runningText.js'
+// import Example from '/Users/duongtung/Workspace/YoutubeMusic/playground/runningText.js'
 import localTracks from './storage/tracks'
 
 
