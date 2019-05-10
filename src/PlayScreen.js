@@ -85,7 +85,7 @@ export default class PlayScreen extends Component {
       let duration = response.data.items[0].contentDetails.duration;
       const track = {
         id: videoId,
-        url: `https://youtubemusicbackend.herokuapp.com/play/${videoId}`, // Load media from heroku
+        url: `http://119.81.246.233:3000/play/${videoId}`, // Load media from server
         title: response.data.items[0].snippet.title,
         artist: response.data.items[0].snippet.channelTitle,
         description: response.data.items[0].snippet.description,
