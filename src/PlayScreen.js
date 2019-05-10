@@ -102,7 +102,7 @@ export default class PlayScreen extends Component {
   
   
   async componentDidUpdate() {
-    this.playFromYoutube()
+    // this.playFromYoutube()
   }
 
   async componentDidMount() {
@@ -155,10 +155,11 @@ export default class PlayScreen extends Component {
         
       }
       this.prevPlaybackState = playbackState.state;
-
-
     })
-    this.playFromYoutube()
+    this.onRemotePause = TrackPlayer.addEventListener('remote-pause'), () => {
+      console.log('remote pause')
+    }
+    this.playFromLocal()
     
   }
   playFromYoutube() {

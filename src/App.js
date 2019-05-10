@@ -23,7 +23,7 @@ const TabNavigator = Navigation.createBottomTabNavigator({
   Play: { screen: PlayScreen },
   Next: { screen: NextScreen },
 }, {
-  initialRouteName: 'Search'
+  initialRouteName: 'Play'
 })
 
 const AppSwitchNavigator = Navigation.createSwitchNavigator({

@@ -3,20 +3,17 @@ import { View, Image, TouchableOpacity, Dimensions } from 'react-native'
 
 const AlbumArt = ({ onPress, url, path }) => {
   const { container, image } = styles;
-  var source = !url ? null : {uri: url}
+  let source = !url ? null : {uri: url}
+ 
   return (
-    <View>
-      <TouchableOpacity onPress={onPress} style={container}>
+    <View style={container} >
         <Image style={image}
           source={source}
           resizeMode={'contain'}
         />
-      </TouchableOpacity>
     </View>
   )
 }
-const { width, height } = Dimensions.get('window');
-const imageSize = width - 48;
 
 const styles = {
   container: {
@@ -24,8 +21,11 @@ const styles = {
     paddingRight: 24,
   },
   image: {
-    width: imageSize,
-    height: imageSize,
+    width: 320,
+    height: 180,
+    borderWidth: 1,
+    borderRadius: 15,
+    borderBottomWidth: 0,
   },
 };
 export { AlbumArt };
