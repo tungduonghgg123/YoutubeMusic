@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import TrackPlayer from 'react-native-track-player';
-import { Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl, Spinner } from './common'
+import { Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl, Spinner, MiniPlayer } from './common'
 import { TextInput, Button, SafeAreaView, Text, View,Alert } from 'react-native';
 import axios from 'axios';
 import memoize from "memoize-one";
@@ -101,9 +101,7 @@ export default class PlayScreen extends Component {
   }
   
   
-  async componentDidUpdate() {
-    // this.playFromYoutube()
-  }
+  
 
   async componentDidMount() {
     this.onTrackChange = TrackPlayer.addEventListener('playback-track-changed', async (data) => {
@@ -129,7 +127,7 @@ export default class PlayScreen extends Component {
     });
     this.onPlaybackStateChange = TrackPlayer.addEventListener('playback-state', async (playbackState) => {
       
-      // console.log(JSON.stringify(playbackState));
+      console.log(JSON.stringify(playbackState));
       switch (playbackState.state) {
         case 'playing':
           this.setState({isLoading: false})
@@ -159,8 +157,11 @@ export default class PlayScreen extends Component {
     this.onRemotePause = TrackPlayer.addEventListener('remote-pause'), () => {
       console.log('remote pause')
     }
-    this.playFromLocal()
+    this.playFromYoutube()
     
+  }
+  async componentDidUpdate() {
+    this.playFromYoutube()
   }
   playFromYoutube() {
     this.memoizedLoad(this.props.navigation.getParam('videoId'));
@@ -189,6 +190,9 @@ export default class PlayScreen extends Component {
         <Header
           message="playing from Youtube"
           onQueuePress={this.getTheTrackQueue.bind(this)}
+          onDownPress={() => {
+            this.props.navigation.goBack()
+          }}
         />
         <AlbumArt url={!this.state.track ? "" : this.state.track.thumbnail.url} />
         <TrackDetails
@@ -211,8 +215,16 @@ export default class PlayScreen extends Component {
           onBack={this.onPressBack.bind(this)}
         />
         {this.state.isLoading ?
-          <Spinner /> : <View />
+          <Spinner /> : <View style={{flex:1}} />
         }
+        <MiniPlayer
+          message = {!this.state.track ? "" : this.state.track.title.slice(0, 30)}
+          paused= {this.state.paused}
+          onPressPause={this.onPressPause.bind(this)}
+          onPressPlay={this.onPressPlay.bind(this)}
+          trackLength={!this.state.track ? 0 : this.state.track.duration}
+        />
+
         {/* <Example text = "zxgvjhbasdljgabsgkasjhgasukdghalsiughasiudhgakshgkajshbgkjashglkjashg"/>
 
         <Button title='remove current' onPress={async() => {
