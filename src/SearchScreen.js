@@ -87,7 +87,7 @@ export default class SearchScreen extends Component {
       <SafeAreaView style={{ flex: 1, backgroundColor: '#FBCD17', height: '100%' }}>
         <SearchBar
           placeholder="Search Youtube Music"
-          containerStyle={{ backgroundColor: null, borderTopWidth: 0, borderBottomWidth: 0, paddingTop: 0, paddingBottom: 2 }}
+          containerStyle={{ backgroundColor: null, borderTopWidth: 0, borderBottomWidth: 0, paddingTop: 10, paddingBottom: 2 }}
           inputContainerStyle={{backgroundColor: 'white'}}
           inputStyle={{color: '#4F0645'}}
           placeholderTextColor= '#4F0645'

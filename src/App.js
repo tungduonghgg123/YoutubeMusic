@@ -9,8 +9,8 @@ import { YellowBox } from 'react-native';
 YellowBox.ignoreWarnings(['Remote debugger']);
 
 /**
- * RedBoxes and YellowBoxes are automatically disabled in release (production) builds.
-For now, just let yellow box on
+ * `RedBoxes and YellowBoxes are automatically disabled in release (production) builds.`
+For now, just let yellowBoxes on
  */
 // YellowBox.ignoreWarnings( ['Possible Unhandled Promise Rejection']);
 
@@ -21,13 +21,13 @@ const TabNavigator = Navigation.createBottomTabNavigator({
   Play: { screen: PlayScreen },
   Next: { screen: NextScreen },
 }, {
-  initialRouteName: 'Play'
+  initialRouteName: 'Search'
 })
 
-const AppSwitchNavigator = Navigation.createSwitchNavigator({
-  TabNavigator
-})
-const AppContainer = Navigation.createAppContainer(AppSwitchNavigator)
+// const AppSwitchNavigator = Navigation.createSwitchNavigator({
+//   TabNavigator
+// })
+const AppContainer = Navigation.createAppContainer(TabNavigator)
 
 export default class App extends Component {
   componentDidMount() {
