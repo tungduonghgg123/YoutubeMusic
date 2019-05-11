@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Navigation from 'react-navigation'
-// import LoginScreen from './LoginScreen';
 import PlayScreen from './PlayScreen';
 import SearchScreen from './SearchScreen'
 import HomeScreen from './HomeScreen';
@@ -19,7 +18,6 @@ For now, just let yellowBoxes on
 
 
 const TabNavigator = Navigation.createBottomTabNavigator({
-  // Login: {screen: LoginScreen},
   Home: { screen: HomeScreen },
   Search: { screen: SearchScreen },
   Next: { screen: NextScreen },

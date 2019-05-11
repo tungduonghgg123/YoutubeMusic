@@ -5,7 +5,7 @@ import { TextInput, Button, SafeAreaView, Text, View,Alert } from 'react-native'
 import axios from 'axios';
 import memoize from "memoize-one";
 import moment from 'moment';
-import Example from '/Users/duongtung/Workspace/YoutubeMusic/playground/runningText.js'
+// import Example from '/Users/duongtung/Workspace/YoutubeMusic/playground/runningText.js'
 import localTracks from './storage/tracks'
 
 
@@ -86,7 +86,7 @@ export default class PlayScreen extends Component {
       let duration = response.data.items[0].contentDetails.duration;
       const track = {
         id: videoId,
-        url: `http://119.81.246.233:3000/play/${videoId}`, // Load media from heroku
+        url: `http://119.81.246.233:3000/play/${videoId}`, // Load media from server
         title: response.data.items[0].snippet.title,
         artist: response.data.items[0].snippet.channelTitle,
         description: response.data.items[0].snippet.description,
@@ -96,6 +96,7 @@ export default class PlayScreen extends Component {
         },
         duration: moment.duration(duration).asSeconds()
       };
+      // this.setState({ track });
       return track;
     })
       .catch(error => console.log(error))
