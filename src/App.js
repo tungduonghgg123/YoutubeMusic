@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Navigation from 'react-navigation'
+import { createBottomTabNavigator, createStackNavigator, createAppContainer } from 'react-navigation'
 import PlayScreen from './PlayScreen';
 import SearchScreen from './SearchScreen'
 import HomeScreen from './HomeScreen';
@@ -8,6 +8,7 @@ import TrackPlayer from 'react-native-track-player';
 import { YellowBox } from 'react-native';
 import { Header, MiniPlayer } from './common'
 import { Root } from "native-base";
+
 YellowBox.ignoreWarnings(['Remote debugger']);
 
 /**
@@ -17,22 +18,35 @@ For now, just let yellowBoxes on
 // YellowBox.ignoreWarnings( ['Possible Unhandled Promise Rejection']);
 
 
-const TabNavigator = Navigation.createBottomTabNavigator({
+const TabNavigator = createBottomTabNavigator({
   Home: { screen: HomeScreen },
   Search: { screen: SearchScreen },
   Next: { screen: NextScreen },
-  Play: {screen: PlayScreen}
 }, {
     initialRouteName: 'Home',
-    order: ['Home', 'Search', 'Next','Play']
+    navigationOptions: {
+      header: null,
+      headerLeft: null
+    }
   })
-const SecondPlayer = Navigation.createBottomTabNavigator({
-  tabBarComponent: () => <MiniPlayer message='tungduong'/>
+  
+const MainNavigator = createStackNavigator({
+  Tabs: TabNavigator,
+  Play: {
+    screen: PlayScreen,
+    navigationOptions: {
+      header: null,
+      headerLeft: null
+    }
+  }
 })
+  
+  const SecondPlayer = createBottomTabNavigator({
+    tabBarComponent: () => <MiniPlayer message='tungduong' />
+  })
 
 
-
-const AppContainer = Navigation.createAppContainer(TabNavigator)
+const AppContainer = createAppContainer(MainNavigator)
 
 export default class App extends Component {
   componentDidMount() {
