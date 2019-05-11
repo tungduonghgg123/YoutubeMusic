@@ -115,6 +115,7 @@ export default class SearchScreen extends Component {
                 key={itemKey}
                 onPress={() => {
                   this.props.navigation.navigate('Play', { videoId: item.id })
+
                 }}
               />
             )

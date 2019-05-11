@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import TrackPlayer from 'react-native-track-player';
-import { Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl, Spinner, MiniPlayer } from './common'
+import { Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl, Spinner } from './common'
 import { TextInput, Button, SafeAreaView, Text, View,Alert } from 'react-native';
 import axios from 'axios';
 import memoize from "memoize-one";
 import moment from 'moment';
 import Example from '/Users/duongtung/Workspace/YoutubeMusic/playground/runningText.js'
 import localTracks from './storage/tracks'
+import NavigationService from './NavigationService';
+
 
 
 
@@ -86,7 +88,7 @@ export default class PlayScreen extends Component {
       let duration = response.data.items[0].contentDetails.duration;
       const track = {
         id: videoId,
-        url: `http://119.81.246.233:3000/play/${videoId}`, // Load media from heroku
+        url: `http://119.81.246.233:3000/play/${videoId}`, // Load media from server
         title: response.data.items[0].snippet.title,
         artist: response.data.items[0].snippet.channelTitle,
         description: response.data.items[0].snippet.description,
@@ -96,6 +98,7 @@ export default class PlayScreen extends Component {
         },
         duration: moment.duration(duration).asSeconds()
       };
+      // this.setState({ track });
       return track;
     })
       .catch(error => console.log(error))
@@ -179,20 +182,26 @@ export default class PlayScreen extends Component {
   }
   componentWillUnmount() {
     // Removes the event handler
-    this.onTrackChange.remove();
-    this.onQueueEnded.remove();
-    this.onRemotePause.remove();
-    this.onRemotePlay.remove();
-    this.onPlaybackStateChange.remove();
+    /**
+     * `weird`: this will be invoked when transition.
+     */
+    // this.onTrackChange.remove();
+    // this.onQueueEnded.remove();
+    // this.onPlaybackStateChange.remove();
   }
   render() {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: 'grey' }}>
+      <Button 
+        title='go to Home'
+        onPress={() => {
+          NavigationService.navigate('Home');
+        }}
+      />
         <Header
           message="playing from Youtube"
           onQueuePress={this.getTheTrackQueue.bind(this)}
           onDownPress={() => {
-            console.log(this.props.navigation)
             this.props.navigation.goBack();
           }}
         />

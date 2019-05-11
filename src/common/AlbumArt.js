@@ -15,14 +15,19 @@ const AlbumArt = ({ onPress, url, path }) => {
   )
 }
 
+const { width, height } = Dimensions.get('window');
+const paddingLeft = 24;
+const paddingRight = 24;
+const imageWidth = width - paddingLeft - paddingRight;
+
 const styles = {
   container: {
-    paddingLeft: 24,
-    paddingRight: 24,
+    paddingLeft: paddingLeft,
+    paddingRight: paddingRight,
   },
   image: {
-    width: 320,
-    height: 180,
+    width: imageWidth,
+    height: imageWidth / 320 * 180,
     borderWidth: 1,
     borderRadius: 15,
     borderBottomWidth: 0,

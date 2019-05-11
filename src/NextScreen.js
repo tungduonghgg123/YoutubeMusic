@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ScrollView, Image, SafeAreaView, Text, View, ActivityIndicator } from 'react-native';
+import { ScrollView, Image, SafeAreaView, Text, View, ActivityIndicator, Button } from 'react-native';
 import { ListItem } from 'react-native-elements';
 import axios from 'axios';
 import moment from 'moment';
@@ -67,6 +67,12 @@ export default class NextScreen extends Component {
   render() {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: 'gray', height: '100%' }}>
+        <Button 
+          title='go to play screen'
+          onPress={() => {
+            this.props.navigation.navigate('Play')
+          }}
+        />
         <Text style={{ margin: 5, fontSize: 15, fontWeight: 'bold', textAlign: 'center' }}>Next</Text>
         <ScrollView
           style={{ paddingTop: 7 }}

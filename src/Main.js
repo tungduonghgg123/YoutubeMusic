@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
-import Navigation from 'react-navigation'
-// import LoginScreen from './LoginScreen';
+import { createBottomTabNavigator, createStackNavigator, createAppContainer } from 'react-navigation'
 import PlayScreen from './PlayScreen';
 import SearchScreen from './SearchScreen'
 import HomeScreen from './HomeScreen';
 import NextScreen from './NextScreen.js';
 import TrackPlayer from 'react-native-track-player';
-import { YellowBox } from 'react-native';
-import { Header, MiniPlayer } from './common'
+
+import  {MiniPlayer}  from './common'
 import { Root } from "native-base";
+import NavigationService from './NavigationService';
+import { YellowBox } from 'react-native';
 YellowBox.ignoreWarnings(['Remote debugger']);
 
 /**
@@ -18,16 +19,40 @@ For now, just let yellowBoxes on
 // YellowBox.ignoreWarnings( ['Possible Unhandled Promise Rejection']);
 
 
+<<<<<<< HEAD:src/Main.js
 const TabNavigator = Navigation.createBottomTabNavigator({
+=======
+const TabNavigator = createBottomTabNavigator({
+>>>>>>> master:src/App.js
   Home: { screen: HomeScreen },
   Search: { screen: SearchScreen },
   Next: { screen: NextScreen },
-  Play: {screen: PlayScreen}
 }, {
     initialRouteName: 'Home',
-    order: ['Home', 'Search', 'Next','Play']
+    navigationOptions: {
+      header: null,
+      headerLeft: null
+    }
   })
+<<<<<<< HEAD:src/Main.js
 const AppContainer = Navigation.createAppContainer(TabNavigator)
+=======
+  
+const MainNavigator = createStackNavigator({
+  Tabs: TabNavigator,
+  Play: {
+    screen: PlayScreen,
+    navigationOptions: {
+      header: null,
+      headerLeft: null
+    }
+  },
+  Mini: MiniPlayer
+})
+
+
+const AppContainer = createAppContainer(MainNavigator)
+>>>>>>> master:src/App.js
 
 export default class Main extends Component {
   componentDidMount() {
@@ -54,20 +79,13 @@ export default class Main extends Component {
   }
   render() {
     return (
-      <Root>
-        <AppContainer />
+      <Root >
+        <AppContainer ref={navigatorRef => {
+          NavigationService.setTopLevelNavigator(navigatorRef);
+        }}/>
         <MiniPlayer
-          // message = {!this.state.track ? "" : this.state.track.title.slice(0, 30)}
-          // paused= {this.state.paused}
-          // onPressPause={this.onPressPause.bind(this)}
-          // onPressPlay={this.onPressPlay.bind(this)}
-          // trackLength={!this.state.track ? 0 : this.state.track.duration}
-          // onUpPress = {
-
-          // }
-          message='tung duong'
+           
         />
-
       </Root>
 
     );
