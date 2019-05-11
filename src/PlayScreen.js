@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import TrackPlayer from 'react-native-track-player';
-import { Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl, Spinner, MiniPlayer } from './common'
+import { Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl, Spinner } from './common'
 import { TextInput, Button, SafeAreaView, Text, View,Alert } from 'react-native';
 import axios from 'axios';
 import memoize from "memoize-one";
 import moment from 'moment';
-// import Example from '/Users/duongtung/Workspace/YoutubeMusic/playground/runningText.js'
+import Example from '/Users/duongtung/Workspace/YoutubeMusic/playground/runningText.js'
 import localTracks from './storage/tracks'
+import NavigationService from './NavigationService';
+
 
 
 
@@ -183,13 +185,19 @@ export default class PlayScreen extends Component {
     /**
      * `weird`: this will be invoked when transition.
      */
-    this.onTrackChange.remove();
-    this.onQueueEnded.remove();
-    this.onPlaybackStateChange.remove();
+    // this.onTrackChange.remove();
+    // this.onQueueEnded.remove();
+    // this.onPlaybackStateChange.remove();
   }
   render() {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: 'grey' }}>
+      <Button 
+        title='go to Home'
+        onPress={() => {
+          NavigationService.navigate('Home');
+        }}
+      />
         <Header
           message="playing from Youtube"
           onQueuePress={this.getTheTrackQueue.bind(this)}

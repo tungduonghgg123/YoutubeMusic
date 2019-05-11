@@ -1,25 +1,27 @@
 import React, { Component } from 'react';
 import TrackPlayer from 'react-native-track-player';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, Image, TouchableOpacity } from 'react-native';
 import Slider from 'react-native-slider';
+import NavigationService from '../NavigationService';
 
 class MiniPlayer extends TrackPlayer.ProgressComponent {
+    static count = 0;
+    onUpPress() {
+        NavigationService.navigate('Play');
+
+    }
     render() {
         const { textStyle, containerStyle, buttonStyle, playButton, onMessagePress } = styles;
         const { paused, onUpPress, onPressPause, onPressPlay, message, trackLength } = this.props;
         return (
+            
             <View style={{
                 backgroundColor: 'pink',
-    width: '100%',
-    position: "absolute",
-    bottom: 80,
-
-    // elevation: 3,
-
-    // zIndex: 0,
-
-            }}>
-
+                width: '100%',
+                position: "absolute",
+                bottom: 80,
+            }
+            }>
                 <Slider
                     disabled={true}
                     maximumValue={trackLength}
@@ -35,12 +37,12 @@ class MiniPlayer extends TrackPlayer.ProgressComponent {
                 />
 
                 <View style={containerStyle}>
-                    <TouchableOpacity onPress={onUpPress}>
+                    <TouchableOpacity onPress={this.onUpPress.bind(this)}>
                         <Image style={buttonStyle}
                             source={require('../img/ic_keyboard_arrow_up_white.png')} />
                     </TouchableOpacity>
                     <Text onPress={onMessagePress} style={textStyle} >
-                        {message.toUpperCase()}
+                        {!message? '': message.toUpperCase()}
                     </Text>
                     {!paused ?
                         <TouchableOpacity onPress={onPressPause}>
@@ -56,6 +58,8 @@ class MiniPlayer extends TrackPlayer.ProgressComponent {
                     }
                 </View>
             </View>
+
+
         )
     }
 }
@@ -101,4 +105,5 @@ const styles = {
         justifyContent: 'center',
     },
 }
+
 export { MiniPlayer };

@@ -5,10 +5,11 @@ import SearchScreen from './SearchScreen'
 import HomeScreen from './HomeScreen';
 import NextScreen from './NextScreen.js';
 import TrackPlayer from 'react-native-track-player';
-import { YellowBox } from 'react-native';
-import { Header, MiniPlayer } from './common'
-import { Root } from "native-base";
 
+import  {MiniPlayer}  from './common'
+import { Root } from "native-base";
+import NavigationService from './NavigationService';
+import { YellowBox } from 'react-native';
 YellowBox.ignoreWarnings(['Remote debugger']);
 
 /**
@@ -38,12 +39,9 @@ const MainNavigator = createStackNavigator({
       header: null,
       headerLeft: null
     }
-  }
+  },
+  Mini: MiniPlayer
 })
-  
-  const SecondPlayer = createBottomTabNavigator({
-    tabBarComponent: () => <MiniPlayer message='tungduong' />
-  })
 
 
 const AppContainer = createAppContainer(MainNavigator)
@@ -73,20 +71,13 @@ export default class App extends Component {
   }
   render() {
     return (
-      <Root>
-        <AppContainer />
-        {/* <MiniPlayer
-          // message = {!this.state.track ? "" : this.state.track.title.slice(0, 30)}
-          // paused= {this.state.paused}
-          // onPressPause={this.onPressPause.bind(this)}
-          // onPressPlay={this.onPressPlay.bind(this)}
-          // trackLength={!this.state.track ? 0 : this.state.track.duration}
-          // onUpPress = {
-
-          // }
-          message='tung duong'
-        /> */}
-
+      <Root >
+        <AppContainer ref={navigatorRef => {
+          NavigationService.setTopLevelNavigator(navigatorRef);
+        }}/>
+        <MiniPlayer
+           
+        />
       </Root>
 
     );
