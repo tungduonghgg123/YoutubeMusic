@@ -7,6 +7,8 @@ import HomeScreen from './HomeScreen';
 import NextScreen from './NextScreen.js';
 import TrackPlayer from 'react-native-track-player';
 import { YellowBox } from 'react-native';
+import { Header, MiniPlayer } from './common'
+import { Root } from "native-base";
 YellowBox.ignoreWarnings(['Remote debugger']);
 
 /**
@@ -20,15 +22,18 @@ const TabNavigator = Navigation.createBottomTabNavigator({
   // Login: {screen: LoginScreen},
   Home: { screen: HomeScreen },
   Search: { screen: SearchScreen },
-  Play: { screen: PlayScreen },
   Next: { screen: NextScreen },
+  Play: {screen: PlayScreen}
 }, {
-  initialRouteName: 'Search'
+    initialRouteName: 'Home',
+    order: ['Home', 'Search', 'Next','Play']
+  })
+const SecondPlayer = Navigation.createBottomTabNavigator({
+  tabBarComponent: () => <MiniPlayer message='tungduong'/>
 })
 
-// const AppSwitchNavigator = Navigation.createSwitchNavigator({
-//   TabNavigator
-// })
+
+
 const AppContainer = Navigation.createAppContainer(TabNavigator)
 
 export default class App extends Component {
@@ -56,7 +61,22 @@ export default class App extends Component {
   }
   render() {
     return (
-      <AppContainer />
+      <Root>
+        <AppContainer />
+        <MiniPlayer
+          // message = {!this.state.track ? "" : this.state.track.title.slice(0, 30)}
+          // paused= {this.state.paused}
+          // onPressPause={this.onPressPause.bind(this)}
+          // onPressPlay={this.onPressPlay.bind(this)}
+          // trackLength={!this.state.track ? 0 : this.state.track.duration}
+          // onUpPress = {
+
+          // }
+          message='tung duong'
+        />
+
+      </Root>
+
     );
   }
 }

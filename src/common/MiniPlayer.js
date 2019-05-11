@@ -10,6 +10,14 @@ class MiniPlayer extends TrackPlayer.ProgressComponent {
         return (
             <View style={{
                 backgroundColor: 'pink',
+    width: '100%',
+    position: "absolute",
+    bottom: 80,
+
+    // elevation: 3,
+
+    // zIndex: 0,
+
             }}>
 
                 <Slider

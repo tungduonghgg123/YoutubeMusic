@@ -10,6 +10,7 @@ import localTracks from './storage/tracks'
 
 
 
+
 export default class PlayScreen extends Component {
   constructor(props) {
     super(props);
@@ -19,7 +20,7 @@ export default class PlayScreen extends Component {
       duration: 0,
       isLoading: false,
       shuffleOn: false,
-      repeatOn: true,
+      repeatOn: false,
       mode: 'youtube'
     };
 
@@ -85,7 +86,7 @@ export default class PlayScreen extends Component {
       let duration = response.data.items[0].contentDetails.duration;
       const track = {
         id: videoId,
-        url: `https://youtubemusicbackend.herokuapp.com/play/${videoId}`, // Load media from heroku
+        url: `http://119.81.246.233:3000/play/${videoId}`, // Load media from heroku
         title: response.data.items[0].snippet.title,
         artist: response.data.items[0].snippet.channelTitle,
         description: response.data.items[0].snippet.description,
@@ -186,12 +187,13 @@ export default class PlayScreen extends Component {
   }
   render() {
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: 'gray' }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: 'grey' }}>
         <Header
           message="playing from Youtube"
           onQueuePress={this.getTheTrackQueue.bind(this)}
           onDownPress={() => {
-            this.props.navigation.goBack()
+            console.log(this.props.navigation)
+            this.props.navigation.goBack();
           }}
         />
         <AlbumArt url={!this.state.track ? "" : this.state.track.thumbnail.url} />
@@ -217,13 +219,13 @@ export default class PlayScreen extends Component {
         {this.state.isLoading ?
           <Spinner /> : <View style={{flex:1}} />
         }
-        <MiniPlayer
+        {/* <MiniPlayer
           message = {!this.state.track ? "" : this.state.track.title.slice(0, 30)}
           paused= {this.state.paused}
           onPressPause={this.onPressPause.bind(this)}
           onPressPlay={this.onPressPlay.bind(this)}
           trackLength={!this.state.track ? 0 : this.state.track.duration}
-        />
+        /> */}
 
         {/* <Example text = "zxgvjhbasdljgabsgkasjhgasukdghalsiughasiudhgakshgkajshbgkjashglkjashg"/>
 
