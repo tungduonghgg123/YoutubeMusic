@@ -1,18 +1,18 @@
-import { TURNON, TURNOFF} from '../actions/type';
+import { TURNON, TURNOFF } from '../actions/type';
 
 const initialState = true;
- 
-export default function( state = initialState, action) {
+
+export default function (state = initialState, action) {
     switch (action.type) {
         case TURNON:
-            state = true;
-            break;
+            return state = true;
+
         case TURNOFF:
-            state = false;
-            break;
+            return state = false;
+
         default:
             console.log('there is problem with reducer')
-            state = false;
-            break;
+            return state = false;
+
     }
 }

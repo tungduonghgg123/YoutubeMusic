@@ -39,7 +39,6 @@
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string/>
-<<<<<<< HEAD
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>
@@ -61,8 +60,6 @@
 		<string>Roboto.ttf</string>
 		<string>rubicon-icon-font.ttf</string>
 	</array>
-=======
->>>>>>> 5f7677d8ad80d89a69f7c28ad78b4bb3152092c7
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>
