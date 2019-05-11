@@ -75,7 +75,7 @@ export default class App extends Component {
     return (
       <Root>
         <AppContainer />
-        <MiniPlayer
+        {/* <MiniPlayer
           // message = {!this.state.track ? "" : this.state.track.title.slice(0, 30)}
           // paused= {this.state.paused}
           // onPressPause={this.onPressPause.bind(this)}
@@ -85,7 +85,7 @@ export default class App extends Component {
 
           // }
           message='tung duong'
-        />
+        /> */}
 
       </Root>
 

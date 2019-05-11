@@ -180,10 +180,11 @@ export default class PlayScreen extends Component {
   }
   componentWillUnmount() {
     // Removes the event handler
+    /**
+     * `weird`: this will be invoked when transition.
+     */
     this.onTrackChange.remove();
     this.onQueueEnded.remove();
-    this.onRemotePause.remove();
-    this.onRemotePlay.remove();
     this.onPlaybackStateChange.remove();
   }
   render() {
@@ -193,7 +194,6 @@ export default class PlayScreen extends Component {
           message="playing from Youtube"
           onQueuePress={this.getTheTrackQueue.bind(this)}
           onDownPress={() => {
-            console.log(this.props.navigation)
             this.props.navigation.goBack();
           }}
         />
