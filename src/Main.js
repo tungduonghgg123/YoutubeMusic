@@ -19,11 +19,7 @@ For now, just let yellowBoxes on
 // YellowBox.ignoreWarnings( ['Possible Unhandled Promise Rejection']);
 
 
-<<<<<<< HEAD:src/Main.js
-const TabNavigator = Navigation.createBottomTabNavigator({
-=======
 const TabNavigator = createBottomTabNavigator({
->>>>>>> master:src/App.js
   Home: { screen: HomeScreen },
   Search: { screen: SearchScreen },
   Next: { screen: NextScreen },
@@ -34,9 +30,6 @@ const TabNavigator = createBottomTabNavigator({
       headerLeft: null
     }
   })
-<<<<<<< HEAD:src/Main.js
-const AppContainer = Navigation.createAppContainer(TabNavigator)
-=======
   
 const MainNavigator = createStackNavigator({
   Tabs: TabNavigator,
@@ -52,7 +45,6 @@ const MainNavigator = createStackNavigator({
 
 
 const AppContainer = createAppContainer(MainNavigator)
->>>>>>> master:src/App.js
 
 export default class Main extends Component {
   componentDidMount() {
