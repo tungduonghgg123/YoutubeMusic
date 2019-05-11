@@ -19,7 +19,6 @@ For now, just let yellowBoxes on
 
 
 const TabNavigator = Navigation.createBottomTabNavigator({
-  // Login: {screen: LoginScreen},
   Home: { screen: HomeScreen },
   Search: { screen: SearchScreen },
   Next: { screen: NextScreen },
@@ -28,15 +27,9 @@ const TabNavigator = Navigation.createBottomTabNavigator({
     initialRouteName: 'Home',
     order: ['Home', 'Search', 'Next','Play']
   })
-const SecondPlayer = Navigation.createBottomTabNavigator({
-  tabBarComponent: () => <MiniPlayer message='tungduong'/>
-})
-
-
-
 const AppContainer = Navigation.createAppContainer(TabNavigator)
 
-export default class App extends Component {
+export default class Main extends Component {
   componentDidMount() {
     /**
      * WORKING ON IT: setup player immediately after the application is launched.
