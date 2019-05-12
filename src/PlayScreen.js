@@ -25,7 +25,7 @@ export default class PlayScreen extends Component {
       repeatOn: false,
       mode: 'youtube'
     };
-
+    console.log('initialized')
   }
   onPressPause() {
     this.setState({ paused: true });
@@ -108,13 +108,14 @@ export default class PlayScreen extends Component {
   
 
   async componentDidMount() {
+    console.log('mounted')
     this.onTrackChange = TrackPlayer.addEventListener('playback-track-changed', async (data) => {
       if(data.nextTrack === 'helperTrack') {
         console.log('helper track ON')
         return;
       }
       // console.log('---------------------')
-      console.log('track changed')
+      // console.log('track changed')
       this.getTheTrackQueue()
       let track = await TrackPlayer.getTrack(data.nextTrack);
       this.setState({ track });
@@ -131,7 +132,7 @@ export default class PlayScreen extends Component {
     });
     this.onPlaybackStateChange = TrackPlayer.addEventListener('playback-state', async (playbackState) => {
       
-      console.log(JSON.stringify(playbackState));
+      // console.log(JSON.stringify(playbackState));
       switch (playbackState.state) {
         case 'playing':
           this.setState({isLoading: false})
@@ -185,19 +186,14 @@ export default class PlayScreen extends Component {
     /**
      * `weird`: this will be invoked when transition.
      */
-    // this.onTrackChange.remove();
-    // this.onQueueEnded.remove();
-    // this.onPlaybackStateChange.remove();
+    this.onTrackChange.remove();
+    this.onQueueEnded.remove();
+    this.onPlaybackStateChange.remove();
   }
   render() {
+    console.log('rendered')
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: 'grey' }}>
-      <Button 
-        title='go to Home'
-        onPress={() => {
-          NavigationService.navigate('Home');
-        }}
-      />
         <Header
           message="playing from Youtube"
           onQueuePress={this.getTheTrackQueue.bind(this)}
