@@ -7,13 +7,14 @@ import memoize from "memoize-one";
 import moment from 'moment';
 import Example from '/Users/duongtung/Workspace/YoutubeMusic/playground/runningText.js'
 import localTracks from './storage/tracks'
-import NavigationService from './NavigationService';
+//redux
+import {connect} from 'react-redux';
+import * as actions from './actions'
 
 
 
 
-
-export default class PlayScreen extends Component {
+class PlayScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -25,6 +26,9 @@ export default class PlayScreen extends Component {
       repeatOn: false,
       mode: 'youtube'
     };
+  this.props.miniPlayerOff();
+
+    
 
   }
   onPressPause() {
@@ -189,6 +193,7 @@ export default class PlayScreen extends Component {
     this.onTrackChange.remove();
     this.onQueueEnded.remove();
     this.onPlaybackStateChange.remove();
+    this.props.miniPlayerOn();
   }
   render() {
     return (
@@ -232,7 +237,7 @@ export default class PlayScreen extends Component {
         /> */}
 
         {/* <Example text = "zxgvjhbasdljgabsgkasjhgasukdghalsiughasiudhgakshgkajshbgkjashglkjashg"/>
-
+q
         <Button title='remove current' onPress={async() => {
           await TrackPlayer.remove("Llw9Q6akRo4")
 
@@ -242,3 +247,4 @@ export default class PlayScreen extends Component {
     );
   }
 }
+export default connect(null, actions)(PlayScreen)

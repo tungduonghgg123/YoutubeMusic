@@ -3,5 +3,5 @@ import miniPlayerReducer from './miniPlayerReducer'
 
 
 export default combineReducers({
-    miniPlayer : miniPlayerReducer
+  miniPlayerReducer : miniPlayerReducer
   });

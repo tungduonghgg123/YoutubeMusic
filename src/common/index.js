@@ -9,4 +9,4 @@ export * from './PlaybackControl';
 export * from './Spinner';
 export * from './YoutubeSearchItem';
 export * from './YoutubeSeachScroll';
-export * from './MiniPlayer';
+// export * from './MiniPlayer';

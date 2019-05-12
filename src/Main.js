@@ -6,7 +6,7 @@ import HomeScreen from './HomeScreen';
 import NextScreen from './NextScreen.js';
 import TrackPlayer from 'react-native-track-player';
 
-import  {MiniPlayer}  from './common'
+import  MiniPlayer  from './common/MiniPlayer'
 import { Root } from "native-base";
 import NavigationService from './NavigationService';
 import { YellowBox } from 'react-native';

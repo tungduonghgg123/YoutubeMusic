@@ -3,9 +3,8 @@ import TrackPlayer from 'react-native-track-player';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import Slider from 'react-native-slider';
 import NavigationService from '../NavigationService';
-
+import {connect} from 'react-redux';
 class MiniPlayer extends TrackPlayer.ProgressComponent {
-    static count = 0;
     onUpPress() {
         NavigationService.navigate('Play');
 
@@ -13,7 +12,10 @@ class MiniPlayer extends TrackPlayer.ProgressComponent {
     render() {
         const { textStyle, containerStyle, buttonStyle, playButton, onMessagePress } = styles;
         const { paused, onUpPress, onPressPause, onPressPlay, message, trackLength } = this.props;
+        console.log(this.props.miniPlayerState)
         return (
+            <View>
+            {this.props.miniPlayerState? 
             
             <View style={{
                 backgroundColor: 'pink',
@@ -57,7 +59,8 @@ class MiniPlayer extends TrackPlayer.ProgressComponent {
                         </TouchableOpacity>
                     }
                 </View>
-            </View>
+            </View> : <View/>
+            }</View>
 
 
         )
@@ -105,5 +108,7 @@ const styles = {
         justifyContent: 'center',
     },
 }
-
-export { MiniPlayer };
+const mapStateToProps = state => ({
+    miniPlayerState: state.miniPlayerReducer
+});
+export default connect(mapStateToProps, null)(MiniPlayer);

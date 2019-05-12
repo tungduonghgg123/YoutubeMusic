@@ -12,7 +12,7 @@ export default function (state = initialState, action) {
 
         default:
             console.log('there is problem with reducer')
-            return state = false;
+            return state = true;
 
     }
 }
