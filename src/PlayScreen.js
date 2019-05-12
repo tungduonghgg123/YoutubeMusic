@@ -25,7 +25,7 @@ export default class PlayScreen extends Component {
       repeatOn: false,
       mode: 'youtube'
     };
-    console.log('initialized')
+
   }
   onPressPause() {
     this.setState({ paused: true });
@@ -108,7 +108,7 @@ export default class PlayScreen extends Component {
   
 
   async componentDidMount() {
-    console.log('mounted')
+
     this.onTrackChange = TrackPlayer.addEventListener('playback-track-changed', async (data) => {
       if(data.nextTrack === 'helperTrack') {
         console.log('helper track ON')
@@ -132,7 +132,7 @@ export default class PlayScreen extends Component {
     });
     this.onPlaybackStateChange = TrackPlayer.addEventListener('playback-state', async (playbackState) => {
       
-      // console.log(JSON.stringify(playbackState));
+      console.log(JSON.stringify(playbackState));
       switch (playbackState.state) {
         case 'playing':
           this.setState({isLoading: false})
@@ -191,7 +191,6 @@ export default class PlayScreen extends Component {
     this.onPlaybackStateChange.remove();
   }
   render() {
-    console.log('rendered')
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: 'grey' }}>
         <Header
