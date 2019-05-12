@@ -5,6 +5,7 @@ import Slider from 'react-native-slider';
 import NavigationService from '../NavigationService';
 import { connect } from 'react-redux';
 import * as actions from '../actions'
+import TextTicker from 'react-native-text-ticker'
 
 
 
@@ -22,10 +23,10 @@ class MiniPlayer extends TrackPlayer.ProgressComponent {
         TrackPlayer.play();
     }
     render() {
-        const { textStyle, containerStyle, upButtonStyle, playButtonStyle, onMessagePress, miniPlayerStyle,
+        const { textStyle, containerStyle, upButtonStyle, playButtonStyle, miniPlayerStyle,
             textContainerStyle
         } = styles;
-        const { duration, title = 'tung duong textStyle, containerStyle, upButtonStyle, playButtonStyle, onMessagePress, miniPlayerStyle,textContainerStyle' } = this.props.track;
+        const { duration, title } = this.props.track;
         return (
             <View>
                 {!this.props.miniPlayerState ?
@@ -34,9 +35,7 @@ class MiniPlayer extends TrackPlayer.ProgressComponent {
                         <Slider
                             disabled={true}
                             maximumValue={duration}
-                            onSlidingComplete={async value => {
-                                await TrackPlayer.seekTo(value)
-                            }}
+                            onSlidingComplete={async value => { await TrackPlayer.seekTo(value) }}
                             value={this.state.position}
                             style={styles.slider}
                             minimumTrackTintColor='#fff'
@@ -44,7 +43,6 @@ class MiniPlayer extends TrackPlayer.ProgressComponent {
                             thumbStyle={styles.thumb}
                             trackStyle={styles.track}
                         />
-
                         <View style={containerStyle}>
                             <TouchableOpacity onPress={this.onUpPress.bind(this)}>
                                 <Image style={upButtonStyle}
@@ -52,9 +50,17 @@ class MiniPlayer extends TrackPlayer.ProgressComponent {
                             </TouchableOpacity>
                             <TouchableOpacity onPress={this.onUpPress.bind(this)}>
                                 <View style={textContainerStyle}>
-                                    <Text onPress={onMessagePress} style={textStyle} >
+                                    <TextTicker
+                                        style={textStyle}
+                                        animationType='auto'
+                                        loop
+                                        bounce
+                                        scroll={false}
+                                        repeatSpacer={100}
+                                        marqueeDelay={1000}
+                                    >
                                         {!title ? '' : title.toUpperCase()}
-                                    </Text>
+                                    </TextTicker>
                                 </View>
                             </TouchableOpacity>
 

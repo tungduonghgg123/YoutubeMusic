@@ -206,7 +206,7 @@ class PlayScreen extends Component {
         />
         <AlbumArt url={!this.state.track.url ? "" : this.state.track.thumbnail.url} />
         <TrackDetails
-          title={!this.state.track.title ? "" : this.state.track.title.slice(0, 30)}
+          title={!this.state.track.title ? "" : this.state.track.title}
         />
         <SeekBar
           trackLength={!this.state.track.duration ? 0 : this.state.track.duration}
