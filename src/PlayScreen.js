@@ -5,7 +5,6 @@ import { TextInput, Button, SafeAreaView, Text, View,Alert } from 'react-native'
 import axios from 'axios';
 import memoize from "memoize-one";
 import moment from 'moment';
-import Example from '/Users/duongtung/Workspace/YoutubeMusic/playground/runningText.js'
 import localTracks from './storage/tracks'
 //redux
 import {connect} from 'react-redux';
@@ -27,12 +26,10 @@ class PlayScreen extends Component {
   this.props.miniPlayerOff();
   }
   onPressPause() {
-    // this.setState({ paused: true });
     this.props.syncPaused(true)
     TrackPlayer.pause();
   }
   onPressPlay() {
-    // this.setState({ paused: false })
     this.props.syncPaused(false)
     TrackPlayer.play();
   }
@@ -124,7 +121,6 @@ class PlayScreen extends Component {
        * sync track to redux store:
        */
       this.props.syncTrack(track)
-      // this.setState({ paused: false});
       this.props.syncPaused(false)
     });
     this.onQueueEnded = TrackPlayer.addEventListener('playback-queue-ended', async (data) => {
@@ -134,7 +130,6 @@ class PlayScreen extends Component {
         this.onPressPlay()
         return;
       }
-      // this.setState({ paused: true });
       this.props.syncPaused(true)
     });
     this.onPlaybackStateChange = TrackPlayer.addEventListener('playback-state', async (playbackState) => {
@@ -193,7 +188,7 @@ class PlayScreen extends Component {
     /**
      * `weird`: this will be invoked when transition.
      */
-    this.props.miniPlayerOn();
+    
     this.onTrackChange.remove();
     this.onQueueEnded.remove();
     this.onPlaybackStateChange.remove();
@@ -207,6 +202,7 @@ class PlayScreen extends Component {
           onQueuePress={this.getTheTrackQueue.bind(this)}
           onDownPress={() => {
             this.props.navigation.goBack();
+            this.props.miniPlayerOn();
           }}
         />
         <AlbumArt url={!this.state.track ? "" : this.state.track.thumbnail.url} />
@@ -232,13 +228,6 @@ class PlayScreen extends Component {
         {this.state.isLoading ?
           <Spinner /> : <View style={{flex:1}} />
         }
-        {/* <MiniPlayer
-          message = {!this.state.track ? "" : this.state.track.title.slice(0, 30)}
-          paused= {this.state.paused}
-          onPressPause={this.onPressPause.bind(this)}
-          onPressPlay={this.onPressPlay.bind(this)}
-          trackLength={!this.state.track ? 0 : this.state.track.duration}
-        /> */}
 
         {/* <Example text = "zxgvjhbasdljgabsgkasjhgasukdghalsiughasiudhgakshgkajshbgkjashglkjashg"/>
 q

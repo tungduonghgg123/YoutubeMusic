@@ -3,12 +3,20 @@ import { ScrollView, Image, SafeAreaView, Text, View, ActivityIndicator, Button 
 import { ListItem } from 'react-native-elements';
 import axios from 'axios';
 import moment from 'moment';
+import {connect} from 'react-redux';
+import * as actions from './actions'
 
-export default class HomeScreen extends Component {
-  state = {
-    nextPageToken: '',
-    isLoading: false,
-    listItem: []
+
+ class HomeScreen extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      nextPageToken: '',
+      isLoading: false,
+      listItem: []
+    };
+    
+    
   }
 
   isCloseToBottom({ layoutMeasurement, contentOffset, contentSize }) {
@@ -62,11 +70,13 @@ export default class HomeScreen extends Component {
 
   componentDidMount() {
     this.onGetVideos(7);
-  }
 
+  }
+  
   render() {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: 'gray', height: '100%' }}>
+
         <Text style={{ margin: 5, fontSize: 15, fontWeight: 'bold', textAlign: 'center' }}>Home</Text>
         <ScrollView
           style={{ paddingTop: 7 }}
@@ -134,3 +144,5 @@ function numberFormatter(num, digits) {
   var rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
   return (num / si[i].value).toFixed(digits).replace(rx, "$1") + si[i].symbol;
 }
+
+export default connect(null, actions)(HomeScreen)
