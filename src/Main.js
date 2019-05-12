@@ -5,11 +5,11 @@ import SearchScreen from './SearchScreen'
 import HomeScreen from './HomeScreen';
 import NextScreen from './NextScreen.js';
 import TrackPlayer from 'react-native-track-player';
-
-import  MiniPlayer  from './common/MiniPlayer'
+import { Icon } from 'react-native-elements'
+import MiniPlayer from './common/MiniPlayer'
 import { Root } from "native-base";
 import NavigationService from './NavigationService';
-import { YellowBox } from 'react-native';
+import { YellowBox, Image } from 'react-native';
 YellowBox.ignoreWarnings(['Remote debugger']);
 
 /**
@@ -20,17 +20,33 @@ For now, just let yellowBoxes on
 
 
 const TabNavigator = createBottomTabNavigator({
-  Home: { screen: HomeScreen },
-  Search: { screen: SearchScreen },
+  Home: {
+    screen: HomeScreen,
+    navigationOptions: {
+      tabBarIcon: <Icon name='home' color='black' />
+    }
+  },
+  Search: { 
+    screen: SearchScreen ,
+    navigationOptions: {
+      tabBarIcon: <Icon name='search' color='black' />
+    }
+  },
   Next: { screen: NextScreen },
 }, {
     initialRouteName: 'Home',
     navigationOptions: {
       header: null,
-      headerLeft: null
-    }
+      headerLeft: null,
+    },
+    tabBarOptions: {
+      showLabel: false,
+      activeBackgroundColor: 'yellow',
+      safeAreaInset: { bottom: 'always', top: 'never' }
+    },
+
   })
-  
+
 const MainNavigator = createStackNavigator({
   Tabs: TabNavigator,
   Play: {
@@ -74,9 +90,8 @@ export default class Main extends Component {
       <Root >
         <AppContainer ref={navigatorRef => {
           NavigationService.setTopLevelNavigator(navigatorRef);
-        }}/>
+        }} />
         <MiniPlayer
-           
         />
       </Root>
 
