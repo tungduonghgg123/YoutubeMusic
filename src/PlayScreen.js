@@ -17,8 +17,6 @@ class PlayScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      track: this.props.track,
-      isLoading: false,
       shuffleOn: false,
       repeatOn: false,
       mode: 'youtube'
@@ -56,8 +54,8 @@ class PlayScreen extends Component {
     /**
      * pause Track Player before loading and playing new Track.
      *  */  
-    TrackPlayer.pause();
-    this.setState({ isLoading: true })
+    this.onPressPause()
+    this.props.syncLoading(true)
     let track = await this.initializeTrack(videoId)
     this.addAndPlay(track)
   })
@@ -95,7 +93,7 @@ class PlayScreen extends Component {
         },
         duration: moment.duration(duration).asSeconds()
       };
-      // this.setState({ track });
+      this.props.syncTrack(track)
       return track;
     })
       .catch(error => console.log(error))
@@ -111,11 +109,10 @@ class PlayScreen extends Component {
         console.log('helper track ON')
         return;
       }
-      // console.log('---------------------')
+      console.log('---------------------')
       // console.log('track changed')
-      // this.getTheTrackQueue()
+      this.getTheTrackQueue()
       let track = await TrackPlayer.getTrack(data.nextTrack);
-      this.setState({ track });
       /**
        * sync track to redux store:
        */
@@ -133,10 +130,11 @@ class PlayScreen extends Component {
     });
     this.onPlaybackStateChange = TrackPlayer.addEventListener('playback-state', async (playbackState) => {
       
-      // console.log(JSON.stringify(playbackState));
+      console.log(JSON.stringify(playbackState));
       switch (playbackState.state) {
         case 'playing':
-          this.setState({isLoading: false})
+          // this.setState({isLoading: false})
+          this.props.syncLoading(false)
           break;
         case 'loading':
           
@@ -204,12 +202,12 @@ class PlayScreen extends Component {
             this.props.miniPlayerOn();
           }}
         />
-        <AlbumArt url={!this.state.track.url ? "" : this.state.track.thumbnail.url} />
+        <AlbumArt url={!this.props.track.url ? "" : this.props.track.thumbnail.url} />
         <TrackDetails
-          title={!this.state.track.title ? "" : this.state.track.title}
+          title={!this.props.track.title ? "" : this.props.track.title}
         />
         <SeekBar
-          trackLength={!this.state.track.duration ? 0 : this.state.track.duration}
+          trackLength={!this.props.track.duration ? 0 : this.props.track.duration}
         />
         <PlaybackControl
           paused={this.props.paused}
@@ -224,13 +222,12 @@ class PlayScreen extends Component {
           onForward={this.onPressForward.bind(this)}
           onBack={this.onPressBack.bind(this)}
         />
-        {this.state.isLoading ?
+        {this.props.loading ?
           <Spinner /> : <View style={{flex:1}} />
         }
 
-        {/* <Example text = "zxgvjhbasdljgabsgkasjhgasukdghalsiughasiudhgakshgkajshbgkjashglkjashg"/>
-q
-        <Button title='remove current' onPress={async() => {
+       
+        {/* <Button title='remove current' onPress={async() => {
           await TrackPlayer.remove("Llw9Q6akRo4")
 
         }}/> */}
@@ -242,6 +239,7 @@ q
 const mapStateToProps = state => ({
   paused: state.syncPausedReducer,
   track: state.syncTrackReducer,
+  loading: state.syncLoadingReducer
 });
 
 export default connect(mapStateToProps, actions)(PlayScreen)
