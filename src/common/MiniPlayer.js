@@ -21,7 +21,6 @@ class MiniPlayer extends TrackPlayer.ProgressComponent {
     render() {
         const { textStyle, containerStyle, buttonStyle, playButton, onMessagePress } = styles;
         const { duration, title } = this.props.track;
-        console.log(this.props.paused)
         return (
             <View>
                 {!this.props.miniPlayerState ?

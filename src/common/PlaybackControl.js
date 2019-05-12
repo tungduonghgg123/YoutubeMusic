@@ -9,6 +9,11 @@ import {
 } from 'react-native';
 
 class PlaybackControl extends TrackPlayer.ProgressComponent {
+  async repeatAndPlay() {
+    console.log('ahihi')
+    await TrackPlayer.seekTo(0);
+    this.props.onPressPlay()
+  }
   render() {
     const { paused,
       shuffleOn,
@@ -35,9 +40,9 @@ class PlaybackControl extends TrackPlayer.ProgressComponent {
         <TouchableOpacity onPress= {() => {
           /**
           * repeat track when if it reached the 4th second
-          else use the onBack() method are passed from the parent component.
+          else use the onBack() method passed from the parent component.
           *  */ 
-          this.state.position > 3 ? TrackPlayer.seekTo(0): onBack() 
+          this.state.position > 3 ? this.repeatAndPlay(): onBack() 
         }} 
         
         disabled={backwardDisabled}>

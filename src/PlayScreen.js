@@ -17,7 +17,7 @@ class PlayScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      track: null,
+      track: this.props.track,
       isLoading: false,
       shuffleOn: false,
       repeatOn: false,
@@ -26,12 +26,12 @@ class PlayScreen extends Component {
   this.props.miniPlayerOff();
   }
   onPressPause() {
-    this.props.syncPaused(true)
     TrackPlayer.pause();
+    this.props.syncPaused(true)
   }
   onPressPlay() {
-    this.props.syncPaused(false)
     TrackPlayer.play();
+    this.props.syncPaused(false)
   }
   onPressRepeat() {
     this.setState((state) => {
@@ -40,7 +40,6 @@ class PlayScreen extends Component {
   }
   async onPressBack() {
     await TrackPlayer.skipToPrevious();
-
   }
   async onPressForward() {
     await TrackPlayer.skipToNext();
@@ -48,7 +47,7 @@ class PlayScreen extends Component {
   async getTheTrackQueue() {
     let tracks = await TrackPlayer.getQueue();
     console.log(tracks)
-    // TrackPlayer.getState().then((result) => console.log(result))
+    TrackPlayer.getState().then((result) => console.log(result))
 
   }
   memoizedLoad = memoize(async (videoId) => {
@@ -205,12 +204,12 @@ class PlayScreen extends Component {
             this.props.miniPlayerOn();
           }}
         />
-        <AlbumArt url={!this.state.track ? "" : this.state.track.thumbnail.url} />
+        <AlbumArt url={!this.state.track.url ? "" : this.state.track.thumbnail.url} />
         <TrackDetails
-          title={!this.state.track ? "" : this.state.track.title.slice(0, 30)}
+          title={!this.state.track.title ? "" : this.state.track.title.slice(0, 30)}
         />
         <SeekBar
-          trackLength={!this.state.track ? 0 : this.state.track.duration}
+          trackLength={!this.state.track.duration ? 0 : this.state.track.duration}
         />
         <PlaybackControl
           paused={this.props.paused}
@@ -242,6 +241,7 @@ q
 }
 const mapStateToProps = state => ({
   paused: state.syncPausedReducer,
+  track: state.syncTrackReducer,
 });
 
 export default connect(mapStateToProps, actions)(PlayScreen)
