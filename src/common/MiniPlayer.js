@@ -3,64 +3,73 @@ import TrackPlayer from 'react-native-track-player';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import Slider from 'react-native-slider';
 import NavigationService from '../NavigationService';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
+import * as actions from '../actions'
+
 class MiniPlayer extends TrackPlayer.ProgressComponent {
     onUpPress() {
         NavigationService.navigate('Play');
-
+    }
+    onPressPause() {
+        this.props.syncPaused(true)
+        TrackPlayer.pause();
+    }
+    onPressPlay() {
+        this.props.syncPaused(false)
+        TrackPlayer.play();
     }
     render() {
         const { textStyle, containerStyle, buttonStyle, playButton, onMessagePress } = styles;
-        const { paused, onUpPress, onPressPause, onPressPlay, message, trackLength } = this.props;
-        console.log(this.props.miniPlayerState)
+        const { duration, title } = this.props.track;
+        console.log(this.props.paused)
         return (
             <View>
-            {this.props.miniPlayerState? 
-            
-            <View style={{
-                backgroundColor: 'pink',
-                width: '100%',
-                position: "absolute",
-                bottom: 80,
-            }
-            }>
-                <Slider
-                    disabled={true}
-                    maximumValue={trackLength}
-                    onSlidingComplete={async value => {
-                        await TrackPlayer.seekTo(value)
-                    }}
-                    value={this.state.position}
-                    style={styles.slider}
-                    minimumTrackTintColor='#fff'
-                    maximumTrackTintColor='rgba(255, 255, 255, 0.14)'
-                    thumbStyle={styles.thumb}
-                    trackStyle={styles.track}
-                />
-
-                <View style={containerStyle}>
-                    <TouchableOpacity onPress={this.onUpPress.bind(this)}>
-                        <Image style={buttonStyle}
-                            source={require('../img/ic_keyboard_arrow_up_white.png')} />
-                    </TouchableOpacity>
-                    <Text onPress={onMessagePress} style={textStyle} >
-                        {!message? '': message.toUpperCase()}
-                    </Text>
-                    {!paused ?
-                        <TouchableOpacity onPress={onPressPause}>
-                            <View style={playButton}>
-                                <Image source={require('../img/ic_pause_white_24pt.png')} />
-                            </View>
-                        </TouchableOpacity> :
-                        <TouchableOpacity onPress={onPressPlay}>
-                            <View style={playButton}>
-                                <Image source={require('../img/ic_play_arrow_white_24pt.png')} />
-                            </View>
-                        </TouchableOpacity>
+                {!this.props.miniPlayerState ?
+                    <View /> :
+                    <View style={{
+                        backgroundColor: 'pink',
+                        width: '100%',
+                        position: "absolute",
+                        bottom: 80,
                     }
-                </View>
-            </View> : <View/>
-            }</View>
+                    }>
+                        <Slider
+                            disabled={true}
+                            maximumValue={duration}
+                            onSlidingComplete={async value => {
+                                await TrackPlayer.seekTo(value)
+                            }}
+                            value={this.state.position}
+                            style={styles.slider}
+                            minimumTrackTintColor='#fff'
+                            maximumTrackTintColor='rgba(255, 255, 255, 0.14)'
+                            thumbStyle={styles.thumb}
+                            trackStyle={styles.track}
+                        />
+
+                        <View style={containerStyle}>
+                            <TouchableOpacity onPress={this.onUpPress.bind(this)}>
+                                <Image style={buttonStyle}
+                                    source={require('../img/ic_keyboard_arrow_up_white.png')} />
+                            </TouchableOpacity>
+                            <Text onPress={onMessagePress} style={textStyle} >
+                                {!title ? '' : title.toUpperCase()}
+                            </Text>
+                            {!this.props.paused ?
+                                <TouchableOpacity onPress={this.onPressPause.bind(this)}>
+                                    <View style={playButton}>
+                                        <Image source={require('../img/ic_pause_white_24pt.png')} />
+                                    </View>
+                                </TouchableOpacity> :
+                                <TouchableOpacity onPress={this.onPressPlay.bind(this)}>
+                                    <View style={playButton}>
+                                        <Image source={require('../img/ic_play_arrow_white_24pt.png')} />
+                                    </View>
+                                </TouchableOpacity>
+                            }
+                        </View>
+                    </View>
+                }</View>
 
 
         )
@@ -71,12 +80,12 @@ const styles = {
         height: 1
     },
     track: {
-        height: 2,
+        height: 1,
         borderRadius: 1,
     },
     thumb: {
-        width: 5,
-        height: 5,
+        width: 1,
+        height: 1,
         backgroundColor: 'white',
     },
     textStyle: {
@@ -109,6 +118,8 @@ const styles = {
     },
 }
 const mapStateToProps = state => ({
-    miniPlayerState: state.miniPlayerReducer
+    miniPlayerState: state.miniPlayerReducer,
+    track: state.syncTrackReducer,
+    paused: state.syncPausedReducer,
 });
-export default connect(mapStateToProps, null)(MiniPlayer);
+export default connect(mapStateToProps, actions)(MiniPlayer);

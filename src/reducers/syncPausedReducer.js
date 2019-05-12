@@ -1,17 +1,15 @@
-import { TURNON, TURNOFF } from '../actions/type';
+import { PAUSED} from '../actions/type'
+
 
 const initialState = true;
 
 export default function (state = initialState, action) {
     switch (action.type) {
-        case TURNON:
-            return state = true;
-
-        case TURNOFF:
-            return state = false;
-
+        case PAUSED:
+            return state = action.payload;
         default:
             return state;
 
     }
 }
+

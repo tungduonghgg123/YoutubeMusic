@@ -19,24 +19,21 @@ class PlayScreen extends Component {
     super(props);
     this.state = {
       track: null,
-      paused: true,
-      duration: 0,
       isLoading: false,
       shuffleOn: false,
       repeatOn: false,
       mode: 'youtube'
     };
   this.props.miniPlayerOff();
-
-    
-
   }
   onPressPause() {
-    this.setState({ paused: true });
+    // this.setState({ paused: true });
+    this.props.syncPaused(true)
     TrackPlayer.pause();
   }
   onPressPlay() {
-    this.setState({ paused: false })
+    // this.setState({ paused: false })
+    this.props.syncPaused(false)
     TrackPlayer.play();
   }
   onPressRepeat() {
@@ -120,10 +117,15 @@ class PlayScreen extends Component {
       }
       // console.log('---------------------')
       // console.log('track changed')
-      this.getTheTrackQueue()
+      // this.getTheTrackQueue()
       let track = await TrackPlayer.getTrack(data.nextTrack);
       this.setState({ track });
-      this.setState({ paused: false});
+      /**
+       * sync track to redux store:
+       */
+      this.props.syncTrack(track)
+      // this.setState({ paused: false});
+      this.props.syncPaused(false)
     });
     this.onQueueEnded = TrackPlayer.addEventListener('playback-queue-ended', async (data) => {
       console.log('queue ended')
@@ -132,11 +134,12 @@ class PlayScreen extends Component {
         this.onPressPlay()
         return;
       }
-      this.setState({ paused: true });
+      // this.setState({ paused: true });
+      this.props.syncPaused(true)
     });
     this.onPlaybackStateChange = TrackPlayer.addEventListener('playback-state', async (playbackState) => {
       
-      console.log(JSON.stringify(playbackState));
+      // console.log(JSON.stringify(playbackState));
       switch (playbackState.state) {
         case 'playing':
           this.setState({isLoading: false})
@@ -190,10 +193,11 @@ class PlayScreen extends Component {
     /**
      * `weird`: this will be invoked when transition.
      */
+    this.props.miniPlayerOn();
     this.onTrackChange.remove();
     this.onQueueEnded.remove();
     this.onPlaybackStateChange.remove();
-    this.props.miniPlayerOn();
+    
   }
   render() {
     return (
@@ -213,7 +217,7 @@ class PlayScreen extends Component {
           trackLength={!this.state.track ? 0 : this.state.track.duration}
         />
         <PlaybackControl
-          paused={this.state.paused}
+          paused={this.props.paused}
           shuffleOn={this.state.shuffleOn}
           repeatOn={this.state.repeatOn}
           onPressPause={this.onPressPause.bind(this)}
@@ -247,4 +251,8 @@ q
     );
   }
 }
-export default connect(null, actions)(PlayScreen)
+const mapStateToProps = state => ({
+  paused: state.syncPausedReducer,
+});
+
+export default connect(mapStateToProps, actions)(PlayScreen)
