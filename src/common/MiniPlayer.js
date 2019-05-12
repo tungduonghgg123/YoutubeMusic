@@ -6,6 +6,9 @@ import NavigationService from '../NavigationService';
 import { connect } from 'react-redux';
 import * as actions from '../actions'
 
+
+
+
 class MiniPlayer extends TrackPlayer.ProgressComponent {
     onUpPress() {
         NavigationService.navigate('Play');
@@ -19,19 +22,15 @@ class MiniPlayer extends TrackPlayer.ProgressComponent {
         TrackPlayer.play();
     }
     render() {
-        const { textStyle, containerStyle, buttonStyle, playButton, onMessagePress } = styles;
-        const { duration, title } = this.props.track;
+        const { textStyle, containerStyle, upButtonStyle, playButtonStyle, onMessagePress, miniPlayerStyle,
+            textContainerStyle
+        } = styles;
+        const { duration, title = 'tung duong textStyle, containerStyle, upButtonStyle, playButtonStyle, onMessagePress, miniPlayerStyle,textContainerStyle' } = this.props.track;
         return (
             <View>
                 {!this.props.miniPlayerState ?
                     <View /> :
-                    <View style={{
-                        backgroundColor: 'pink',
-                        width: '100%',
-                        position: "absolute",
-                        bottom: 80,
-                    }
-                    }>
+                    <View style={miniPlayerStyle}>
                         <Slider
                             disabled={true}
                             maximumValue={duration}
@@ -48,20 +47,25 @@ class MiniPlayer extends TrackPlayer.ProgressComponent {
 
                         <View style={containerStyle}>
                             <TouchableOpacity onPress={this.onUpPress.bind(this)}>
-                                <Image style={buttonStyle}
+                                <Image style={upButtonStyle}
                                     source={require('../img/ic_keyboard_arrow_up_white.png')} />
                             </TouchableOpacity>
-                            <Text onPress={onMessagePress} style={textStyle} >
-                                {!title ? '' : title.toUpperCase()}
-                            </Text>
+                            <TouchableOpacity onPress={this.onUpPress.bind(this)}>
+                                <View style={textContainerStyle}>
+                                    <Text onPress={onMessagePress} style={textStyle} >
+                                        {!title ? '' : title.toUpperCase()}
+                                    </Text>
+                                </View>
+                            </TouchableOpacity>
+
                             {!this.props.paused ?
                                 <TouchableOpacity onPress={this.onPressPause.bind(this)}>
-                                    <View style={playButton}>
+                                    <View style={playButtonStyle}>
                                         <Image source={require('../img/ic_pause_white_24pt.png')} />
                                     </View>
                                 </TouchableOpacity> :
                                 <TouchableOpacity onPress={this.onPressPlay.bind(this)}>
-                                    <View style={playButton}>
+                                    <View style={playButtonStyle}>
                                         <Image source={require('../img/ic_play_arrow_white_24pt.png')} />
                                     </View>
                                 </TouchableOpacity>
@@ -88,25 +92,32 @@ const styles = {
         backgroundColor: 'white',
     },
     textStyle: {
-        flex: 1,
         textAlign: 'center',
         color: 'rgba(255, 255, 255, 0.72)',
         fontWeight: 'bold',
         fontSize: 10,
     },
-    containerStyle: {
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        flexDirection: 'row',
+    textContainerStyle: {
+        width: 300,
         paddingLeft: 12,
         paddingRight: 12,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    containerStyle: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'row',
+        height: 40,
+        // paddingLeft: 12,
+        // paddingRight: 12,
         paddingTop: 5,
         paddingBottom: 5
     },
-    buttonStyle: {
-        opacity: 0.72,
+    upButtonStyle: {
+
     },
-    playButton: {
+    playButtonStyle: {
         height: 30,
         width: 30,
         borderWidth: 1,
@@ -115,6 +126,12 @@ const styles = {
         alignItems: 'center',
         justifyContent: 'center',
     },
+    miniPlayerStyle: {
+        backgroundColor: '#84BFE3',
+        width: '100%',
+        position: "absolute",
+        bottom: 80,
+    }
 }
 const mapStateToProps = state => ({
     miniPlayerState: state.miniPlayerReducer,

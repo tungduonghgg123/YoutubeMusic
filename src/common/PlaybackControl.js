@@ -10,7 +10,6 @@ import {
 
 class PlaybackControl extends TrackPlayer.ProgressComponent {
   async repeatAndPlay() {
-    console.log('ahihi')
     await TrackPlayer.seekTo(0);
     this.props.onPressPlay()
   }
@@ -29,29 +28,23 @@ class PlaybackControl extends TrackPlayer.ProgressComponent {
       shuffleDisabled } = this.props;
     return (
       <View style={styles.container}>
-      {/* Shuffle */}
+        {/* Shuffle */}
         <TouchableOpacity activeOpacity={0.0} onPress={onPressShuffle} disabled={shuffleDisabled}>
           <Image style={[styles.secondaryControl, shuffleOn ? [] : styles.off]}
             source={require('../img/ic_shuffle_white.png')} />
         </TouchableOpacity>
 
         <View style={{ width: 40 }} />
-      {/* Backward */}
-        <TouchableOpacity onPress= {() => {
-          /**
-          * repeat track when if it reached the 4th second
-          else use the onBack() method passed from the parent component.
-          *  */ 
-          this.state.position > 3 ? this.repeatAndPlay(): onBack() 
-        }} 
-        
-        disabled={backwardDisabled}>
+        {/* Backward */}
+        <TouchableOpacity 
+          onPress={() => {this.state.position > 3 ? this.repeatAndPlay() : onBack()}}
+          disabled={backwardDisabled}>
           <Image style={[backwardDisabled && { opacity: 0.3 }]}
             source={require('../img/ic_skip_previous_white_36pt.png')} />
         </TouchableOpacity>
 
         <View style={{ width: 20 }} />
-      {/* Play/pause */}
+        {/* Play/pause */}
         {!paused ?
           <TouchableOpacity onPress={onPressPause}>
             <View style={styles.playButton}>
