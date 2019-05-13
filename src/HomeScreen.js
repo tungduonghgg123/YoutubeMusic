@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { ScrollView, Image, SafeAreaView, Text, View, ActivityIndicator, Button } from 'react-native';
-import { ListItem } from 'react-native-elements';
+import { SafeAreaView, Text } from 'react-native';
 import axios from 'axios';
 import moment from 'moment';
 import { connect } from 'react-redux';
@@ -16,12 +15,6 @@ class HomeScreen extends Component {
       listItem: []
     };
   }
-
-  isCloseToBottom({ layoutMeasurement, contentOffset, contentSize }) {
-    const paddingToBottom = 20;
-    return layoutMeasurement.height + contentOffset.y >=
-      contentSize.height - paddingToBottom;
-  };
 
   getVideoDetails(videoId) {
     return axios.get('https://www.googleapis.com/youtube/v3/videos', {
