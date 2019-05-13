@@ -248,6 +248,7 @@ class PlayScreen extends Component {
         key: process.env.YOUTUBE_API_KEY
       }
     }).then(response => {
+      const videoIds = response.data.items.map(item => item.id.videoId)
       this.getVideoDetails(videoIds.join()).then(videos => {
         videos.map(video => {
           const duration = moment.duration(video.contentDetails.duration)
