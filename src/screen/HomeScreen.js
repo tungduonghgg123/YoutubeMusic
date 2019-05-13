@@ -4,7 +4,7 @@ import { ListItem } from 'react-native-elements';
 import axios from 'axios';
 import moment from 'moment';
 import {connect} from 'react-redux';
-import * as actions from './actions'
+import * as actions from '../redux/actions'
 
 
  class HomeScreen extends Component {

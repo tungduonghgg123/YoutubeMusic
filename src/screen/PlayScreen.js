@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import TrackPlayer from 'react-native-track-player';
-import { Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl, Spinner } from './common'
+import { Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl, Spinner } from '../commonComponents'
 import { TextInput, Button, SafeAreaView, Text, View,Alert } from 'react-native';
 import axios from 'axios';
 import memoize from "memoize-one";
 import moment from 'moment';
-import localTracks from './storage/tracks'
+import localTracks from '../storage/tracks'
 //redux
 import {connect} from 'react-redux';
-import * as actions from './actions'
+import * as actions from '../redux/actions'
 
 
 
@@ -205,6 +205,9 @@ class PlayScreen extends Component {
         <AlbumArt url={!this.props.track.url ? "" : this.props.track.thumbnail.url} />
         <TrackDetails
           title={!this.props.track.title ? "" : this.props.track.title}
+          onLayout={(event) => {
+            console.log(event)
+          }}
         />
         <SeekBar
           trackLength={!this.props.track.duration ? 0 : this.props.track.duration}
@@ -225,7 +228,6 @@ class PlayScreen extends Component {
         {this.props.loading ?
           <Spinner /> : <View style={{flex:1}} />
         }
-
        
         {/* <Button title='remove current' onPress={async() => {
           await TrackPlayer.remove("Llw9Q6akRo4")

@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import TrackPlayer from 'react-native-track-player';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import Slider from 'react-native-slider';
-import NavigationService from '../NavigationService';
+import NavigationService from '../service/NavigationService';
 import { connect } from 'react-redux';
-import * as actions from '../actions'
+import * as actions from '../redux/actions'
 import TextTicker from 'react-native-text-ticker'
 
 
@@ -27,6 +27,7 @@ class MiniPlayer extends TrackPlayer.ProgressComponent {
             textContainerStyle
         } = styles;
         const { duration, title } = this.props.track;
+        // console.log(this.props.tab)
         return (
             <View>
                 {!this.props.miniPlayerState ?
@@ -143,5 +144,7 @@ const mapStateToProps = state => ({
     miniPlayerState: state.miniPlayerReducer,
     track: state.syncTrackReducer,
     paused: state.syncPausedReducer,
+    tab: state.tabMeasurementReducer
+
 });
 export default connect(mapStateToProps, actions)(MiniPlayer);

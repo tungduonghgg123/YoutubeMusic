@@ -6,10 +6,12 @@ import HomeScreen from './HomeScreen';
 import NextScreen from './NextScreen.js';
 import TrackPlayer from 'react-native-track-player';
 import { Icon } from 'react-native-elements'
-import MiniPlayer from './common/MiniPlayer'
+import MiniPlayer from '../commonComponents/MiniPlayer'
 import { Root } from "native-base";
-import NavigationService from './NavigationService';
-import { YellowBox, Image } from 'react-native';
+import NavigationService from '../service/NavigationService';
+import { YellowBox } from 'react-native';
+
+
 YellowBox.ignoreWarnings(['Remote debugger']);
 
 /**
@@ -46,7 +48,7 @@ const TabNavigator = createBottomTabNavigator({
     },
 
   })
-
+export {TabNavigator}
 const MainNavigator = createStackNavigator({
   Tabs: TabNavigator,
   Play: {
@@ -91,8 +93,7 @@ export default class Main extends Component {
         <AppContainer ref={navigatorRef => {
           NavigationService.setTopLevelNavigator(navigatorRef);
         }} />
-        <MiniPlayer
-        />
+        <MiniPlayer/>
       </Root>
 
     );

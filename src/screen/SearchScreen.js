@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { ScrollView, Image, SafeAreaView, Text, View, ActivityIndicator } from 'react-native';
 import { ListItem, SearchBar } from "react-native-elements";
-import { YoutubeSearchItem, YoutubeSeachScroll } from './common'
+import { YoutubeSearchItem, YoutubeSeachScroll } from '../commonComponents'
 import axios from 'axios';
 import moment from 'moment';
 
