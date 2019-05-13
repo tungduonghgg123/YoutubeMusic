@@ -9,9 +9,7 @@ import localTracks from './storage/tracks'
 //redux
 import { connect } from 'react-redux';
 import * as actions from './actions'
-
-import NextComponent from './NextComponent';
-
+import { Item, ItemsListVertical } from './common'
 
 class PlayScreen extends Component {
   constructor(props) {
@@ -19,7 +17,10 @@ class PlayScreen extends Component {
     this.state = {
       shuffleOn: false,
       repeatOn: false,
-      mode: 'youtube'
+      mode: 'youtube',
+      nextPageToken: '',
+      isLoading: false,
+      listItem: []
     };
     this.props.miniPlayerOff();
   }
@@ -67,10 +68,6 @@ class PlayScreen extends Component {
     await TrackPlayer.skip(track.id)
     this.onPressPlay();
   }
-  /**
-   * 
-   * @param {youtube video id} videoId 
-   */
   initializeTrack(videoId) {
     return axios.get('https://www.googleapis.com/youtube/v3/videos', {
       params: {
@@ -103,7 +100,7 @@ class PlayScreen extends Component {
 
 
   async componentDidMount() {
-
+    this.getVideos(this.props.navigation.getParam('videoId'), 7);
     this.onTrackChange = TrackPlayer.addEventListener('playback-track-changed', async (data) => {
       if (data.nextTrack === 'helperTrack') {
         console.log('helper track ON')
@@ -191,10 +188,65 @@ class PlayScreen extends Component {
     this.onPlaybackStateChange.remove();
 
   }
+  isCloseToEdge({ layoutMeasurement, contentOffset, contentSize }) {
+    const paddingToBottom = 20;
+    return layoutMeasurement.height + contentOffset.y >=
+      contentSize.height - paddingToBottom;
+  };
+
+  getVideoDetails(videoId) {
+    return axios.get('https://www.googleapis.com/youtube/v3/videos', {
+      params: {
+        part: "snippet,statistics,contentDetails",
+        id: videoId,
+        fields: 'items(id,snippet,statistics(viewCount),contentDetails(duration))',
+        key: process.env.YOUTUBE_API_KEY
+      }
+    }).then((response) => {
+      return response.data.items
+    }).catch((error) => {
+      console.log(error);
+    });
+  }
+
+  getVideos(relatedToVideoId, maxResults, pageToken) {
+    this.setState({ isLoading: true })
+    axios.get('https://www.googleapis.com/youtube/v3/search', {
+      params: {
+        part: 'snippet',
+        maxResults: maxResults,
+        type: 'video',
+        relatedToVideoId: relatedToVideoId,
+        pageToken: pageToken,
+        key: process.env.YOUTUBE_API_KEY
+      }
+    }).then(response => {
+      this.getVideoDetails(videoIds.join()).then(videos => {
+        videos.map(video => {
+          const duration = moment.duration(video.contentDetails.duration)
+          video.contentDetails.duration = duration.asHours() < 1 ? moment(duration._data).format("m:ss") : moment(duration._data).format("H:mm:ss")
+          video.statistics.viewCount = numberFormatter(video.statistics.viewCount);
+          this.setState({ listItem: [...this.state.listItem, video] })
+        })
+      })
+      this.setState({
+        nextPageToken: response.data.nextPageToken,
+        isLoading: false
+      })
+    })
+  };
+
   render() {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: 'grey' }}>
-        <ScrollView stickyHeaderIndices={[0, 2]}>
+        <ScrollView stickyHeaderIndices={[0, 2]}
+          onScroll={({ nativeEvent }) => {
+            if (!this.state.isLoading && this.isCloseToEdge(nativeEvent) && this.state.listItem.length < 30 && this.state.listItem.length != 0) {
+              this.getVideos(this.props.navigation.getParam('videoId'), 1, this.state.nextPageToken)
+            }
+          }}
+          scrollEventThrottle={5000}
+        >
           <Header
             message="playing from Youtube"
             onQueuePress={this.getTheTrackQueue.bind(this)}
@@ -228,7 +280,20 @@ class PlayScreen extends Component {
           {this.props.loading ?
             <Spinner /> : <View style={{ flex: 1 }} />
           }
-          <NextComponent videoId={this.props.navigation.getParam('videoId')}></NextComponent>
+          <ItemsListVertical isLoading={this.state.isLoading}>
+            {this.state.listItem.map((item, itemKey) => {
+              return (
+                <Item
+                  item={item}
+                  key={itemKey}
+                  onPress={() => {
+                    this.props.navigation.navigate('Play', { videoId: item.id })
+
+                  }}
+                />
+              )
+            })}
+          </ItemsListVertical>
         </ScrollView>
       </SafeAreaView>
     );
@@ -241,3 +306,19 @@ const mapStateToProps = state => ({
 });
 
 export default connect(mapStateToProps, actions)(PlayScreen)
+
+function numberFormatter(num, digits) {
+  var si = [
+    { value: 1, symbol: "" },
+    { value: 1E3, symbol: "K" },
+    { value: 1E6, symbol: "M" },
+    { value: 1E9, symbol: "B" }
+  ];
+  for (var i = si.length - 1; i > 0; i--) {
+    if (num >= si[i].value) {
+      break;
+    }
+  }
+  var rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
+  return (num / si[i].value).toFixed(digits).replace(rx, "$1") + si[i].symbol;
+}
