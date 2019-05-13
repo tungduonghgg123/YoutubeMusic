@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import TrackPlayer from 'react-native-track-player';
 import { Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl, Spinner } from '../commonComponents'
-import { SafeAreaView, View } from 'react-native';
+import { SafeAreaView, View, Button } from 'react-native';
 import axios from 'axios';
 import memoize from "memoize-one";
 import moment from 'moment';
@@ -16,6 +16,7 @@ import * as actions from '../redux/actions'
 
 class PlayScreen extends Component {
   constructor(props) {
+    console.log('initialized')
     super(props);
     this.state = {
       shuffleOn: false,
@@ -112,39 +113,43 @@ class PlayScreen extends Component {
       /**
        * sync track to redux store:
        */
-      this.props.syncTrack(track)
-      this.props.syncPaused(false)
+      if (track) {
+        this.props.syncTrack(track)
+        this.props.syncPaused(false)
+      } else {
+        this.props.syncPaused(true)
+      }
     });
     this.onQueueEnded = TrackPlayer.addEventListener('playback-queue-ended', async (data) => {
-      console.log('queue ended')
+      console.log('queue ended event')
       if (this.state.repeatOn) {
         TrackPlayer.seekTo(0);
         this.onPressPlay()
         return;
       }
+      // let current = await TrackPlayer.getPosition();
+      // let buffered = await TrackPlayer.getBufferedPosition();
+      // if(current > buffered) {
+      //   TrackPlayer.play();
+      //   console.log('havent ended yet, current > buffered, need to loading ');
+      //   console.log(current)
+      //   console.log(buffered )
+      // }
       this.props.syncPaused(true)
     });
     this.onPlaybackStateChange = TrackPlayer.addEventListener('playback-state', async (playbackState) => {
 
-      console.log(JSON.stringify(playbackState));
       switch (playbackState.state) {
-        case 'playing':
-        case 3:
+        case TrackPlayer.STATE_PLAYING:
           this.props.syncLoading(false);
-          /**
-           * make sure that when music is playing, the play button change accrodingly.
-           */
-          this.onPressPlay();
+          console.log('playing')
+          // this.onPressPlay()
           break;
-        case 'paused':
-        case 2:
-          /**
-           * make sure that when music is playing, the play button change accrodingly.
-           */
-          this.onPressPause();
+        case TrackPlayer.STATE_PAUSED:
+        console.log('paused')
           break;
-        case 'loading':
-        case 6:
+        case TrackPlayer.STATE_BUFFERING:
+          console.log('buffering')
 
           // if(this.prevPlaybackState === 'playing'){
           //   let helperTrack = {
@@ -160,6 +165,13 @@ class PlayScreen extends Component {
           // }
 
           break;
+        case TrackPlayer.STATE_NONE:
+          console.log('state none')
+          break;
+        case TrackPlayer.STATE_STOPPED:
+          console.log('state stopped')
+          break;
+
         default:
           break;
 
@@ -171,9 +183,6 @@ class PlayScreen extends Component {
     }
     this.playFromYoutube()
 
-  }
-  async componentDidUpdate() {
-    this.playFromYoutube()
   }
   playFromYoutube() {
     this.memoizedLoad(this.props.navigation.getParam('videoId'));
@@ -236,6 +245,21 @@ class PlayScreen extends Component {
         {this.props.loading ?
           <Spinner /> : <View style={{ flex: 1 }} />
         }
+        <Button
+          title='get current position'
+          onPress={async() => { 
+            let position = await TrackPlayer.getPosition() 
+            let bufferedPosition = await TrackPlayer.getBufferedPosition()
+            console.log(bufferedPosition)
+            console.log(position)
+
+          }}
+        />
+        <Button
+          title='stop'
+          onPress={() => { TrackPlayer.stop() }}
+        />
+    
 
         {/* <Button title='remove current' onPress={async() => {
           await TrackPlayer.remove("Llw9Q6akRo4")

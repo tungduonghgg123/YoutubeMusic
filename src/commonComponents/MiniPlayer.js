@@ -49,7 +49,8 @@ class MiniPlayer extends TrackPlayer.ProgressComponent {
         const { textStyle, containerStyle, upButtonStyle, playButtonStyle, miniPlayerStyle,
             textContainerStyle
         } = styles;
-        const { duration, title } = this.props.track;
+        
+        const { duration, title } = this.props.track? this.props.track: {} ;
         
         return (
             <View>
@@ -58,7 +59,7 @@ class MiniPlayer extends TrackPlayer.ProgressComponent {
                     <View style={miniPlayerStyle}>
                         <Slider
                             disabled={true}
-                            maximumValue={duration}
+                            maximumValue={duration? duration:0}
                             onSlidingComplete={async value => { await TrackPlayer.seekTo(value) }}
                             value={this.state.position}
                             style={styles.slider}

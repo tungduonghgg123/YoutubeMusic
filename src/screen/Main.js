@@ -3,10 +3,7 @@ import {SafeAreaView, YellowBox} from 'react-native'
 import {createStackNavigator,createAppContainer, 
     createMaterialTopTabNavigator, MaterialTopTabBar
 } from 'react-navigation'
-import PlayScreen from './PlayScreen';
-import SearchScreen from './SearchScreen'
-import HomeScreen from './HomeScreen';
-import NextScreen from './NextScreen.js';
+import { PlayScreen, SearchScreen, NextScreen, HomeScreen} from './'
 import TrackPlayer from 'react-native-track-player';
 import { Icon } from 'react-native-elements'
 import MiniPlayer from '../commonComponents/MiniPlayer'
