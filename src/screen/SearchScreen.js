@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { ScrollView, Image, SafeAreaView, Text, View, ActivityIndicator } from 'react-native';
-import { ListItem, SearchBar } from "react-native-elements";
+import {  View } from 'react-native';
+import {  SearchBar } from "react-native-elements";
 import { YoutubeSearchItem, YoutubeSeachScroll } from '../commonComponents'
 import axios from 'axios';
 import moment from 'moment';
-
+import { BACKGROUND_COLOR, COMMON_COMPONENTS_COLOR, TEXT_COLOR} from '../style'
 function numberFormatter(num, digits) {
   var si = [
     { value: 1, symbol: "" },
@@ -84,13 +84,13 @@ export default class SearchScreen extends Component {
 
   render() {
     return (
-      <View style={{ flex: 1, backgroundColor: '#FBCD17', height: '100%' }}>
+      <View style={{ flex: 1, backgroundColor: BACKGROUND_COLOR, height: '100%' }}>
         <SearchBar
           placeholder="Search Youtube Music"
           containerStyle={{ backgroundColor: null, borderTopWidth: 0, borderBottomWidth: 0, paddingTop: 10, paddingBottom: 2 }}
           inputContainerStyle={{backgroundColor: 'white'}}
-          inputStyle={{color: '#4F0645'}}
-          placeholderTextColor= '#4F0645'
+          inputStyle={{color: TEXT_COLOR}}
+          placeholderTextColor= {COMMON_COMPONENTS_COLOR}
           round={true}
           /**
           this line leads to bug!!!!!!! 

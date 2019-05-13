@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Image, TouchableOpacity, Dimensions } from 'react-native'
+import { BACKGROUND_COLOR} from '../style'
 
 const AlbumArt = ({ onPress, url, path }) => {
   const { container, image } = styles;
@@ -31,6 +32,7 @@ const styles = {
     borderWidth: 1,
     borderRadius: 15,
     borderBottomWidth: 0,
+    borderColor: BACKGROUND_COLOR
   },
 };
 export { AlbumArt };

@@ -6,6 +6,7 @@ import NavigationService from '../service/NavigationService';
 import { connect } from 'react-redux';
 import * as actions from '../redux/actions'
 import TextTicker from 'react-native-text-ticker'
+import { MINIPLAYER_BACKGROUND_COLOR} from '../style'
 
 
 
@@ -134,7 +135,7 @@ const styles = {
         justifyContent: 'center',
     },
     miniPlayerStyle: {
-        backgroundColor: '#84BFE3',
+        backgroundColor: MINIPLAYER_BACKGROUND_COLOR,
         width: '100%',
         position: "absolute",
         bottom: 0,

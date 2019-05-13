@@ -13,6 +13,7 @@ import MiniPlayer from '../commonComponents/MiniPlayer'
 import { Root } from "native-base";
 import NavigationService from '../service/NavigationService';
 import { YellowBox } from 'react-native';
+import { BACKGROUND_COLOR} from '../style'
 
 
 YellowBox.ignoreWarnings(['Remote debugger']);
@@ -25,25 +26,23 @@ For now, just let yellowBoxes on
 
 function SafeAreaMaterialTopTabBar (props) {
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{backgroundColor: BACKGROUND_COLOR}}>
       <MaterialTopTabBar {...props} />
     </SafeAreaView>
   )
 }
 const TabNavigator = createMaterialTopTabNavigator({
-  
-  
   Next: { screen: NextScreen },
   Home: {
     screen: HomeScreen,
     navigationOptions: {
-      tabBarIcon: <Icon name='home' color='black' />
+      tabBarIcon: <Icon name='home'  />
     }
   },
   Search: { 
     screen: SearchScreen ,
     navigationOptions: {
-      tabBarIcon: <Icon name='search' color='black' />
+      tabBarIcon: <Icon name='search'  />
     }
   },
 }, {
@@ -56,9 +55,15 @@ const TabNavigator = createMaterialTopTabNavigator({
     tabBarOptions: {
       showLabel: false,
       showIcon: true,
-      activeBackgroundColor: 'yellow',
+      style: {
+        backgroundColor: BACKGROUND_COLOR
+      },
+      indicatorStyle: {
+        backgroundColor: 'pink'
+      },
     },
     tabBarComponent: SafeAreaMaterialTopTabBar,
+    
 
   })
 export {TabNavigator}

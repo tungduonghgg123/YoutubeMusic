@@ -1,0 +1,4 @@
+export const BACKGROUND_COLOR = '#FBCD17'
+export const TEXT_COLOR = '#4F0645'
+export const COMMON_COMPONENTS_COLOR = '#4F0645'
+export const MINIPLAYER_BACKGROUND_COLOR = '#A16C34'

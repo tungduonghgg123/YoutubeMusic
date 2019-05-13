@@ -5,6 +5,7 @@ import axios from 'axios';
 import moment from 'moment';
 import {connect} from 'react-redux';
 import * as actions from '../redux/actions'
+import { BACKGROUND_COLOR} from '../style'
 
 
  class HomeScreen extends Component {
@@ -75,7 +76,7 @@ import * as actions from '../redux/actions'
   
   render() {
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: 'gray', height: '100%' }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: BACKGROUND_COLOR, height: '100%' }}>
 
         <ScrollView
           style={{ paddingTop: 7 }}

@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import TrackPlayer from 'react-native-track-player';
 import { Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl, Spinner } from '../commonComponents'
-import { TextInput, Button, SafeAreaView, Text, View,Alert } from 'react-native';
+import {  SafeAreaView, View } from 'react-native';
 import axios from 'axios';
 import memoize from "memoize-one";
 import moment from 'moment';
 import localTracks from '../storage/tracks'
+import { BACKGROUND_COLOR} from '../style'
 //redux
 import {connect} from 'react-redux';
 import * as actions from '../redux/actions'
@@ -193,7 +194,7 @@ class PlayScreen extends Component {
   }
   render() {
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: 'grey' }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: BACKGROUND_COLOR }}>
         <Header
           message="playing from Youtube"
           onQueuePress={this.getTheTrackQueue.bind(this)}
