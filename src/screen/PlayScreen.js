@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import TrackPlayer from 'react-native-track-player';
 import { Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl, Spinner } from '../commonComponents'
-import {  SafeAreaView, View } from 'react-native';
+import { SafeAreaView, View } from 'react-native';
 import axios from 'axios';
 import memoize from "memoize-one";
 import moment from 'moment';
 import localTracks from '../storage/tracks'
-import { BACKGROUND_COLOR} from '../style'
+import { BACKGROUND_COLOR } from '../style'
 //redux
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import * as actions from '../redux/actions'
 
 
@@ -22,7 +22,7 @@ class PlayScreen extends Component {
       repeatOn: false,
       mode: 'youtube'
     };
-  this.props.miniPlayerOff();
+    this.props.miniPlayerOff();
   }
   onPressPause() {
     TrackPlayer.pause();
@@ -54,7 +54,7 @@ class PlayScreen extends Component {
       return;
     /**
      * pause Track Player before loading and playing new Track.
-     *  */  
+     *  */
     this.onPressPause()
     this.props.syncLoading(true)
     let track = await this.initializeTrack(videoId)
@@ -99,14 +99,9 @@ class PlayScreen extends Component {
     })
       .catch(error => console.log(error))
   }
-  
-  
-  
-
   async componentDidMount() {
-
     this.onTrackChange = TrackPlayer.addEventListener('playback-track-changed', async (data) => {
-      if(data.nextTrack === 'helperTrack') {
+      if (data.nextTrack === 'helperTrack') {
         console.log('helper track ON')
         return;
       }
@@ -130,15 +125,27 @@ class PlayScreen extends Component {
       this.props.syncPaused(true)
     });
     this.onPlaybackStateChange = TrackPlayer.addEventListener('playback-state', async (playbackState) => {
-      
+
       console.log(JSON.stringify(playbackState));
       switch (playbackState.state) {
         case 'playing':
-          // this.setState({isLoading: false})
-          this.props.syncLoading(false)
+        case 3:
+          this.props.syncLoading(false);
+          /**
+           * make sure that when music is playing, the play button change accrodingly.
+           */
+          this.onPressPlay();
+          break;
+        case 'paused':
+        case 2:
+          /**
+           * make sure that when music is playing, the play button change accrodingly.
+           */
+          this.onPressPause();
           break;
         case 'loading':
-          
+        case 6:
+
           // if(this.prevPlaybackState === 'playing'){
           //   let helperTrack = {
           //     id: 'helperTrack', 
@@ -151,11 +158,11 @@ class PlayScreen extends Component {
           //   await TrackPlayer.skipToPrevious();
           //   await TrackPlayer.remove(helperTrack.id)
           // }
-            
+
           break;
         default:
           break;
-        
+
       }
       this.prevPlaybackState = playbackState.state;
     })
@@ -163,7 +170,7 @@ class PlayScreen extends Component {
       console.log('remote pause')
     }
     this.playFromYoutube()
-    
+
   }
   async componentDidUpdate() {
     this.playFromYoutube()
@@ -186,11 +193,11 @@ class PlayScreen extends Component {
     /**
      * `weird`: this will be invoked when transition.
      */
-    
+
     this.onTrackChange.remove();
     this.onQueueEnded.remove();
     this.onPlaybackStateChange.remove();
-    
+
   }
   render() {
     return (
@@ -227,9 +234,9 @@ class PlayScreen extends Component {
           onBack={this.onPressBack.bind(this)}
         />
         {this.props.loading ?
-          <Spinner /> : <View style={{flex:1}} />
+          <Spinner /> : <View style={{ flex: 1 }} />
         }
-       
+
         {/* <Button title='remove current' onPress={async() => {
           await TrackPlayer.remove("Llw9Q6akRo4")
 

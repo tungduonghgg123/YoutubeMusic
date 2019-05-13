@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import TrackPlayer from 'react-native-track-player';
-import { View, SafeAreaView, Image, TouchableOpacity } from 'react-native';
+import { View, SafeAreaView, Image, TouchableOpacity, Keyboard } from 'react-native';
 import Slider from 'react-native-slider';
 import NavigationService from '../service/NavigationService';
 import { connect } from 'react-redux';
@@ -12,6 +12,18 @@ import { MINIPLAYER_BACKGROUND_COLOR} from '../style'
 
 
 class MiniPlayer extends TrackPlayer.ProgressComponent {
+    constructor(props){
+        super(props);
+        this.state = {
+            keyboardDidShow: false
+        }
+    }
+    _keyboardDidShow(){
+        this.setState({keyboardDidShow: true})
+    }
+    _keyboardDidHide(){
+        this.setState({keyboardDidShow: false})
+    }
     onUpPress() {
         NavigationService.navigate('Play');
     }
@@ -23,15 +35,25 @@ class MiniPlayer extends TrackPlayer.ProgressComponent {
         this.props.syncPaused(false)
         TrackPlayer.play();
     }
+    componentDidMount() {
+        this.keyboardDidShowListener = Keyboard.addListener(
+            'keyboardDidShow',
+            this._keyboardDidShow.bind(this),
+          );
+          this.keyboardDidHideListener = Keyboard.addListener(
+            'keyboardDidHide',
+            this._keyboardDidHide.bind(this),
+          );
+    }
     render() {
         const { textStyle, containerStyle, upButtonStyle, playButtonStyle, miniPlayerStyle,
             textContainerStyle
         } = styles;
         const { duration, title } = this.props.track;
-        // console.log(this.props.tab)
+        
         return (
             <View>
-                {!this.props.miniPlayerState ?
+                {!this.props.miniPlayerState || this.state.keyboardDidShow ?
                     <View /> :
                     <View style={miniPlayerStyle}>
                         <Slider

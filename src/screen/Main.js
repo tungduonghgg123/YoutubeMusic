@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {SafeAreaView} from 'react-native'
+import {SafeAreaView, YellowBox} from 'react-native'
 import {createStackNavigator,createAppContainer, 
     createMaterialTopTabNavigator, MaterialTopTabBar
 } from 'react-navigation'
@@ -12,11 +12,11 @@ import { Icon } from 'react-native-elements'
 import MiniPlayer from '../commonComponents/MiniPlayer'
 import { Root } from "native-base";
 import NavigationService from '../service/NavigationService';
-import { YellowBox } from 'react-native';
 import { BACKGROUND_COLOR} from '../style'
 
 
 YellowBox.ignoreWarnings(['Remote debugger']);
+YellowBox.ignoreWarnings(['Warning: ViewPagerAndroid has been extracted']);
 
 /**
  * `RedBoxes and YellowBoxes are automatically disabled in release (production) builds.`
