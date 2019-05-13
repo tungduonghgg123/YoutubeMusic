@@ -3,11 +3,11 @@ import { ScrollView, Image, SafeAreaView, Text, View, ActivityIndicator, Button 
 import { ListItem } from 'react-native-elements';
 import axios from 'axios';
 import moment from 'moment';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import * as actions from './actions'
+import { Item, ItemsListVertical } from './common'
 
-
- class HomeScreen extends Component {
+class HomeScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -15,8 +15,6 @@ import * as actions from './actions'
       isLoading: false,
       listItem: []
     };
-    
-    
   }
 
   isCloseToBottom({ layoutMeasurement, contentOffset, contentSize }) {
@@ -40,8 +38,8 @@ import * as actions from './actions'
     });
   }
 
-  onGetVideos(maxResults, pageToken) {
-    this.setState({isLoading: true})
+  getVideos(maxResults, pageToken) {
+    this.setState({ isLoading: true })
     axios.get('https://www.googleapis.com/youtube/v3/videos', {
       params: {
         part: 'snippet',
@@ -69,61 +67,32 @@ import * as actions from './actions'
   };
 
   componentDidMount() {
-    this.onGetVideos(7);
-
+    this.getVideos(7);
   }
-  
+
   render() {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: 'gray', height: '100%' }}>
-
         <Text style={{ margin: 5, fontSize: 15, fontWeight: 'bold', textAlign: 'center' }}>Home</Text>
-        <ScrollView
-          style={{ paddingTop: 7 }}
-          onScroll={({ nativeEvent }) => {
-            if (this.isCloseToBottom(nativeEvent) && !this.state.isLoading && this.state.listItem.length < 50 && this.state.listItem.length != 0) {
-              this.onGetVideos(5, this.state.nextPageToken)
-            }
+        <ItemsListVertical
+          isLoading={this.state.isLoading}
+          onCloseToEdge={() => {
+            if (!this.state.isLoading && this.state.listItem.length < 50 && this.state.listItem.length != 0)
+              this.getVideos(5, this.state.nextPageToken)
           }}
-          scrollEventThrottle={5000}
         >
-          {this.state.listItem.map((item, key) => {
+          {this.state.listItem.map((item, itemKey) => {
             return (
-              <ListItem
-                key={key}
-                containerStyle={{ alignItems: 'flex-start', backgroundColor: null, paddingTop: 2, paddingBottom: 2 }}
-                leftElement={
-                  <View style={{}}>
-                    <Image
-                      resizeMode='contain'
-                      style={{ width: 160, height: 100 }}
-                      source={{ uri: item.snippet.thumbnails.medium.url }}
-                    />
-                    <Text style={{ position: 'absolute', bottom: 7, right: 5, backgroundColor: 'black', color: 'white', opacity: 0.7, padding: 2, borderRadius: 2, overflow: 'hidden', fontSize: 12 }}>
-                      {item.contentDetails.duration}
-                    </Text>
-                  </View>
-                }
-                title={item.snippet.title}
-                titleStyle={{ color: 'white' }}
-                titleProps={{ numberOfLines: 3 }}
-                subtitle={
-                  <View>
-                    <Text numberOfLines={1} >{item.snippet.channelTitle}</Text>
-                    <Text>{item.statistics.viewCount + ' views'}</Text>
-                  </View>
-                }
-                subtitleStyle={{ color: 'black', fontSize: 11 }}
-                pad={10}
+              <Item
+                item={item}
+                key={itemKey}
                 onPress={() => {
-                  // global.videoId = item.id
                   this.props.navigation.navigate('Play', { videoId: item.id })
                 }}
               />
             )
           })}
-          <ActivityIndicator size='large' animating={this.state.isLoading} />
-        </ScrollView>
+        </ItemsListVertical>
       </SafeAreaView >
     );
   }

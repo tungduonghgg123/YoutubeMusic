@@ -6,16 +6,13 @@ function isCloseToEdge({ layoutMeasurement, contentOffset, contentSize }) {
     return layoutMeasurement.height + contentOffset.y >=
         contentSize.height - paddingToBottom;
 };
-const YoutubeSeachScroll = ({ children, onSearch, searchInput, isLoading, listItem, nextPageToken }) => {
+const ItemsListVertical = ({ children, isLoading, onCloseToEdge }) => {
     return (
         <ScrollView
             style={{ paddingTop: 7 }}
             onScroll={({ nativeEvent }) => {
-                if (isCloseToEdge(nativeEvent) &&
-                    !isLoading && 
-                    listItem.length < 50 &&
-                    listItem.length != 0) {
-                    onSearch(searchInput, 5, nextPageToken)
+                if (isCloseToEdge(nativeEvent)) {
+                    onCloseToEdge();
                 }
             }}
             scrollEventThrottle={5000}
@@ -24,6 +21,6 @@ const YoutubeSeachScroll = ({ children, onSearch, searchInput, isLoading, listIt
             <ActivityIndicator size='large' animating={isLoading} />
         </ScrollView>
     )
-}   
+}
 
-export { YoutubeSeachScroll }
+export { ItemsListVertical }

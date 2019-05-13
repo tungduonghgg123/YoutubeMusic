@@ -24,7 +24,7 @@ const TabNavigator = createBottomTabNavigator({
   Search: { screen: SearchScreen },
   Next: { screen: NextScreen },
 }, {
-    initialRouteName: 'Home',
+    initialRouteName: 'Search',
     navigationOptions: {
       header: null,
       headerLeft: null

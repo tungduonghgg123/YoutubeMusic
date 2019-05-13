@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { ScrollView, Image, SafeAreaView, Text, View, ActivityIndicator } from 'react-native';
-import { ListItem, SearchBar } from "react-native-elements";
-import { YoutubeSearchItem, YoutubeSeachScroll } from './common'
+import { SafeAreaView } from 'react-native';
+import { SearchBar } from "react-native-elements";
+import { Item, ItemsListVertical } from './common'
 import axios from 'axios';
 import moment from 'moment';
 
@@ -76,21 +76,15 @@ export default class SearchScreen extends Component {
     });
   }
 
-  isCloseToBottom({ layoutMeasurement, contentOffset, contentSize }) {
-    const paddingToBottom = 20;
-    return layoutMeasurement.height + contentOffset.y >=
-      contentSize.height - paddingToBottom;
-  };
-
   render() {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: '#FBCD17', height: '100%' }}>
         <SearchBar
           placeholder="Search Youtube Music"
           containerStyle={{ backgroundColor: null, borderTopWidth: 0, borderBottomWidth: 0, paddingTop: 10, paddingBottom: 2 }}
-          inputContainerStyle={{backgroundColor: 'white'}}
-          inputStyle={{color: '#4F0645'}}
-          placeholderTextColor= '#4F0645'
+          inputContainerStyle={{ backgroundColor: 'white' }}
+          inputStyle={{ color: '#4F0645' }}
+          placeholderTextColor='#4F0645'
           round={true}
           autoFocus={true}
           autoCorrect={false}
@@ -101,16 +95,16 @@ export default class SearchScreen extends Component {
           onSubmitEditing={event => this.onSearch(event.nativeEvent.text, 7)}
         />
 
-        <YoutubeSeachScroll
-          onSearch={this.onSearch.bind(this)} 
-          searchInput={this.state.searchInput}
+        <ItemsListVertical
           isLoading={this.state.isLoading}
-          listItem= {this.state.listItem}
-          nextPageToken={this.state.nextPageToken}
+          onCloseToEdge={() => {
+            if (!this.state.isLoading && this.state.listItem.length < 50 && this.state.listItem.length != 0)
+              this.onSearch(this.state.searchInput, 5, this.state.nextPageToken)
+          }}
         >
           {this.state.listItem.map((item, itemKey) => {
             return (
-              <YoutubeSearchItem
+              <Item
                 item={item}
                 key={itemKey}
                 onPress={() => {
@@ -120,7 +114,7 @@ export default class SearchScreen extends Component {
               />
             )
           })}
-        </YoutubeSeachScroll>
+        </ItemsListVertical>
       </SafeAreaView >
     );
   }

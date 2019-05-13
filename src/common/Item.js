@@ -3,7 +3,7 @@ import { Image, Text, View } from 'react-native';
 import { ListItem } from "react-native-elements";
 
 
-const YoutubeSearchItem = ({ item, onPress }) => {
+const Item = ({ item, onPress }) => {
 
     return (
         <ListItem
@@ -36,4 +36,4 @@ const YoutubeSearchItem = ({ item, onPress }) => {
     )
 }
 
-export { YoutubeSearchItem }
+export { Item }
