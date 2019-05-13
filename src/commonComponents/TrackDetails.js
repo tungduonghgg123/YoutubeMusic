@@ -45,6 +45,7 @@ const styles = {
     buttonStyle: {
     },
     containerStyle: {
+        backgroundColor: 'grey',
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'row',
