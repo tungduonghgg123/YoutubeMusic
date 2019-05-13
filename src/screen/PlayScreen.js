@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import TrackPlayer from 'react-native-track-player';
-import { Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl, Spinner } from '../commonComponents'
-import { SafeAreaView, View, Button } from 'react-native';
+import { Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl, Spinner ,
+  Item, ItemsListVertical} from '../commonComponents'
+
+
+import { TextInput, Button, SafeAreaView, Text, View, ScrollView } from 'react-native';
 import axios from 'axios';
 import memoize from "memoize-one";
 import moment from 'moment';
@@ -21,7 +24,10 @@ class PlayScreen extends Component {
     this.state = {
       shuffleOn: false,
       repeatOn: false,
-      mode: 'youtube'
+      mode: 'youtube',
+      nextPageToken: '',
+      isLoading: false,
+      listItem: []
     };
     this.props.miniPlayerOff();
   }
@@ -69,10 +75,6 @@ class PlayScreen extends Component {
     await TrackPlayer.skip(track.id)
     this.onPressPlay();
   }
-  /**
-   * 
-   * @param {youtube video id} videoId 
-   */
   initializeTrack(videoId) {
     return axios.get('https://www.googleapis.com/youtube/v3/videos', {
       params: {
@@ -100,7 +102,12 @@ class PlayScreen extends Component {
     })
       .catch(error => console.log(error))
   }
+
+
+
+
   async componentDidMount() {
+    this.getVideos(this.props.navigation.getParam('videoId'), 7);
     this.onTrackChange = TrackPlayer.addEventListener('playback-track-changed', async (data) => {
       if (data.nextTrack === 'helperTrack') {
         console.log('helper track ON')
@@ -208,64 +215,114 @@ class PlayScreen extends Component {
     this.onPlaybackStateChange.remove();
 
   }
+  isCloseToEdge({ layoutMeasurement, contentOffset, contentSize }) {
+    const paddingToBottom = 20;
+    return layoutMeasurement.height + contentOffset.y >=
+      contentSize.height - paddingToBottom;
+  };
+
+  getVideoDetails(videoId) {
+    return axios.get('https://www.googleapis.com/youtube/v3/videos', {
+      params: {
+        part: "snippet,statistics,contentDetails",
+        id: videoId,
+        fields: 'items(id,snippet,statistics(viewCount),contentDetails(duration))',
+        key: process.env.YOUTUBE_API_KEY
+      }
+    }).then((response) => {
+      return response.data.items
+    }).catch((error) => {
+      console.log(error);
+    });
+  }
+
+  getVideos(relatedToVideoId, maxResults, pageToken) {
+    this.setState({ isLoading: true })
+    axios.get('https://www.googleapis.com/youtube/v3/search', {
+      params: {
+        part: 'snippet',
+        maxResults: maxResults,
+        type: 'video',
+        relatedToVideoId: relatedToVideoId,
+        pageToken: pageToken,
+        key: process.env.YOUTUBE_API_KEY
+      }
+    }).then(response => {
+      const videoIds = response.data.items.map(item => item.id)
+      this.getVideoDetails(videoIds.join()).then(videos => {
+        videos.map(video => {
+          const duration = moment.duration(video.contentDetails.duration)
+          video.contentDetails.duration = duration.asHours() < 1 ? moment(duration._data).format("m:ss") : moment(duration._data).format("H:mm:ss")
+          video.statistics.viewCount = numberFormatter(video.statistics.viewCount);
+          this.setState({ listItem: [...this.state.listItem, video] })
+        })
+      })
+      this.setState({
+        nextPageToken: response.data.nextPageToken,
+        isLoading: false
+      })
+    })
+  };
+
   render() {
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: BACKGROUND_COLOR }}>
-        <Header
-          message="playing from Youtube"
-          onQueuePress={this.getTheTrackQueue.bind(this)}
-          onDownPress={() => {
-            this.props.navigation.goBack();
-            this.props.miniPlayerOn();
+      <SafeAreaView style={{ flex: 1, backgroundColor: BACKGROUND_COLOR}}>
+        <ScrollView stickyHeaderIndices={[0, 2]}
+          onScroll={({ nativeEvent }) => {
+            if (!this.state.isLoading && this.isCloseToEdge(nativeEvent) && this.state.listItem.length < 30 && this.state.listItem.length != 0) {
+              this.getVideos(this.props.navigation.getParam('videoId'), 1, this.state.nextPageToken)
+            }
           }}
-        />
-        <AlbumArt url={!this.props.track.url ? "" : this.props.track.thumbnail.url} />
-        <TrackDetails
-          title={!this.props.track.title ? "" : this.props.track.title}
-          onLayout={(event) => {
-            console.log(event)
-          }}
-        />
-        <SeekBar
-          trackLength={!this.props.track.duration ? 0 : this.props.track.duration}
-        />
-        <PlaybackControl
-          paused={this.props.paused}
-          shuffleOn={this.state.shuffleOn}
-          repeatOn={this.state.repeatOn}
-          onPressPause={this.onPressPause.bind(this)}
-          onPressPlay={this.onPressPlay.bind(this)}
-          onPressRepeat={this.onPressRepeat.bind(this)}
-          forwardDisabled={false}
-          backwardDisabled={false}
-          shuffleDisabled={true}
-          onForward={this.onPressForward.bind(this)}
-          onBack={this.onPressBack.bind(this)}
-        />
-        {this.props.loading ?
-          <Spinner /> : <View style={{ flex: 1 }} />
-        }
-        <Button
-          title='get current position'
-          onPress={async() => { 
-            let position = await TrackPlayer.getPosition() 
-            let bufferedPosition = await TrackPlayer.getBufferedPosition()
-            console.log(bufferedPosition)
-            console.log(position)
+          scrollEventThrottle={5000}
+        >
+          <Header
+            message="playing from Youtube"
+            onQueuePress={this.getTheTrackQueue.bind(this)}
+            onDownPress={() => {
+              this.props.navigation.goBack();
+              this.props.miniPlayerOn();
+            }} 
+          />
+          <AlbumArt url={!this.props.track.url ? "" : this.props.track.thumbnail.url} />
+          <View style={{backgroundColor: BACKGROUND_COLOR}}>
+            <TrackDetails
+              title={!this.props.track.title ? "" : this.props.track.title}
+            />
+            <SeekBar
+              trackLength={!this.props.track.duration ? 0 : this.props.track.duration}
+            />
+            <PlaybackControl
+              paused={this.props.paused}
+              shuffleOn={this.state.shuffleOn}
+              repeatOn={this.state.repeatOn}
+              onPressPause={this.onPressPause.bind(this)}
+              onPressPlay={this.onPressPlay.bind(this)}
+              onPressRepeat={this.onPressRepeat.bind(this)}
+              forwardDisabled={false}
+              backwardDisabled={false}
+              shuffleDisabled={true}
+              onForward={this.onPressForward.bind(this)}
+              onBack={this.onPressBack.bind(this)}
+            />
+          </View>
+          {this.props.loading ?
+            <Spinner /> : <View style={{ flex: 1 }} />
+          }
+          <ItemsListVertical isLoading={this.state.isLoading}>
+            {this.state.listItem.map((item, itemKey) => {
+              return (
+                <Item
+                  item={item}
+                  key={itemKey}
+                  onPress={() => {
+                    this.props.navigation.navigate('Play', { videoId: item.id })
 
-          }}
-        />
-        <Button
-          title='stop'
-          onPress={() => { TrackPlayer.stop() }}
-        />
-    
-
-        {/* <Button title='remove current' onPress={async() => {
-          await TrackPlayer.remove("Llw9Q6akRo4")
-
-        }}/> */}
-
+                  }}
+                />
+              )
+            })}
+          </ItemsListVertical>
+        </ScrollView>
       </SafeAreaView>
     );
   }
@@ -277,3 +334,19 @@ const mapStateToProps = state => ({
 });
 
 export default connect(mapStateToProps, actions)(PlayScreen)
+
+function numberFormatter(num, digits) {
+  var si = [
+    { value: 1, symbol: "" },
+    { value: 1E3, symbol: "K" },
+    { value: 1E6, symbol: "M" },
+    { value: 1E9, symbol: "B" }
+  ];
+  for (var i = si.length - 1; i > 0; i--) {
+    if (num >= si[i].value) {
+      break;
+    }
+  }
+  var rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
+  return (num / si[i].value).toFixed(digits).replace(rx, "$1") + si[i].symbol;
+}

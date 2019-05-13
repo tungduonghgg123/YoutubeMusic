@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import {  View } from 'react-native';
-import {  SearchBar } from "react-native-elements";
-import { YoutubeSearchItem, YoutubeSeachScroll } from '../commonComponents'
+import { View } from 'react-native';
+import { SearchBar } from "react-native-elements";
+import { Item, ItemsListVertical } from '../commonComponents'
 import axios from 'axios';
 import moment from 'moment';
-import { BACKGROUND_COLOR, COMMON_COMPONENTS_COLOR, TEXT_COLOR} from '../style'
+import { BACKGROUND_COLOR, COMMON_COMPONENTS_COLOR, TEXT_COLOR } from '../style'
 function numberFormatter(num, digits) {
   var si = [
     { value: 1, symbol: "" },
@@ -76,21 +76,15 @@ export default class SearchScreen extends Component {
     });
   }
 
-  isCloseToBottom({ layoutMeasurement, contentOffset, contentSize }) {
-    const paddingToBottom = 20;
-    return layoutMeasurement.height + contentOffset.y >=
-      contentSize.height - paddingToBottom;
-  };
-
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: BACKGROUND_COLOR, height: '100%' }}>
         <SearchBar
           placeholder="Search Youtube Music"
           containerStyle={{ backgroundColor: null, borderTopWidth: 0, borderBottomWidth: 0, paddingTop: 10, paddingBottom: 2 }}
-          inputContainerStyle={{backgroundColor: 'white'}}
-          inputStyle={{color: TEXT_COLOR}}
-          placeholderTextColor= {COMMON_COMPONENTS_COLOR}
+          inputContainerStyle={{ backgroundColor: 'white' }}
+          inputStyle={{ color: TEXT_COLOR }}
+          placeholderTextColor={COMMON_COMPONENTS_COLOR}
           round={true}
           /**
           this line leads to bug!!!!!!! 
@@ -104,16 +98,16 @@ export default class SearchScreen extends Component {
           onSubmitEditing={event => this.onSearch(event.nativeEvent.text, 7)}
         />
 
-        <YoutubeSeachScroll
-          onSearch={this.onSearch.bind(this)} 
-          searchInput={this.state.searchInput}
+        <ItemsListVertical
           isLoading={this.state.isLoading}
-          listItem= {this.state.listItem}
-          nextPageToken={this.state.nextPageToken}
+          onCloseToEdge={() => {
+            if (!this.state.isLoading && this.state.listItem.length < 50 && this.state.listItem.length != 0)
+              this.onSearch(this.state.searchInput, 5, this.state.nextPageToken)
+          }}
         >
           {this.state.listItem.map((item, itemKey) => {
             return (
-              <YoutubeSearchItem
+              <Item
                 item={item}
                 key={itemKey}
                 onPress={() => {
@@ -123,8 +117,8 @@ export default class SearchScreen extends Component {
               />
             )
           })}
-        </YoutubeSeachScroll>
-      </View >
+        </ItemsListVertical>
+      </View>
     );
   }
 }

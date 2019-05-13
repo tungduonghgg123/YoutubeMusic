@@ -7,6 +7,6 @@ export * from './TrackDetails';
 export * from './SeekBar';
 export * from './PlaybackControl';
 export * from './Spinner';
-export * from './YoutubeSearchItem';
-export * from './YoutubeSeachScroll';
+export * from './Item';
+export * from './ItemsListVertical';
 // export * from './MiniPlayer';
