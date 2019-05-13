@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
 import TrackPlayer from 'react-native-track-player';
 import { Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl, Spinner } from './common'
-import { TextInput, Button, SafeAreaView, Text, View,Alert } from 'react-native';
+import { TextInput, Button, SafeAreaView, Text, View, ScrollView } from 'react-native';
 import axios from 'axios';
 import memoize from "memoize-one";
 import moment from 'moment';
 import localTracks from './storage/tracks'
 //redux
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import * as actions from './actions'
 
-
+import NextComponent from './NextComponent';
 
 
 class PlayScreen extends Component {
@@ -21,7 +21,7 @@ class PlayScreen extends Component {
       repeatOn: false,
       mode: 'youtube'
     };
-  this.props.miniPlayerOff();
+    this.props.miniPlayerOff();
   }
   onPressPause() {
     TrackPlayer.pause();
@@ -53,7 +53,7 @@ class PlayScreen extends Component {
       return;
     /**
      * pause Track Player before loading and playing new Track.
-     *  */  
+     *  */
     this.onPressPause()
     this.props.syncLoading(true)
     let track = await this.initializeTrack(videoId)
@@ -98,14 +98,14 @@ class PlayScreen extends Component {
     })
       .catch(error => console.log(error))
   }
-  
-  
-  
+
+
+
 
   async componentDidMount() {
 
     this.onTrackChange = TrackPlayer.addEventListener('playback-track-changed', async (data) => {
-      if(data.nextTrack === 'helperTrack') {
+      if (data.nextTrack === 'helperTrack') {
         console.log('helper track ON')
         return;
       }
@@ -129,7 +129,7 @@ class PlayScreen extends Component {
       this.props.syncPaused(true)
     });
     this.onPlaybackStateChange = TrackPlayer.addEventListener('playback-state', async (playbackState) => {
-      
+
       console.log(JSON.stringify(playbackState));
       switch (playbackState.state) {
         case 'playing':
@@ -137,7 +137,7 @@ class PlayScreen extends Component {
           this.props.syncLoading(false)
           break;
         case 'loading':
-          
+
           // if(this.prevPlaybackState === 'playing'){
           //   let helperTrack = {
           //     id: 'helperTrack', 
@@ -150,11 +150,11 @@ class PlayScreen extends Component {
           //   await TrackPlayer.skipToPrevious();
           //   await TrackPlayer.remove(helperTrack.id)
           // }
-            
+
           break;
         default:
           break;
-        
+
       }
       this.prevPlaybackState = playbackState.state;
     })
@@ -162,7 +162,7 @@ class PlayScreen extends Component {
       console.log('remote pause')
     }
     this.playFromYoutube()
-    
+
   }
   async componentDidUpdate() {
     this.playFromYoutube()
@@ -185,53 +185,51 @@ class PlayScreen extends Component {
     /**
      * `weird`: this will be invoked when transition.
      */
-    
+
     this.onTrackChange.remove();
     this.onQueueEnded.remove();
     this.onPlaybackStateChange.remove();
-    
+
   }
   render() {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: 'grey' }}>
-        <Header
-          message="playing from Youtube"
-          onQueuePress={this.getTheTrackQueue.bind(this)}
-          onDownPress={() => {
-            this.props.navigation.goBack();
-            this.props.miniPlayerOn();
-          }}
-        />
-        <AlbumArt url={!this.props.track.url ? "" : this.props.track.thumbnail.url} />
-        <TrackDetails
-          title={!this.props.track.title ? "" : this.props.track.title}
-        />
-        <SeekBar
-          trackLength={!this.props.track.duration ? 0 : this.props.track.duration}
-        />
-        <PlaybackControl
-          paused={this.props.paused}
-          shuffleOn={this.state.shuffleOn}
-          repeatOn={this.state.repeatOn}
-          onPressPause={this.onPressPause.bind(this)}
-          onPressPlay={this.onPressPlay.bind(this)}
-          onPressRepeat={this.onPressRepeat.bind(this)}
-          forwardDisabled={false}
-          backwardDisabled={false}
-          shuffleDisabled={true}
-          onForward={this.onPressForward.bind(this)}
-          onBack={this.onPressBack.bind(this)}
-        />
-        {this.props.loading ?
-          <Spinner /> : <View style={{flex:1}} />
-        }
-
-       
-        {/* <Button title='remove current' onPress={async() => {
-          await TrackPlayer.remove("Llw9Q6akRo4")
-
-        }}/> */}
-
+        <ScrollView stickyHeaderIndices={[0, 2]}>
+          <Header
+            message="playing from Youtube"
+            onQueuePress={this.getTheTrackQueue.bind(this)}
+            onDownPress={() => {
+              this.props.navigation.goBack();
+              this.props.miniPlayerOn();
+            }}
+          />
+          <AlbumArt url={!this.props.track.url ? "" : this.props.track.thumbnail.url} />
+          <View>
+            <TrackDetails
+              title={!this.props.track.title ? "" : this.props.track.title}
+            />
+            <SeekBar
+              trackLength={!this.props.track.duration ? 0 : this.props.track.duration}
+            />
+            <PlaybackControl
+              paused={this.props.paused}
+              shuffleOn={this.state.shuffleOn}
+              repeatOn={this.state.repeatOn}
+              onPressPause={this.onPressPause.bind(this)}
+              onPressPlay={this.onPressPlay.bind(this)}
+              onPressRepeat={this.onPressRepeat.bind(this)}
+              forwardDisabled={false}
+              backwardDisabled={false}
+              shuffleDisabled={true}
+              onForward={this.onPressForward.bind(this)}
+              onBack={this.onPressBack.bind(this)}
+            />
+          </View>
+          {this.props.loading ?
+            <Spinner /> : <View style={{ flex: 1 }} />
+          }
+          <NextComponent videoId={this.props.navigation.getParam('videoId')}></NextComponent>
+        </ScrollView>
       </SafeAreaView>
     );
   }

@@ -4,7 +4,7 @@ import axios from 'axios';
 import moment from 'moment';
 import { Item, ItemsListVertical } from './common'
 
-export default class NextScreen extends Component {
+export default class NextComponent extends Component {
   state = {
     nextPageToken: '',
     isLoading: false,
@@ -26,7 +26,7 @@ export default class NextScreen extends Component {
     });
   }
 
-  onGetVideos(relatedToVideoId, maxResults, pageToken) {
+  getVideos(relatedToVideoId, maxResults, pageToken) {
     this.setState({ isLoading: true })
     axios.get('https://www.googleapis.com/youtube/v3/search', {
       params: {
@@ -55,18 +55,17 @@ export default class NextScreen extends Component {
   };
 
   componentDidMount() {
-    this.onGetVideos(global.videoId, 7);
+    this.getVideos(this.props.videoId, 7);
   }
 
   render() {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: 'gray', height: '100%' }}>
-        <Text style={{ margin: 5, fontSize: 15, fontWeight: 'bold', textAlign: 'center' }}>Next</Text>
         <ItemsListVertical
           isLoading={this.state.isLoading}
           onCloseToEdge={() => {
             if (!this.state.isLoading && this.state.listItem.length < 50 && this.state.listItem.length != 0)
-              this.onGetVideos(global.videoId, 5, this.state.nextPageToken)
+              this.getVideos(this.props.videoId, 5, this.state.nextPageToken)
           }}
         >
           {this.state.listItem.map((item, itemKey) => {

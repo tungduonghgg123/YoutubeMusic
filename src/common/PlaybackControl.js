@@ -81,6 +81,7 @@ export { PlaybackControl };
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: 'grey',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

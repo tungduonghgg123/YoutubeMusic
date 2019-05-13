@@ -3,7 +3,6 @@ import { createBottomTabNavigator, createStackNavigator, createAppContainer } fr
 import PlayScreen from './PlayScreen';
 import SearchScreen from './SearchScreen'
 import HomeScreen from './HomeScreen';
-import NextScreen from './NextScreen.js';
 import TrackPlayer from 'react-native-track-player';
 
 import  MiniPlayer  from './common/MiniPlayer'
@@ -22,7 +21,6 @@ For now, just let yellowBoxes on
 const TabNavigator = createBottomTabNavigator({
   Home: { screen: HomeScreen },
   Search: { screen: SearchScreen },
-  Next: { screen: NextScreen },
 }, {
     initialRouteName: 'Search',
     navigationOptions: {
