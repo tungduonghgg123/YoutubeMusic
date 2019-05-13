@@ -84,7 +84,7 @@ export default class SearchScreen extends Component {
 
   render() {
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: '#FBCD17', height: '100%' }}>
+      <View style={{ flex: 1, backgroundColor: '#FBCD17', height: '100%' }}>
         <SearchBar
           placeholder="Search Youtube Music"
           containerStyle={{ backgroundColor: null, borderTopWidth: 0, borderBottomWidth: 0, paddingTop: 10, paddingBottom: 2 }}
@@ -92,7 +92,10 @@ export default class SearchScreen extends Component {
           inputStyle={{color: '#4F0645'}}
           placeholderTextColor= '#4F0645'
           round={true}
-          autoFocus={true}
+          /**
+          this line leads to bug!!!!!!! 
+           */
+          // autoFocus={true}
           autoCorrect={false}
           autoCapitalize="none"
           showLoading={this.state.isLoading}
@@ -121,7 +124,7 @@ export default class SearchScreen extends Component {
             )
           })}
         </YoutubeSeachScroll>
-      </SafeAreaView >
+      </View >
     );
   }
 }

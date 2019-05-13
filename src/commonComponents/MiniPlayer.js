@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import TrackPlayer from 'react-native-track-player';
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import { View, SafeAreaView, Image, TouchableOpacity } from 'react-native';
 import Slider from 'react-native-slider';
 import NavigationService from '../service/NavigationService';
 import { connect } from 'react-redux';
@@ -137,7 +137,7 @@ const styles = {
         backgroundColor: '#84BFE3',
         width: '100%',
         position: "absolute",
-        bottom: 80,
+        bottom: 0,
     }
 }
 const mapStateToProps = state => ({

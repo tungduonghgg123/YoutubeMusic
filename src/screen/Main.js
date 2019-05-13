@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
-import { createBottomTabNavigator, createStackNavigator, createAppContainer } from 'react-navigation'
+import {SafeAreaView} from 'react-native'
+import {createStackNavigator,createAppContainer, 
+    createMaterialTopTabNavigator, MaterialTopTabBar
+} from 'react-navigation'
 import PlayScreen from './PlayScreen';
 import SearchScreen from './SearchScreen'
 import HomeScreen from './HomeScreen';
@@ -20,8 +23,17 @@ For now, just let yellowBoxes on
  */
 // YellowBox.ignoreWarnings( ['Possible Unhandled Promise Rejection']);
 
-
-const TabNavigator = createBottomTabNavigator({
+function SafeAreaMaterialTopTabBar (props) {
+  return (
+    <SafeAreaView>
+      <MaterialTopTabBar {...props} />
+    </SafeAreaView>
+  )
+}
+const TabNavigator = createMaterialTopTabNavigator({
+  
+  
+  Next: { screen: NextScreen },
   Home: {
     screen: HomeScreen,
     navigationOptions: {
@@ -34,8 +46,8 @@ const TabNavigator = createBottomTabNavigator({
       tabBarIcon: <Icon name='search' color='black' />
     }
   },
-  Next: { screen: NextScreen },
 }, {
+    order: ['Home', 'Search'],
     initialRouteName: 'Home',
     navigationOptions: {
       header: null,
@@ -43,9 +55,10 @@ const TabNavigator = createBottomTabNavigator({
     },
     tabBarOptions: {
       showLabel: false,
+      showIcon: true,
       activeBackgroundColor: 'yellow',
-      safeAreaInset: { bottom: 'always', top: 'never' }
     },
+    tabBarComponent: SafeAreaMaterialTopTabBar,
 
   })
 export {TabNavigator}
