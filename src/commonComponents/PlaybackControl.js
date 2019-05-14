@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import TrackPlayer from 'react-native-track-player';
 import {
   View,
@@ -7,7 +7,7 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import { TEXT_COLOR} from '../style'
+import { TEXT_COLOR } from '../style'
 class PlaybackControl extends TrackPlayer.ProgressComponent {
   async repeatAndPlay() {
     await TrackPlayer.seekTo(0);
@@ -29,11 +29,11 @@ class PlaybackControl extends TrackPlayer.ProgressComponent {
     return (
       <View style={styles.container}>
         {/* Auto */}
-        <TouchableOpacity 
-          activeOpacity={0.0} 
-          onPress={onPressAuto} 
+        <TouchableOpacity
+          activeOpacity={0.0}
+          onPress={onPressAuto}
           disabled={autoDisabled}>
-          <Text style={[{color: TEXT_COLOR}, autoOn ? [] : styles.off]}>
+          <Text style={[{ color: TEXT_COLOR }, autoOn ? [] : styles.off]}>
             AUTO
           </Text>
         </TouchableOpacity>
@@ -41,10 +41,10 @@ class PlaybackControl extends TrackPlayer.ProgressComponent {
         <View style={{ width: 20 }} />
 
         {/* Backward */}
-        <TouchableOpacity 
-          onPress={() => {this.state.position > 3 ? this.repeatAndPlay() : onBack()}}
+        <TouchableOpacity
+          onPress={() => { this.state.position > 3 ? this.repeatAndPlay() : onBack() }}
           disabled={backwardDisabled}>
-          <Image 
+          <Image
             style={[backwardDisabled && { opacity: 0.3 }]}
             source={require('../img/ic_skip_previous_white_36pt.png')} />
         </TouchableOpacity>
@@ -77,9 +77,9 @@ class PlaybackControl extends TrackPlayer.ProgressComponent {
         <View style={{ width: 40 }} />
 
         {/* Repeat */}
-        <TouchableOpacity 
-        activeOpacity={0.0} onPress={onPressRepeat}>
-          <Image 
+        <TouchableOpacity
+          activeOpacity={0.0} onPress={onPressRepeat}>
+          <Image
             style={[styles.secondaryControl, repeatOn ? [] : styles.off]}
             source={require('../img/ic_repeat_white.png')} />
         </TouchableOpacity>

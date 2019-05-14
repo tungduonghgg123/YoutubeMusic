@@ -1,20 +1,27 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Image } from 'react-native';
-
+import { Icon } from 'react-native-elements'
+import {HEADER_BUTTON_SIZE, COMMON_COMPONENTS_COLOR, TEXT_COLOR} from '../style'
 const Header = ({ message, onDownPress, onQueuePress, onMessagePress }) => {
     const { textStyle, containerStyle, buttonStyle } = styles;
     return (
         <View style={containerStyle}>
             <TouchableOpacity onPress={onDownPress}>
-                <Image style={buttonStyle}
-                    source={require('../img/ic_keyboard_arrow_down_white.png')} />
+                <Icon 
+                    name='expand-more'
+                    color={COMMON_COMPONENTS_COLOR}
+                    size={HEADER_BUTTON_SIZE}
+                />
             </TouchableOpacity>
             <Text onPress={onMessagePress} style={textStyle} >
                 {message.toUpperCase()}
             </Text>
             <TouchableOpacity onPress={onQueuePress}>
-                <Image style={buttonStyle}
-                    source={require('../img/ic_queue_music_white.png')} />
+            <Icon 
+                    name='queue-music'
+                    color={COMMON_COMPONENTS_COLOR}
+                    size={HEADER_BUTTON_SIZE}
+            />
             </TouchableOpacity>
         </View>
     );
@@ -24,9 +31,9 @@ const styles = {
     textStyle: {
         flex: 1,
         textAlign: 'center',
-        color: 'rgba(255, 255, 255, 0.72)',
+        color: TEXT_COLOR,
         fontWeight: 'bold',
-        fontSize: 10,
+        fontSize: 12,
     },
     containerStyle: {
         justifyContent: 'space-between',

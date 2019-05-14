@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import TrackPlayer from 'react-native-track-player';
 import { View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import Slider from 'react-native-slider';
-
+import { THUMP_COLOR, TEXT_COLOR, MIN_TRACK_TINT_COLOR, MAX_TRACK_TINT_COLOR} from '../style'
 function pad(n, width, z=0) {
   n = n + '';
   return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
@@ -32,12 +32,18 @@ class SeekBar extends TrackPlayer.ProgressComponent {
       return (
         <View style={styles.container}>
           <View style={{flexDirection: 'row'}}>
-            <Text style={styles.text}>
-              {elapsed.length === 3? elapsed[0] + ":" + elapsed[1] + ":" + elapsed[2]:elapsed[0] + ":" + elapsed[1]}
+            <Text style={styles.numberStyle}>
+              {elapsed.length === 3? 
+                elapsed[0] + ":" + elapsed[1] + ":" + elapsed[2]:
+                elapsed[0] + ":" + elapsed[1]
+              }
             </Text>
             <View style={{flex: 1}} />
-            <Text style={[styles.text]}>
-              {total.length === 3?  total[0] + ":" + total[1]+ ":" + total[2]:total[0] + ":" + total[1]}
+            <Text style={[styles.numberStyle]}>
+              {total.length === 3?  
+                total[0] + ":" + total[1]+ ":" + total[2]:
+                total[0] + ":" + total[1]
+              }
             </Text>
           </View>
           <Slider
@@ -47,8 +53,8 @@ class SeekBar extends TrackPlayer.ProgressComponent {
             }}
             value={this.state.position}
             style={styles.slider}
-            minimumTrackTintColor='#fff'
-            maximumTrackTintColor='rgba(255, 255, 255, 0.14)'
+            minimumTrackTintColor={MIN_TRACK_TINT_COLOR}
+            maximumTrackTintColor={MAX_TRACK_TINT_COLOR}
             thumbStyle={styles.thumb}
             trackStyle={styles.track}
             />
@@ -78,10 +84,10 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: 'white',
+    backgroundColor: THUMP_COLOR,
   },
-  text: {
-    color: 'rgba(255, 255, 255, 0.72)',
+  numberStyle: {
+    color: TEXT_COLOR,
     fontSize: 12,
     textAlign:'center',
   }

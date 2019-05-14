@@ -6,23 +6,27 @@ import NavigationService from '../service/NavigationService';
 import { connect } from 'react-redux';
 import * as actions from '../redux/actions'
 import TextTicker from 'react-native-text-ticker'
-import { MINIPLAYER_BACKGROUND_COLOR} from '../style'
+import {
+    MINIPLAYER_BACKGROUND_COLOR, THUMP_COLOR, MINI_TEXT_COLOR,
+    BUTTON_BORDER_COLOR, COMMON_COMPONENTS_COLOR, MINI_BUTTON_SIZE
+} from '../style'
+import { Icon } from 'react-native-elements'
 
 
 
 
 class MiniPlayer extends TrackPlayer.ProgressComponent {
-    constructor(props){
+    constructor(props) {
         super(props);
         this.state = {
             keyboardDidShow: false
         }
     }
-    _keyboardDidShow(){
-        this.setState({keyboardDidShow: true})
+    _keyboardDidShow() {
+        this.setState({ keyboardDidShow: true })
     }
-    _keyboardDidHide(){
-        this.setState({keyboardDidShow: false})
+    _keyboardDidHide() {
+        this.setState({ keyboardDidShow: false })
     }
     onUpPress() {
         NavigationService.navigate('Play');
@@ -39,13 +43,13 @@ class MiniPlayer extends TrackPlayer.ProgressComponent {
         this.keyboardDidShowListener = Keyboard.addListener(
             'keyboardDidShow',
             this._keyboardDidShow.bind(this),
-          );
-          this.keyboardDidHideListener = Keyboard.addListener(
+        );
+        this.keyboardDidHideListener = Keyboard.addListener(
             'keyboardDidHide',
             this._keyboardDidHide.bind(this),
-          );
-          this.onTrackChange = TrackPlayer.addEventListener('playback-track-changed', async (data) => {
-      
+        );
+        this.onTrackChange = TrackPlayer.addEventListener('playback-track-changed', async (data) => {
+
             console.log('---------------------')
             // console.log('track changed')
             let track = await TrackPlayer.getTrack(data.nextTrack);
@@ -53,20 +57,20 @@ class MiniPlayer extends TrackPlayer.ProgressComponent {
              * sync track to redux store:
              */
             if (track) {
-              this.props.syncTrack(track)
-              this.props.syncPaused(false)
+                this.props.syncTrack(track)
+                this.props.syncPaused(false)
             } else {
-              this.props.syncPaused(true)
+                this.props.syncPaused(true)
             }
-          });
+        });
     }
     render() {
         const { textStyle, containerStyle, upButtonStyle, playButtonStyle, miniPlayerStyle,
             textContainerStyle
         } = styles;
-        
-        const { duration, title } = this.props.track? this.props.track: {} ;
-        
+
+        const { duration, title } = this.props.track ? this.props.track : {};
+
         return (
             <View>
                 {!this.props.miniPlayerState || this.state.keyboardDidShow ?
@@ -74,7 +78,7 @@ class MiniPlayer extends TrackPlayer.ProgressComponent {
                     <View style={miniPlayerStyle}>
                         <Slider
                             disabled={true}
-                            maximumValue={duration? duration:0}
+                            maximumValue={duration ? duration : 0}
                             onSlidingComplete={async value => { await TrackPlayer.seekTo(value) }}
                             value={this.state.position}
                             style={styles.slider}
@@ -85,8 +89,11 @@ class MiniPlayer extends TrackPlayer.ProgressComponent {
                         />
                         <View style={containerStyle}>
                             <TouchableOpacity onPress={this.onUpPress.bind(this)}>
-                                <Image style={upButtonStyle}
-                                    source={require('../img/ic_keyboard_arrow_up_white.png')} />
+                                <Icon
+                                    name='expand-less'
+                                    size={MINI_BUTTON_SIZE}
+                                    color={COMMON_COMPONENTS_COLOR}
+                                />
                             </TouchableOpacity>
                             <TouchableOpacity onPress={this.onUpPress.bind(this)}>
                                 <View style={textContainerStyle}>
@@ -107,12 +114,20 @@ class MiniPlayer extends TrackPlayer.ProgressComponent {
                             {!this.props.paused ?
                                 <TouchableOpacity onPress={this.onPressPause.bind(this)}>
                                     <View style={playButtonStyle}>
-                                        <Image source={require('../img/ic_pause_white_24pt.png')} />
+                                        <Icon
+                                            name='pause'
+                                            size={MINI_BUTTON_SIZE}
+                                            color={COMMON_COMPONENTS_COLOR}
+                                        />
                                     </View>
                                 </TouchableOpacity> :
                                 <TouchableOpacity onPress={this.onPressPlay.bind(this)}>
                                     <View style={playButtonStyle}>
-                                        <Image source={require('../img/ic_play_arrow_white_24pt.png')} />
+                                        <Icon
+                                            name='play-arrow'
+                                            size={MINI_BUTTON_SIZE}
+                                            color={COMMON_COMPONENTS_COLOR}
+                                        />
                                     </View>
                                 </TouchableOpacity>
                             }
@@ -135,11 +150,11 @@ const styles = {
     thumb: {
         width: 1,
         height: 1,
-        backgroundColor: 'white',
+        backgroundColor: THUMP_COLOR
     },
     textStyle: {
         textAlign: 'center',
-        color: 'rgba(255, 255, 255, 0.72)',
+        color: MINI_TEXT_COLOR,
         fontWeight: 'bold',
         fontSize: 10,
     },
@@ -155,8 +170,6 @@ const styles = {
         alignItems: 'center',
         flexDirection: 'row',
         height: 40,
-        // paddingLeft: 12,
-        // paddingRight: 12,
         paddingTop: 5,
         paddingBottom: 5
     },
@@ -167,7 +180,7 @@ const styles = {
         height: 30,
         width: 30,
         borderWidth: 1,
-        borderColor: 'white',
+        borderColor: BUTTON_BORDER_COLOR,
         borderRadius: 36 / 2,
         alignItems: 'center',
         justifyContent: 'center',

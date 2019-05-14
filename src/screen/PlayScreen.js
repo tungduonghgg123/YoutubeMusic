@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import TrackPlayer from 'react-native-track-player';
-import { Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl, Spinner ,
-  Item, ItemsListVertical} from '../commonComponents'
+import {
+  Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl, Spinner,
+  Item, ItemsListVertical
+} from '../commonComponents'
 import { TextInput, Button, SafeAreaView, Text, View, ScrollView } from 'react-native';
 import axios from 'axios';
 import memoize from "memoize-one";
@@ -109,7 +111,7 @@ class PlayScreen extends Component {
   async componentDidMount() {
     // this.getNextVideos(this.props.navigation.getParam('videoId'), 7);
     this.onTrackChange = TrackPlayer.addEventListener('playback-track-changed', async (data) => {
-      
+
       if (data.nextTrack === 'helperTrack') {
         console.log('helper track ON')
         return;
@@ -122,7 +124,7 @@ class PlayScreen extends Component {
        * sync track to redux store:
        */
       if (track) {
-        this.setState({listItem: []}, this.getNextVideos(data.nextTrack, 7) )
+        this.setState({ listItem: [] }, this.getNextVideos(data.nextTrack, 7))
         this.props.syncTrack(track)
         this.props.syncPaused(false)
       } else {
@@ -155,7 +157,7 @@ class PlayScreen extends Component {
           // this.onPressPlay()
           break;
         case TrackPlayer.STATE_PAUSED:
-        console.log('paused')
+          console.log('paused')
           break;
         case TrackPlayer.STATE_BUFFERING:
           console.log('buffering')
@@ -194,7 +196,7 @@ class PlayScreen extends Component {
 
   }
   playFromYoutube(videoId) {
-    if(videoId){
+    if (videoId) {
       this.memoizedLoad(videoId)
     } else {
       this.memoizedLoad(this.props.navigation.getParam('videoId'));
@@ -272,7 +274,7 @@ class PlayScreen extends Component {
 
   render() {
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: BACKGROUND_COLOR}}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: BACKGROUND_COLOR }}>
         <ScrollView stickyHeaderIndices={[0, 2]}
           onScroll={({ nativeEvent }) => {
             if (!this.state.isLoading && this.isCloseToEdge(nativeEvent) && this.state.listItem.length < 30 && this.state.listItem.length != 0) {
@@ -287,12 +289,14 @@ class PlayScreen extends Component {
             onDownPress={() => {
               this.props.navigation.goBack();
               this.props.miniPlayerOn();
-            }} 
+            }}
           />
           <AlbumArt url={!this.props.track.url ? "" : this.props.track.thumbnail.url} />
-          <View style={{backgroundColor: BACKGROUND_COLOR}}>
+          <View style={{ backgroundColor: BACKGROUND_COLOR }}>
             <TrackDetails
               title={!this.props.track.title ? "" : this.props.track.title}
+              channelTitle={!this.props.track.artist ? "" : this.props.track.artist}
+
             />
             <SeekBar
               trackLength={!this.props.track.duration ? 0 : this.props.track.duration}
@@ -315,6 +319,14 @@ class PlayScreen extends Component {
           {this.props.loading ?
             <Spinner /> : <View style={{ flex: 1 }} />
           }
+          <Button 
+            title='get current position' 
+            onPress={async () => { 
+                let position = await TrackPlayer.getPosition() 
+                let bufferedPosition = await TrackPlayer.getBufferedPosition() 
+                console.log(bufferedPosition) 
+                console.log(position) }} />
+           <Button title='stop' onPress={() => { TrackPlayer.stop() }} />
           <ItemsListVertical isLoading={this.state.isLoading}>
             {this.state.listItem.map((item, itemKey) => {
               return (
@@ -323,7 +335,7 @@ class PlayScreen extends Component {
                   key={itemKey}
                   onPress={() => {
                     this.playFromYoutube(item.id)
-                    this.setState({listItem: []})
+                    this.setState({ listItem: [] })
                   }}
                 />
               )

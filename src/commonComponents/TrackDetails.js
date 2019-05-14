@@ -1,43 +1,48 @@
 import React from 'react';
-import { View, TouchableOpacity, Image } from 'react-native';
+import { View, TouchableOpacity, Image, Text } from 'react-native';
 import TextTicker from 'react-native-text-ticker'
-
+import { TEXT_COLOR } from '../style'
 /**
  * 
  * `issue` TextTicker doesn't work on first track
  */
-const TrackDetails = ({ title, onMorePress, onAddPress, onCheckPress }) => {
-    const { buttonStyle, containerStyle, textStyle, textContainerStyle } = styles;
+const TrackDetails = ({ channelTitle, title, onMorePress, onAddPress, onCheckPress }) => {
+    const { buttonStyle, containerStyle, textStyle,
+        titleContainerStyle, channelTitleContainerStyle } = styles;
     return (
+        <View>
+            <View style={containerStyle}>
+                <TouchableOpacity onPress={onAddPress}>
+                    <Image
+                        source={require('../img/baseline_add_white_18dp.png')}
+                        style={buttonStyle}
+                    />
+                </TouchableOpacity>
+                <View style={titleContainerStyle}>
 
-        <View style={containerStyle}>
-            <TouchableOpacity onPress={onAddPress}>
-                <Image
-                    source={require('../img/baseline_add_white_18dp.png')}
-                    style={buttonStyle}
-                />
-            </TouchableOpacity>
-            <View style={textContainerStyle}>
-                
-                <TextTicker
-                    style={textStyle}
-                    animationType='auto'
-                    loop
-                    bounce
-                    repeatSpacer={100}
-                    marqueeDelay={1000}
-                    scroll={false}
-                >
-                    {title}
-                    
-                </TextTicker>
+                    <TextTicker
+                        style={textStyle}
+                        animationType='auto'
+                        loop
+                        bounce
+                        repeatSpacer={100}
+                        marqueeDelay={1000}
+                        scroll={false}
+                    >
+                        {title}
+                    </TextTicker>
+                </View>
+                <TouchableOpacity onPress={onMorePress}>
+                    <Image source={require('../img/ic_more_horiz_white.png')}
+                        style={buttonStyle}
+                    />
+                </TouchableOpacity>
             </View>
-            <TouchableOpacity onPress={onMorePress}>
-                <Image source={require('../img/ic_more_horiz_white.png')}
-                    style={buttonStyle}
-                />
-            </TouchableOpacity>
-
+            <View style={channelTitleContainerStyle}>
+                <Text style={{ color: TEXT_COLOR }}>
+                    {channelTitle}
+                </Text>
+            </View>
         </View>
     )
 }
@@ -55,16 +60,20 @@ const styles = {
     },
     textStyle: {
         textAlign: 'center',
-        color: 'rgba(255, 255, 255, 0.72)',
+        color: TEXT_COLOR,
         fontWeight: 'bold',
         fontSize: 15
     },
-    textContainerStyle: {
+    titleContainerStyle: {
         width: 300,
         paddingLeft: 12,
         paddingRight: 12,
         justifyContent: 'center',
         alignItems: 'center',
     },
+    channelTitleContainerStyle: {
+        justifyContent: 'center',
+        alignItems: 'center',
+    }
 }
 export { TrackDetails };

@@ -1,8 +1,9 @@
 {
   "development": {
-    "YOUTUBE_API_KEY2": "AIzaSyAIfkV-l0E-DkPG8TV0dwSDweA0ctTYwKU",
-    "YOUTUBE_API_KEY": "AIzaSyAj-0GyBrQ39mh57ho6WYMPVhWlL8rY0tg",
-    "YOUTUBE_API_KEY3": "AIzaSyDzP76efMfCi4BrzcEVNg2N4aBNpl_wrmE",
-    "YOUTUBE_API_KEY4": "AIzaSyAj-0GyBrQ39mh57ho6WYMPVhWlL8rY0tg"
+    "YOUTUBE_API_KEY3": "AIzaSyAIfkV-l0E-DkPG8TV0dwSDweA0ctTYwKU",
+    "YOUTUBE_API_KEY2": "AIzaSyAj-0GyBrQ39mh57ho6WYMPVhWlL8rY0tg",
+    "YOUTUBE_API_KEY1": "AIzaSyDzP76efMfCi4BrzcEVNg2N4aBNpl_wrmE",
+    "YOUTUBE_API_KEY": "AIzaSyDxWUB3SgAZamhNqRpZd3zYmnp9nZDCajU"
+
   }
 }

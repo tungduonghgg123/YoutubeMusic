@@ -84,7 +84,7 @@ export default class SearchScreen extends Component {
           containerStyle={{ backgroundColor: null, borderTopWidth: 0, borderBottomWidth: 0, paddingTop: 10, paddingBottom: 2 }}
           inputContainerStyle={{ backgroundColor: 'white' }}
           inputStyle={{ color: TEXT_COLOR }}
-          placeholderTextColor={COMMON_COMPONENTS_COLOR}
+          placeholderTextColor={TEXT_COLOR}
           round={true}
           /**
           this line leads to bug!!!!!!! 

@@ -3,13 +3,13 @@ import {SafeAreaView, YellowBox} from 'react-native'
 import {createStackNavigator,createAppContainer, 
     createMaterialTopTabNavigator, MaterialTopTabBar
 } from 'react-navigation'
-import { PlayScreen, SearchScreen, NextScreen, HomeScreen} from './'
+import { PlayScreen, SearchScreen, HomeScreen} from './'
 import TrackPlayer from 'react-native-track-player';
 import { Icon } from 'react-native-elements'
 import MiniPlayer from '../commonComponents/MiniPlayer'
 import { Root } from "native-base";
 import NavigationService from '../service/NavigationService';
-import { BACKGROUND_COLOR} from '../style'
+import { BACKGROUND_COLOR, COMMON_COMPONENTS_COLOR, INDICATOR_COLOR} from '../style'
 
 
 YellowBox.ignoreWarnings(['Remote debugger']);
@@ -29,21 +29,19 @@ function SafeAreaMaterialTopTabBar (props) {
   )
 }
 const TabNavigator = createMaterialTopTabNavigator({
-  Next: { screen: NextScreen },
   Home: {
     screen: HomeScreen,
     navigationOptions: {
-      tabBarIcon: <Icon name='home'  />
+      tabBarIcon: <Icon name='home' color={COMMON_COMPONENTS_COLOR} />
     }
   },
   Search: { 
     screen: SearchScreen ,
     navigationOptions: {
-      tabBarIcon: <Icon name='search'  />
+      tabBarIcon: <Icon name='search'  color={COMMON_COMPONENTS_COLOR}/>
     }
   },
 }, {
-    order: ['Home', 'Search'],
     initialRouteName: 'Home',
     navigationOptions: {
       header: null,
@@ -56,7 +54,7 @@ const TabNavigator = createMaterialTopTabNavigator({
         backgroundColor: BACKGROUND_COLOR
       },
       indicatorStyle: {
-        backgroundColor: 'pink'
+        backgroundColor: INDICATOR_COLOR
       },
     },
     tabBarComponent: SafeAreaMaterialTopTabBar,
@@ -75,7 +73,7 @@ const MainNavigator = createStackNavigator({
   },
   Mini: MiniPlayer
 }, {
-  // initialRouteName: 'Pla',
+  // initialRouteName: 'Play',
 })
 
 
