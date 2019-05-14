@@ -28,25 +28,29 @@ class PlaybackControl extends TrackPlayer.ProgressComponent {
       autoDisabled } = this.props;
     return (
       <View style={styles.container}>
-        {/* Shuffle */}
-        <TouchableOpacity activeOpacity={0.0} onPress={onPressAuto} disabled={autoDisabled}>
-          {/* <Image style={[styles.secondaryControl, shuffleOn ? [] : styles.off]}
-            source={require('../img/ic_shuffle_white.png')} /> */}
+        {/* Auto */}
+        <TouchableOpacity 
+          activeOpacity={0.0} 
+          onPress={onPressAuto} 
+          disabled={autoDisabled}>
           <Text style={[{color: TEXT_COLOR}, autoOn ? [] : styles.off]}>
             AUTO
           </Text>
         </TouchableOpacity>
 
-        <View style={{ width: 40 }} />
+        <View style={{ width: 20 }} />
+
         {/* Backward */}
         <TouchableOpacity 
           onPress={() => {this.state.position > 3 ? this.repeatAndPlay() : onBack()}}
           disabled={backwardDisabled}>
-          <Image style={[backwardDisabled && { opacity: 0.3 }]}
+          <Image 
+            style={[backwardDisabled && { opacity: 0.3 }]}
             source={require('../img/ic_skip_previous_white_36pt.png')} />
         </TouchableOpacity>
 
         <View style={{ width: 20 }} />
+
         {/* Play/pause */}
         {!paused ?
           <TouchableOpacity onPress={onPressPause}>
@@ -62,6 +66,7 @@ class PlaybackControl extends TrackPlayer.ProgressComponent {
         }
 
         <View style={{ width: 20 }} />
+
         {/* Forward */}
         <TouchableOpacity onPress={onForward}
           disabled={forwardDisabled}>
@@ -70,9 +75,12 @@ class PlaybackControl extends TrackPlayer.ProgressComponent {
         </TouchableOpacity>
 
         <View style={{ width: 40 }} />
+
         {/* Repeat */}
-        <TouchableOpacity activeOpacity={0.0} onPress={onPressRepeat}>
-          <Image style={[styles.secondaryControl, repeatOn ? [] : styles.off]}
+        <TouchableOpacity 
+        activeOpacity={0.0} onPress={onPressRepeat}>
+          <Image 
+            style={[styles.secondaryControl, repeatOn ? [] : styles.off]}
             source={require('../img/ic_repeat_white.png')} />
         </TouchableOpacity>
       </View>

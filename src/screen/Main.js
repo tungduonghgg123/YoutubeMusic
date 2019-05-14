@@ -74,6 +74,8 @@ const MainNavigator = createStackNavigator({
     }
   },
   Mini: MiniPlayer
+}, {
+  // initialRouteName: 'Pla',
 })
 
 

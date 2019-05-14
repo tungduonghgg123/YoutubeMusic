@@ -44,6 +44,21 @@ class MiniPlayer extends TrackPlayer.ProgressComponent {
             'keyboardDidHide',
             this._keyboardDidHide.bind(this),
           );
+          this.onTrackChange = TrackPlayer.addEventListener('playback-track-changed', async (data) => {
+      
+            console.log('---------------------')
+            // console.log('track changed')
+            let track = await TrackPlayer.getTrack(data.nextTrack);
+            /**
+             * sync track to redux store:
+             */
+            if (track) {
+              this.props.syncTrack(track)
+              this.props.syncPaused(false)
+            } else {
+              this.props.syncPaused(true)
+            }
+          });
     }
     render() {
         const { textStyle, containerStyle, upButtonStyle, playButtonStyle, miniPlayerStyle,
