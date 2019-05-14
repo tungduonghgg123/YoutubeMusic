@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "test": "jest",
-    "android": "emulator -avd Pixel_2_XL_API_28" 
+    "android": "emulator -avd Pixel_2_XL_API_28"
   },
   "dependencies": {
     "axios": "^0.18.0",
@@ -15,6 +15,7 @@
     "react": "16.8.3",
     "react-native": "0.59.3",
     "react-native-elements": "^1.1.0",
+    "react-native-flip-card": "^3.5.5",
     "react-native-gesture-handler": "^1.2.1",
     "react-native-paper": "^2.15.2",
     "react-native-reanimated": "^1.0.1",

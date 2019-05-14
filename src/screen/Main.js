@@ -3,7 +3,7 @@ import {SafeAreaView, YellowBox} from 'react-native'
 import {createStackNavigator,createAppContainer, 
     createMaterialTopTabNavigator, MaterialTopTabBar
 } from 'react-navigation'
-import { PlayScreen, SearchScreen, NextScreen, HomeScreen} from './'
+import { PlayScreen, SearchScreen, HomeScreen} from './'
 import TrackPlayer from 'react-native-track-player';
 import { Icon } from 'react-native-elements'
 import MiniPlayer from '../commonComponents/MiniPlayer'
@@ -29,7 +29,6 @@ function SafeAreaMaterialTopTabBar (props) {
   )
 }
 const TabNavigator = createMaterialTopTabNavigator({
-  Next: { screen: NextScreen },
   Home: {
     screen: HomeScreen,
     navigationOptions: {
