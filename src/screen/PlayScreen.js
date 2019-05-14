@@ -103,12 +103,10 @@ class PlayScreen extends Component {
       .catch(error => console.log(error))
   }
 
-
-
-
   async componentDidMount() {
-    this.getVideos(this.props.navigation.getParam('videoId'), 7);
+    // this.getNextVideos(this.props.navigation.getParam('videoId'), 7);
     this.onTrackChange = TrackPlayer.addEventListener('playback-track-changed', async (data) => {
+      this.getNextVideos(this.props.track.id, 7);
       if (data.nextTrack === 'helperTrack') {
         console.log('helper track ON')
         return;
@@ -191,8 +189,12 @@ class PlayScreen extends Component {
     this.playFromYoutube()
 
   }
-  playFromYoutube() {
-    this.memoizedLoad(this.props.navigation.getParam('videoId'));
+  playFromYoutube(videoId) {
+    if(videoId){
+      this.memoizedLoad(videoId)
+    } else {
+      this.memoizedLoad(this.props.navigation.getParam('videoId'));
+    }
   }
   /**
    * not working at the moment.
@@ -236,7 +238,7 @@ class PlayScreen extends Component {
     });
   }
 
-  getVideos(relatedToVideoId, maxResults, pageToken) {
+  getNextVideos(relatedToVideoId, maxResults, pageToken) {
     this.setState({ isLoading: true })
     axios.get('https://www.googleapis.com/youtube/v3/search', {
       params: {
@@ -248,7 +250,7 @@ class PlayScreen extends Component {
         key: process.env.YOUTUBE_API_KEY
       }
     }).then(response => {
-      const videoIds = response.data.items.map(item => item.id)
+      const videoIds = response.data.items.map(item => item.id.videoId)
       this.getVideoDetails(videoIds.join()).then(videos => {
         videos.map(video => {
           const duration = moment.duration(video.contentDetails.duration)
@@ -270,7 +272,7 @@ class PlayScreen extends Component {
         <ScrollView stickyHeaderIndices={[0, 2]}
           onScroll={({ nativeEvent }) => {
             if (!this.state.isLoading && this.isCloseToEdge(nativeEvent) && this.state.listItem.length < 30 && this.state.listItem.length != 0) {
-              this.getVideos(this.props.navigation.getParam('videoId'), 1, this.state.nextPageToken)
+              this.getNextVideos(this.props.track.id, 1, this.state.nextPageToken)
             }
           }}
           scrollEventThrottle={5000}
@@ -310,13 +312,14 @@ class PlayScreen extends Component {
           }
           <ItemsListVertical isLoading={this.state.isLoading}>
             {this.state.listItem.map((item, itemKey) => {
+              console.log(this.state.listItem)
               return (
                 <Item
                   item={item}
                   key={itemKey}
                   onPress={() => {
-                    this.props.navigation.navigate('Play', { videoId: item.id })
-
+                    this.playFromYoutube(item.id)
+                    this.setState({listItem: []})
                   }}
                 />
               )
