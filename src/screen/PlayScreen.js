@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import TrackPlayer from 'react-native-track-player';
 import { Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl, Spinner ,
   Item, ItemsListVertical} from '../commonComponents'
-
-
 import { TextInput, Button, SafeAreaView, Text, View, ScrollView } from 'react-native';
 import axios from 'axios';
 import memoize from "memoize-one";
@@ -22,7 +20,7 @@ class PlayScreen extends Component {
     console.log('initialized')
     super(props);
     this.state = {
-      shuffleOn: false,
+      autoOn: false,
       repeatOn: false,
       mode: 'youtube',
       nextPageToken: '',
@@ -42,6 +40,11 @@ class PlayScreen extends Component {
   onPressRepeat() {
     this.setState((state) => {
       return { repeatOn: !this.state.repeatOn }
+    })
+  }
+  onPressAuto() {
+    this.setState((state) => {
+      return { autoOn: !this.state.autoOn }
     })
   }
   async onPressBack() {
@@ -106,7 +109,7 @@ class PlayScreen extends Component {
   async componentDidMount() {
     // this.getNextVideos(this.props.navigation.getParam('videoId'), 7);
     this.onTrackChange = TrackPlayer.addEventListener('playback-track-changed', async (data) => {
-      this.getNextVideos(this.props.track.id, 7);
+      
       if (data.nextTrack === 'helperTrack') {
         console.log('helper track ON')
         return;
@@ -119,6 +122,7 @@ class PlayScreen extends Component {
        * sync track to redux store:
        */
       if (track) {
+        this.setState({listItem: []}, this.getNextVideos(data.nextTrack, 7) )
         this.props.syncTrack(track)
         this.props.syncPaused(false)
       } else {
@@ -295,14 +299,15 @@ class PlayScreen extends Component {
             />
             <PlaybackControl
               paused={this.props.paused}
-              shuffleOn={this.state.shuffleOn}
+              autoOn={this.state.autoOn}
               repeatOn={this.state.repeatOn}
               onPressPause={this.onPressPause.bind(this)}
               onPressPlay={this.onPressPlay.bind(this)}
               onPressRepeat={this.onPressRepeat.bind(this)}
+              onPressAuto={this.onPressAuto.bind(this)}
               forwardDisabled={false}
               backwardDisabled={false}
-              shuffleDisabled={true}
+              autoDisabled={false}
               onForward={this.onPressForward.bind(this)}
               onBack={this.onPressBack.bind(this)}
             />
@@ -312,7 +317,6 @@ class PlayScreen extends Component {
           }
           <ItemsListVertical isLoading={this.state.isLoading}>
             {this.state.listItem.map((item, itemKey) => {
-              console.log(this.state.listItem)
               return (
                 <Item
                   item={item}

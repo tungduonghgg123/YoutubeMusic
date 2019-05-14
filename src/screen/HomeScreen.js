@@ -67,7 +67,6 @@ class HomeScreen extends Component {
   render() {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: BACKGROUND_COLOR, height: '100%' }}>
-        <Text style={{ margin: 5, fontSize: 15, fontWeight: 'bold', textAlign: 'center' }}>Home</Text>
         <ItemsListVertical
           isLoading={this.state.isLoading}
           onCloseToEdge={() => {

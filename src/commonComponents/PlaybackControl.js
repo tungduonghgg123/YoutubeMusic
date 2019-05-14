@@ -7,7 +7,7 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-
+import { TEXT_COLOR} from '../style'
 class PlaybackControl extends TrackPlayer.ProgressComponent {
   async repeatAndPlay() {
     await TrackPlayer.seekTo(0);
@@ -15,23 +15,26 @@ class PlaybackControl extends TrackPlayer.ProgressComponent {
   }
   render() {
     const { paused,
-      shuffleOn,
+      autoOn,
       repeatOn,
       onPressPlay,
       onPressPause,
       onBack,
       onForward,
-      onPressShuffle,
+      onPressAuto,
       onPressRepeat,
       forwardDisabled,
       backwardDisabled,
-      shuffleDisabled } = this.props;
+      autoDisabled } = this.props;
     return (
       <View style={styles.container}>
         {/* Shuffle */}
-        <TouchableOpacity activeOpacity={0.0} onPress={onPressShuffle} disabled={shuffleDisabled}>
-          <Image style={[styles.secondaryControl, shuffleOn ? [] : styles.off]}
-            source={require('../img/ic_shuffle_white.png')} />
+        <TouchableOpacity activeOpacity={0.0} onPress={onPressAuto} disabled={autoDisabled}>
+          {/* <Image style={[styles.secondaryControl, shuffleOn ? [] : styles.off]}
+            source={require('../img/ic_shuffle_white.png')} /> */}
+          <Text style={[{color: TEXT_COLOR}, autoOn ? [] : styles.off]}>
+            AUTO
+          </Text>
         </TouchableOpacity>
 
         <View style={{ width: 40 }} />
