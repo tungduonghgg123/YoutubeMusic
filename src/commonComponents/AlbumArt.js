@@ -1,18 +1,26 @@
 import React from 'react';
-import { View, Image, TouchableOpacity, Dimensions } from 'react-native'
-import { BACKGROUND_COLOR} from '../style'
+import { View, Image, ScrollView, Dimensions, Text } from 'react-native'
+import FlipCard from 'react-native-flip-card'
+import { BACKGROUND_COLOR } from '../style'
 
-const AlbumArt = ({ onPress, url, path }) => {
+const AlbumArt = ({ url, description }) => {
   const { container, image } = styles;
-  let source = !url ? null : {uri: url}
- 
+  let source = !url ? null : { uri: url }
+
   return (
-    <View style={container} >
+    <FlipCard flipHorizontal={true} flipVertical={false}>
+      <View style={container} >
         <Image style={image}
           source={source}
           resizeMode={'contain'}
         />
-    </View>
+      </View>
+      <View style={container} >
+        <View style={image} >
+          <Text>{description}</Text>
+        </View>
+      </View>
+    </FlipCard>
   )
 }
 

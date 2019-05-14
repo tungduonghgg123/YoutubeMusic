@@ -291,8 +291,8 @@ class PlayScreen extends Component {
               this.props.miniPlayerOn();
             }}
           />
-          <AlbumArt url={!this.props.track.url ? "" : this.props.track.thumbnail.url} />
-          <View style={{ backgroundColor: BACKGROUND_COLOR }}>
+          <AlbumArt url={!this.props.track.url ? "" : this.props.track.thumbnail.url} description={this.props.track.description}/>
+          <View style={{backgroundColor: BACKGROUND_COLOR}}>
             <TrackDetails
               title={!this.props.track.title ? "" : this.props.track.title}
               channelTitle={!this.props.track.artist ? "" : this.props.track.artist}
