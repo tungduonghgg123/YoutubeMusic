@@ -327,7 +327,8 @@ class PlayScreen extends Component {
             <TrackDetails
               title={!this.props.track.title ? "" : this.props.track.title}
               channelTitle={!this.props.track.artist ? "" : this.props.track.artist}
-
+              addToAlbumDisabled={true}
+              downloadDisabled={true}
             />
             <SeekBar
               trackLength={!this.props.track.duration ? 0 : this.props.track.duration}

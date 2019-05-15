@@ -121,12 +121,6 @@ export default class SearchScreen extends Component {
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: BACKGROUND_COLOR, height: '100%' }}>
-      <Button title='go back'
-      onPress={() => {
-        this.props.navigation.goBack()
-      }}
-
-      />
         {this.state.showSearchBar ?
           <SearchBar
             placeholder="Search Youtube Music"

@@ -95,8 +95,7 @@ class PlaybackControl extends TrackPlayer.ProgressComponent {
             onPress={onPressRepeat} 
         >
           <Icon
-            
-            iconStyle={[styles.secondaryControl, repeatOn ? [] : styles.off]}
+            iconStyle={repeatOn ? [] : styles.off}
             color= {COMMON_COMPONENTS_COLOR}
             size={18}
             name='repeat'
@@ -125,10 +124,6 @@ const styles = StyleSheet.create({
     borderRadius: 72 / 2,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  secondaryControl: {
-    height: 18,
-    width: 18,
   },
   off: {
     opacity: 0.30,

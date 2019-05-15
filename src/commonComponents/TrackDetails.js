@@ -8,14 +8,15 @@ import { Icon} from 'react-native-elements'
  * 
  * `issue` TextTicker doesn't work on first track
  */
-const TrackDetails = ({ channelTitle, title, onMorePress, onAddPress, onCheckPress }) => {
+const TrackDetails = ({ channelTitle, title, onMorePress, onAddPress, downloadDisabled, addToAlbumDisabled }) => {
     const { buttonStyle, containerStyle, textStyle,
         titleContainerStyle, channelTitleContainerStyle } = styles;
     return (
         <View>
             <View style={containerStyle}>
-                <TouchableOpacity onPress={onAddPress}>
+                <TouchableOpacity onPress={onAddPress} disabled={addToAlbumDisabled}>
                     <Icon 
+                        iconStyle={!addToAlbumDisabled ? [] : styles.off}
                         name='add'
                         color= {COMMON_COMPONENTS_COLOR}
                         size={18}
@@ -35,9 +36,10 @@ const TrackDetails = ({ channelTitle, title, onMorePress, onAddPress, onCheckPre
                         {title}
                     </TextTicker>
                 </View>
-                <TouchableOpacity onPress={onMorePress}>
+                <TouchableOpacity onPress={onMorePress} disabled={downloadDisabled}>
                 <Icon 
-                        name='more-horiz'
+                        iconStyle={!downloadDisabled ? [] : styles.off}
+                        name='arrow-downward'
                         color= {COMMON_COMPONENTS_COLOR}
                         size={18}
                 />
@@ -79,6 +81,9 @@ const styles = {
     channelTitleContainerStyle: {
         justifyContent: 'center',
         alignItems: 'center',
-    }
+    },
+    off: {
+        opacity: 0.30,
+      }
 }
 export { TrackDetails };
