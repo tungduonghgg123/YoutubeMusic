@@ -27,7 +27,6 @@ class PlayScreen extends Component {
       mode: 'youtube',
       nextPageToken: '',
       isLoading: false,
-      listItem: []
     };
     this.props.miniPlayerOff();
   }
@@ -58,7 +57,6 @@ class PlayScreen extends Component {
   async getTheTrackQueue() {
     let tracks = await TrackPlayer.getQueue();
     console.log(tracks)
-    TrackPlayer.getState().then((result) => console.log(result))
 
   }
   memoizedLoad = memoize(async (videoId) => {
@@ -109,7 +107,6 @@ class PlayScreen extends Component {
   }
 
   async componentDidMount() {
-    // this.getNextVideos(this.props.navigation.getParam('videoId'), 7);
     this.onTrackChange = TrackPlayer.addEventListener('playback-track-changed', async (data) => {
 
       if (data.nextTrack === 'helperTrack') {
@@ -124,7 +121,9 @@ class PlayScreen extends Component {
        * sync track to redux store:
        */
       if (track) {
-        this.setState({ listItem: [] }, this.getNextVideos(data.nextTrack, 7))
+        this.props.addNextTracks([])
+        this.getNextVideos(data.nextTrack, 7)
+
         this.props.syncTrack(track)
         this.props.syncPaused(false)
       } else {
@@ -262,7 +261,7 @@ class PlayScreen extends Component {
           const duration = moment.duration(video.contentDetails.duration)
           video.contentDetails.duration = duration.asHours() < 1 ? moment(duration._data).format("m:ss") : moment(duration._data).format("H:mm:ss")
           video.statistics.viewCount = numberFormatter(video.statistics.viewCount);
-          this.setState({ listItem: [...this.state.listItem, video] })
+          this.props.appendNextTracks( video)
         })
       })
       this.setState({
@@ -277,7 +276,7 @@ class PlayScreen extends Component {
       <SafeAreaView style={{ flex: 1, backgroundColor: BACKGROUND_COLOR }}>
         <ScrollView stickyHeaderIndices={[0, 2]}
           onScroll={({ nativeEvent }) => {
-            if (!this.state.isLoading && this.isCloseToEdge(nativeEvent) && this.state.listItem.length < 30 && this.state.listItem.length != 0) {
+            if (!this.state.isLoading && this.isCloseToEdge(nativeEvent) && this.props.listItem.length < 30 && this.props.listItem.length != 0) {
               this.getNextVideos(this.props.track.id, 1, this.state.nextPageToken)
             }
           }}
@@ -328,14 +327,14 @@ class PlayScreen extends Component {
                 console.log(position) }} />
            <Button title='stop' onPress={() => { TrackPlayer.stop() }} />
           <ItemsListVertical isLoading={this.state.isLoading}>
-            {this.state.listItem.map((item, itemKey) => {
+            {this.props.listItem.map((item, itemKey) => {
               return (
                 <Item
                   item={item}
                   key={itemKey}
                   onPress={() => {
                     this.playFromYoutube(item.id)
-                    this.setState({ listItem: [] })
+                    this.props.addNextTracks([])
                   }}
                 />
               )
@@ -349,7 +348,8 @@ class PlayScreen extends Component {
 const mapStateToProps = state => ({
   paused: state.syncPausedReducer,
   track: state.syncTrackReducer,
-  loading: state.syncLoadingReducer
+  loading: state.syncLoadingReducer,
+  listItem: state.syncNextTrackListReducer
 });
 
 export default connect(mapStateToProps, actions)(PlayScreen)
