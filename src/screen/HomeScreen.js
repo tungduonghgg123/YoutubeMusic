@@ -7,6 +7,7 @@ import * as actions from '../redux/actions'
 import { BACKGROUND_COLOR} from '../style'
 import { Item, ItemsListVertical } from '../commonComponents'
 
+
 class HomeScreen extends Component {
   constructor(props) {
     super(props);

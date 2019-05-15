@@ -5,6 +5,8 @@ import { Item, ItemsListVertical } from '../commonComponents'
 import axios from 'axios';
 import moment from 'moment';
 import { BACKGROUND_COLOR, COMMON_COMPONENTS_COLOR, TEXT_COLOR } from '../style'
+
+
 function numberFormatter(num, digits) {
   var si = [
     { value: 1, symbol: "" },
