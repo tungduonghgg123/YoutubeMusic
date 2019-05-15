@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { SafeAreaView, Text } from 'react-native';
+import { SafeAreaView, Text, StatusBar } from 'react-native';
 import axios from 'axios';
 import moment from 'moment';
 import {connect} from 'react-redux';
@@ -16,6 +16,7 @@ class HomeScreen extends Component {
       isLoading: false,
       listItem: []
     };
+    this.offset = 0;
   }
 
   getVideoDetails(videoId) {
@@ -64,16 +65,23 @@ class HomeScreen extends Component {
   componentDidMount() {
     this.getVideos(7);
   }
-
+  onScroll = (event) => {
+    var currentOffset = event.nativeEvent.contentOffset.y;
+    var direction = currentOffset > this.offset ? 'down' : 'up';
+    this.offset = currentOffset;
+    console.log(direction);
+  }
   render() {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: BACKGROUND_COLOR, height: '100%' }}>
+        <StatusBar  backgroundColor={BACKGROUND_COLOR} barStyle="light-content"/>
         <ItemsListVertical
           isLoading={this.state.isLoading}
           onCloseToEdge={() => {
             if (!this.state.isLoading && this.state.listItem.length < 50 && this.state.listItem.length != 0)
               this.getVideos(5, this.state.nextPageToken)
           }}
+          onScroll={this.onScroll.bind(this)}
         >
           {this.state.listItem.map((item, itemKey) => {
             return (

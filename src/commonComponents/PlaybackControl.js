@@ -7,7 +7,10 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import { TEXT_COLOR } from '../style'
+import { TEXT_COLOR, COMMON_COMPONENTS_COLOR, HEADER_BUTTON_SIZE, 
+  PLAY_BUTTON_SIZE, BUTTON_BORDER_COLOR  } from '../style'
+import { Icon} from 'react-native-elements'
+
 class PlaybackControl extends TrackPlayer.ProgressComponent {
   async repeatAndPlay() {
     await TrackPlayer.seekTo(0);
@@ -44,9 +47,10 @@ class PlaybackControl extends TrackPlayer.ProgressComponent {
         <TouchableOpacity
           onPress={() => { this.state.position > 3 ? this.repeatAndPlay() : onBack() }}
           disabled={backwardDisabled}>
-          <Image
-            style={[backwardDisabled && { opacity: 0.3 }]}
-            source={require('../img/ic_skip_previous_white_36pt.png')} />
+          <Icon
+            color= {COMMON_COMPONENTS_COLOR}
+            size={HEADER_BUTTON_SIZE}
+            name='skip-previous' />
         </TouchableOpacity>
 
         <View style={{ width: 20 }} />
@@ -55,12 +59,20 @@ class PlaybackControl extends TrackPlayer.ProgressComponent {
         {!paused ?
           <TouchableOpacity onPress={onPressPause}>
             <View style={styles.playButton}>
-              <Image source={require('../img/ic_pause_white_48pt.png')} />
+              <Icon 
+                name='pause'
+                size={PLAY_BUTTON_SIZE}
+                color= {COMMON_COMPONENTS_COLOR}
+              />
             </View>
           </TouchableOpacity> :
           <TouchableOpacity onPress={onPressPlay}>
             <View style={styles.playButton}>
-              <Image source={require('../img/ic_play_arrow_white_48pt.png')} />
+            <Icon 
+                name='play-arrow'
+                size={PLAY_BUTTON_SIZE}
+                color= {COMMON_COMPONENTS_COLOR}
+              />
             </View>
           </TouchableOpacity>
         }
@@ -70,18 +82,26 @@ class PlaybackControl extends TrackPlayer.ProgressComponent {
         {/* Forward */}
         <TouchableOpacity onPress={onForward}
           disabled={forwardDisabled}>
-          <Image style={[forwardDisabled && { opacity: 0.3 }]}
-            source={require('../img/ic_skip_next_white_36pt.png')} />
+          <Icon
+            color= {COMMON_COMPONENTS_COLOR}
+            size={HEADER_BUTTON_SIZE}
+            name='skip-next' />
         </TouchableOpacity>
 
         <View style={{ width: 40 }} />
 
         {/* Repeat */}
         <TouchableOpacity
-          activeOpacity={0.0} onPress={onPressRepeat}>
-          <Image
-            style={[styles.secondaryControl, repeatOn ? [] : styles.off]}
-            source={require('../img/ic_repeat_white.png')} />
+            onPress={onPressRepeat} 
+        >
+          <Icon
+            
+            iconStyle={[styles.secondaryControl, repeatOn ? [] : styles.off]}
+            color= {COMMON_COMPONENTS_COLOR}
+            size={18}
+            name='repeat'
+
+            />
         </TouchableOpacity>
       </View>
     )
@@ -101,7 +121,7 @@ const styles = StyleSheet.create({
     height: 72,
     width: 72,
     borderWidth: 1,
-    borderColor: 'white',
+    borderColor: BUTTON_BORDER_COLOR,
     borderRadius: 72 / 2,
     alignItems: 'center',
     justifyContent: 'center',

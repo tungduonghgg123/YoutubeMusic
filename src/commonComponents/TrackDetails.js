@@ -1,7 +1,9 @@
 import React from 'react';
 import { View, TouchableOpacity, Image, Text } from 'react-native';
 import TextTicker from 'react-native-text-ticker'
-import { TEXT_COLOR } from '../style'
+import { TEXT_COLOR, COMMON_COMPONENTS_COLOR } from '../style'
+import { Icon} from 'react-native-elements'
+
 /**
  * 
  * `issue` TextTicker doesn't work on first track
@@ -13,9 +15,10 @@ const TrackDetails = ({ channelTitle, title, onMorePress, onAddPress, onCheckPre
         <View>
             <View style={containerStyle}>
                 <TouchableOpacity onPress={onAddPress}>
-                    <Image
-                        source={require('../img/baseline_add_white_18dp.png')}
-                        style={buttonStyle}
+                    <Icon 
+                        name='add'
+                        color= {COMMON_COMPONENTS_COLOR}
+                        size={18}
                     />
                 </TouchableOpacity>
                 <View style={titleContainerStyle}>
@@ -33,9 +36,11 @@ const TrackDetails = ({ channelTitle, title, onMorePress, onAddPress, onCheckPre
                     </TextTicker>
                 </View>
                 <TouchableOpacity onPress={onMorePress}>
-                    <Image source={require('../img/ic_more_horiz_white.png')}
-                        style={buttonStyle}
-                    />
+                <Icon 
+                        name='more-horiz'
+                        color= {COMMON_COMPONENTS_COLOR}
+                        size={18}
+                />
                 </TouchableOpacity>
             </View>
             <View style={channelTitleContainerStyle}>

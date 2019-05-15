@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Image, ScrollView, Dimensions, Text } from 'react-native'
 import FlipCard from 'react-native-flip-card'
-import { BACKGROUND_COLOR } from '../style'
+import { BACKGROUND_COLOR, TEXT_COLOR } from '../style'
 
 const AlbumArt = ({ url, description }) => {
   const { container, image } = styles;
@@ -17,7 +17,7 @@ const AlbumArt = ({ url, description }) => {
       </View>
       <View style={container} >
         <View style={image} >
-          <Text>{description}</Text>
+          <Text style={{ color: TEXT_COLOR}}>{description}</Text>
         </View>
       </View>
     </FlipCard>

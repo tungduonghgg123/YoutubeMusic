@@ -4,7 +4,7 @@ import {
   Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl, Spinner,
   Item, ItemsListVertical
 } from '../commonComponents'
-import { TextInput, Button, SafeAreaView, Text, View, ScrollView } from 'react-native';
+import { StatusBar, Button, SafeAreaView, Text, View, ScrollView } from 'react-native';
 import axios from 'axios';
 import memoize from "memoize-one";
 import moment from 'moment';
@@ -85,12 +85,14 @@ class PlayScreen extends Component {
     this.addAndPlay(track)
   })
   async addAndPlay(track) {
-    await TrackPlayer.add(track)
-    /**
-     * skip to this `track` by using `track id`
-     */
-    await TrackPlayer.skip(track.id)
-    this.onPressPlay();
+    if(track && track.id) {
+      await TrackPlayer.add(track)
+      /**
+       * skip to this `track` by using `track id`
+       */
+      await TrackPlayer.skip(track.id)
+      this.onPressPlay();
+    }
   }
   initializeTrack(videoId) {
     return axios.get('https://www.googleapis.com/youtube/v3/videos', {

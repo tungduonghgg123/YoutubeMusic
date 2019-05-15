@@ -22,14 +22,33 @@ function numberFormatter(num, digits) {
   var rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
   return (num / si[i].value).toFixed(digits).replace(rx, "$1") + si[i].symbol;
 }
-export default class SearchScreen extends Component {
-  state = {
-    searchInput: '',
-    isLoading: false,
-    nextPageToken: '',
-    listItem: []
-  };
 
+export default class SearchScreen extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      searchInput: '',
+      isLoading: false,
+      nextPageToken: '',
+      listItem: [],
+      showSearchBar: true
+    };
+    this.offset = 0;
+  }
+  onScroll = (event) => {
+    var currentOffset = event.nativeEvent.contentOffset.y;
+    var direction = currentOffset > this.offset ? 'down' : 'up';
+    this.offset = currentOffset;
+    console.log(direction);
+    switch (direction) {
+      case 'down':
+        this.setState({ showSearchBar: false })
+        break;
+      case 'up':
+        this.setState({ showSearchBar: true })
+        break;
+    }
+  }
   getVideoDetails(videoId) {
     return axios.get('https://www.googleapis.com/youtube/v3/videos', {
       params: {
@@ -81,24 +100,25 @@ export default class SearchScreen extends Component {
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: BACKGROUND_COLOR, height: '100%' }}>
-        <SearchBar
-          placeholder="Search Youtube Music"
-          containerStyle={{ backgroundColor: null, borderTopWidth: 0, borderBottomWidth: 0, paddingTop: 10, paddingBottom: 2 }}
-          inputContainerStyle={{ backgroundColor: 'white' }}
-          inputStyle={{ color: TEXT_COLOR }}
-          placeholderTextColor={TEXT_COLOR}
-          round={true}
-          /**
-          this line leads to bug!!!!!!! 
-           */
-          // autoFocus={true}
-          autoCorrect={false}
-          autoCapitalize="none"
-          showLoading={this.state.isLoading}
-          value={this.state.searchInput}
-          onChangeText={searchInput => this.setState({ searchInput })}
-          onSubmitEditing={event => this.onSearch(event.nativeEvent.text, 7)}
-        />
+        {this.state.showSearchBar ?
+          <SearchBar
+            placeholder="Search Youtube Music"
+            containerStyle={{ backgroundColor: null, borderTopWidth: 0, borderBottomWidth: 0, paddingTop: 10, paddingBottom: 2 }}
+            inputContainerStyle={{ backgroundColor: 'white' }}
+            inputStyle={{ color: TEXT_COLOR }}
+            placeholderTextColor={TEXT_COLOR}
+            round={true}
+            /**
+            this line leads to bug!!!!!!! 
+             */
+            // autoFocus={true}
+            autoCorrect={false}
+            autoCapitalize="none"
+            showLoading={this.state.isLoading}
+            value={this.state.searchInput}
+            onChangeText={searchInput => this.setState({ searchInput })}
+            onSubmitEditing={event => this.onSearch(event.nativeEvent.text, 7)}
+          /> : <View />}
 
         <ItemsListVertical
           isLoading={this.state.isLoading}
@@ -106,6 +126,7 @@ export default class SearchScreen extends Component {
             if (!this.state.isLoading && this.state.listItem.length < 50 && this.state.listItem.length != 0)
               this.onSearch(this.state.searchInput, 5, this.state.nextPageToken)
           }}
+          onScroll={this.onScroll.bind(this)}
         >
           {this.state.listItem.map((item, itemKey) => {
             return (
