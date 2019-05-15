@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { SafeAreaView, Text, StatusBar } from 'react-native';
+import { SafeAreaView, Text, StatusBar, BackHandler } from 'react-native';
 import axios from 'axios';
 import moment from 'moment';
 import {connect} from 'react-redux';
@@ -61,10 +61,27 @@ class HomeScreen extends Component {
       })
     })
   };
+  // onHardwareBackPress(){
+  //   let routeName = this.props.navigation.state.routeName
+  //   switch (routeName) {
+  //     case 'Home':
+  //     console.log('called from home screen')
 
+  //       this.props.navigation.goBack();
+  //       return true;
+  //     default:
+  //       return true;
+  //   }
+  // }
   componentDidMount() {
     this.getVideos(7);
+    // BackHandler.addEventListener('hardwareBackPress', () => {
+    //   this.onHardwareBackPress()
+    // });
   }
+  // componentWillUnmount(){
+  //   BackHandler.removeEventListener('hardwareBackPress', this.onHardwareBackPress);
+  // }
   onScroll = (event) => {
     var currentOffset = event.nativeEvent.contentOffset.y;
     var direction = currentOffset > this.offset ? 'down' : 'up';

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { View, Button,BackHandler } from 'react-native';
 import { SearchBar } from "react-native-elements";
 import { Item, ItemsListVertical } from '../commonComponents'
 import axios from 'axios';
@@ -96,10 +96,37 @@ export default class SearchScreen extends Component {
       console.log(error);
     });
   }
-
+  // onHardwareBackPress(){
+    
+  //   let routeName = this.props.navigation.state.routeName
+  //   console.log(routeName)
+  //   switch (routeName) {
+  //     case 'Search':
+  //     console.log('called from search screen')
+  //       this.props.navigation.goBack();
+  //       return true;
+  //     default:
+  //       return true;
+  //   }
+  // }
+  // componentDidMount() {
+  //   this.backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+  //     console.log('hardware back event fired')
+  //     this.onHardwareBackPress()
+  //   });
+  // }
+  // componentWillUnmount(){
+  //   this.backHandler.remove()
+  // }
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: BACKGROUND_COLOR, height: '100%' }}>
+      <Button title='go back'
+      onPress={() => {
+        this.props.navigation.goBack()
+      }}
+
+      />
         {this.state.showSearchBar ?
           <SearchBar
             placeholder="Search Youtube Music"

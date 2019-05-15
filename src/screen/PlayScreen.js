@@ -4,7 +4,7 @@ import {
   Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl, Spinner,
   Item, ItemsListVertical
 } from '../commonComponents'
-import { StatusBar, Button, SafeAreaView, Text, View, ScrollView } from 'react-native';
+import { StatusBar, Button, SafeAreaView, Text, View, ScrollView, BackHandler } from 'react-native';
 import axios from 'axios';
 import memoize from "memoize-one";
 import moment from 'moment';
@@ -19,7 +19,6 @@ import * as actions from '../redux/actions'
 
 
 class PlayScreen extends Component {
-  
   constructor(props) {
     console.log('initialized')
     super(props);
@@ -31,7 +30,6 @@ class PlayScreen extends Component {
       isLoading: false,
     };
     this.props.miniPlayerOff();
-
   }
   onPressPause() {
     TrackPlayer.pause();
@@ -42,22 +40,35 @@ class PlayScreen extends Component {
     this.props.syncPaused(false)
   }
   onPressRepeat() {
-    this.setState({repeatOn: !this.state.repeatOn}, () => {
-      if(this.state.repeatOn) {
-        this.setState({autoOn: false})
+    this.setState({ repeatOn: !this.state.repeatOn }, () => {
+      if (this.state.repeatOn) {
+        this.setState({ autoOn: false })
       }
     });
   }
   onPressAuto() {
-    this.setState({autoOn: !this.state.autoOn}, () => {
-      if(this.state.autoOn) {
-        this.setState({repeatOn: false})
+    this.setState({ autoOn: !this.state.autoOn }, () => {
+      if (this.state.autoOn) {
+        this.setState({ repeatOn: false })
       }
     });
-   
+
+  }
+  onDownPress() {
+    let routeName = this.props.navigation.state.routeName
+    switch (routeName) {
+      case 'Play':
+        this.props.navigation.goBack();
+        this.props.miniPlayerOn();
+        return true;
+      default:
+        return true;
+    }
+
+
   }
   playSuggestedNextVideo() {
-    if(this.props.listItem[0] && this.props.listItem[0].id) {
+    if (this.props.listItem[0] && this.props.listItem[0].id) {
       let videoId = this.props.listItem[0].id;
       this.memoizedLoad(videoId)
     }
@@ -85,7 +96,7 @@ class PlayScreen extends Component {
     this.addAndPlay(track)
   })
   async addAndPlay(track) {
-    if(track && track.id) {
+    if (track && track.id) {
       await TrackPlayer.add(track)
       /**
        * skip to this `track` by using `track id`
@@ -153,11 +164,13 @@ class PlayScreen extends Component {
         this.onPressPlay()
         return;
       }
-      if(this.state.autoOn) {
+      if (this.state.autoOn) {
         this.playSuggestedNextVideo()
         return;
       }
-
+      /**
+       * `android` when Track Player'b buffered hehinds current position.
+       */
       // let current = await TrackPlayer.getPosition();
       // let buffered = await TrackPlayer.getBufferedPosition();
       // if(current > buffered) {
@@ -181,7 +194,9 @@ class PlayScreen extends Component {
           break;
         case TrackPlayer.STATE_BUFFERING:
           console.log('buffering')
-
+          /**
+           * `iOS handler` when Track Player are busy `buffering` 
+           */
           // if(this.prevPlaybackState === 'playing'){
           //   let helperTrack = {
           //     id: 'helperTrack', 
@@ -202,7 +217,6 @@ class PlayScreen extends Component {
         case TrackPlayer.STATE_STOPPED:
           console.log('state stopped')
           break;
-
         default:
           break;
 
@@ -212,7 +226,18 @@ class PlayScreen extends Component {
     this.onRemotePause = TrackPlayer.addEventListener('remote-pause'), () => {
       console.log('remote pause')
     }
+    BackHandler.addEventListener('hardwareBackPress', this.onDownPress.bind(this));
+
     this.playFromYoutube()
+
+  }
+  componentWillUnmount() {
+    // Removes the event handler
+
+    this.onTrackChange.remove();
+    this.onQueueEnded.remove();
+    this.onPlaybackStateChange.remove();
+    BackHandler.removeEventListener('hardwareBackPress', this.onDownPress);
 
   }
   playFromYoutube(videoId) {
@@ -230,17 +255,6 @@ class PlayScreen extends Component {
       console.log('track added');
       this.onPressPlay()
     })
-
-  }
-  componentWillUnmount() {
-    // Removes the event handler
-    /**
-     * `weird`: this will be invoked when transition.
-     */
-
-    this.onTrackChange.remove();
-    this.onQueueEnded.remove();
-    this.onPlaybackStateChange.remove();
 
   }
   isCloseToEdge({ layoutMeasurement, contentOffset, contentSize }) {
@@ -282,7 +296,7 @@ class PlayScreen extends Component {
           const duration = moment.duration(video.contentDetails.duration)
           video.contentDetails.duration = duration.asHours() < 1 ? moment(duration._data).format("m:ss") : moment(duration._data).format("H:mm:ss")
           video.statistics.viewCount = numberFormatter(video.statistics.viewCount);
-          this.props.appendNextTracks( video)
+          this.props.appendNextTracks(video)
         })
       })
       this.setState({
@@ -306,13 +320,10 @@ class PlayScreen extends Component {
           <Header
             message="playing from Youtube"
             onQueuePress={this.getTheTrackQueue.bind(this)}
-            onDownPress={() => {
-              this.props.navigation.goBack();
-              this.props.miniPlayerOn();
-            }}
+            onDownPress={this.onDownPress.bind(this)}
           />
-          <AlbumArt url={!this.props.track.url ? "" : this.props.track.thumbnail.url} description={this.props.track.description}/>
-          <View style={{backgroundColor: BACKGROUND_COLOR}}>
+          <AlbumArt url={!this.props.track.url ? "" : this.props.track.thumbnail.url} description={this.props.track.description} />
+          <View style={{ backgroundColor: BACKGROUND_COLOR }}>
             <TrackDetails
               title={!this.props.track.title ? "" : this.props.track.title}
               channelTitle={!this.props.track.artist ? "" : this.props.track.artist}
@@ -339,14 +350,15 @@ class PlayScreen extends Component {
           {this.props.loading ?
             <Spinner /> : <View style={{ flex: 1 }} />
           }
-          <Button 
-            title='get current position' 
-            onPress={async () => { 
-                let position = await TrackPlayer.getPosition() 
-                let bufferedPosition = await TrackPlayer.getBufferedPosition() 
-                console.log(bufferedPosition) 
-                console.log(position) }} />
-           <Button title='stop' onPress={() => { TrackPlayer.stop() }} />
+          <Button
+            title='get current position'
+            onPress={async () => {
+              let position = await TrackPlayer.getPosition()
+              let bufferedPosition = await TrackPlayer.getBufferedPosition()
+              console.log(bufferedPosition)
+              console.log(position)
+            }} />
+          <Button title='stop' onPress={() => { TrackPlayer.stop() }} />
           <ItemsListVertical isLoading={this.state.isLoading}>
             {this.props.listItem.map((item, itemKey) => {
               return (
