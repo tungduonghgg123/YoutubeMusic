@@ -73,7 +73,8 @@ export default class SearchScreen extends Component {
     this.offset = currentOffset;
   }
   getVideoDetails(videoId) {
-    return axios.get('https://www.googleapis.com/youtube/v3/videos', {
+    return axios.get('https://content.googleapis.com/youtube/v3/videos', {
+      headers: { "X-Origin": "https://explorer.apis.google.com" },
       params: {
         part: "snippet,statistics,contentDetails",
         id: videoId,
@@ -92,7 +93,8 @@ export default class SearchScreen extends Component {
       this.setState({ listItem: [] })
     }
     this.setState({ isLoading: true, searchInput: text })
-    axios.get('https://www.googleapis.com/youtube/v3/search', {
+    axios.get('https://content.googleapis.com/youtube/v3/search', {
+      headers: { "X-Origin": "https://explorer.apis.google.com" },
       params: {
         part: "snippet",
         q: text,

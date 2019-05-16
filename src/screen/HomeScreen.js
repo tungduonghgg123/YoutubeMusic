@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { SafeAreaView, Text, StatusBar, BackHandler } from 'react-native';
 import axios from 'axios';
 import moment from 'moment';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import * as actions from '../redux/actions'
-import { BACKGROUND_COLOR} from '../style'
+import { BACKGROUND_COLOR } from '../style'
 import { Item, ItemsListVertical } from '../commonComponents'
 
 
@@ -19,26 +19,13 @@ class HomeScreen extends Component {
     this.offset = 0;
   }
 
-  getVideoDetails(videoId) {
-    return axios.get('https://www.googleapis.com/youtube/v3/videos', {
-      params: {
-        part: "snippet,statistics,contentDetails",
-        id: videoId,
-        fields: 'items(id,snippet,statistics(viewCount),contentDetails(duration))',
-        key: process.env.YOUTUBE_API_KEY
-      }
-    }).then((response) => {
-      return response.data.items
-    }).catch((error) => {
-      console.log(error);
-    });
-  }
-
   getVideos(maxResults, pageToken) {
     this.setState({ isLoading: true })
-    axios.get('https://www.googleapis.com/youtube/v3/videos', {
+    axios.get('https://content.googleapis.com/youtube/v3/videos', {
+      headers: { "X-Origin": "https://explorer.apis.google.com" },
       params: {
-        part: 'snippet',
+        part: 'snippet,statistics,contentDetails',
+        fields: 'nextPageToken,items(snippet,statistics(viewCount),contentDetails(duration))',
         chart: 'mostPopular',
         regionCode: 'VN',
         maxResults: maxResults,
@@ -46,14 +33,12 @@ class HomeScreen extends Component {
         key: process.env.YOUTUBE_API_KEY
       }
     }).then(response => {
-      const videoIds = response.data.items.map(item => item.id)
-      this.getVideoDetails(videoIds.join()).then(videos => {
-        videos.map(video => {
-          const duration = moment.duration(video.contentDetails.duration)
-          video.contentDetails.duration = duration.asHours() < 1 ? moment(duration._data).format("m:ss") : moment(duration._data).format("H:mm:ss")
-          video.statistics.viewCount = numberFormatter(video.statistics.viewCount);
-          this.setState({ listItem: [...this.state.listItem, video] })
-        })
+      console.log(response)
+      response.data.items.map(video => {
+        const duration = moment.duration(video.contentDetails.duration)
+        video.contentDetails.duration = duration.asHours() < 1 ? moment(duration._data).format("m:ss") : moment(duration._data).format("H:mm:ss")
+        video.statistics.viewCount = numberFormatter(video.statistics.viewCount);
+        this.setState({ listItem: [...this.state.listItem, video] })
       })
       this.setState({
         nextPageToken: response.data.nextPageToken,
@@ -95,7 +80,7 @@ class HomeScreen extends Component {
   render() {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: BACKGROUND_COLOR, height: '100%' }}>
-        <StatusBar  backgroundColor={BACKGROUND_COLOR} barStyle="light-content"/>
+        <StatusBar backgroundColor={BACKGROUND_COLOR} barStyle="light-content" />
         <ItemsListVertical
           isLoading={this.state.isLoading}
           onCloseToEdge={() => {
