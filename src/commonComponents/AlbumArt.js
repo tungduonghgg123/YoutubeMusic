@@ -1,38 +1,39 @@
 import React from 'react';
-import { View, Image, ScrollView, Dimensions, Text } from 'react-native'
-import FlipCard from 'react-native-flip-card'
+import { View, Image, ScrollView, Dimensions, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import CardFlip from 'react-native-card-flip';
 import { BACKGROUND_COLOR, TEXT_COLOR } from '../style'
 
 const AlbumArt = ({ url, description }) => {
-  const { container, image } = styles;
-  let source = !url ? null : { uri: url }
-
   return (
-    <FlipCard flipHorizontal={true} flipVertical={false}>
-      <View style={container} >
-        <Image style={image}
-          source={source}
-          resizeMode={'contain'}
-        />
-      </View>
-      <View style={container} >
-        <View style={image} >
-          <Text style={{ color: TEXT_COLOR}}>{description}</Text>
+    <View style={styles.container}>
+      <CardFlip style={styles.cardContainer} ref={(card) => this.card = card}>
+        <TouchableOpacity activeOpacity={1} onPress={() => this.card.flip()}>
+          <Image style={styles.image}
+            source={!url ? null : { uri: url }}
+            resizeMode={'contain'}
+          />
+        </TouchableOpacity>
+        <View style={styles.image}>
+          <ScrollView>
+            <Text style={{ color: TEXT_COLOR }}  onPress={() => {this.card.flip()}}>{description}</Text>
+          </ScrollView>
         </View>
-      </View>
-    </FlipCard>
+      </CardFlip>
+    </View>
   )
 }
 
-const { width, height } = Dimensions.get('window');
-const paddingLeft = 24;
-const paddingRight = 24;
-const imageWidth = width - paddingLeft - paddingRight;
+const imageWidth = Dimensions.get('window').width - 48;
 
-const styles = {
+const styles = StyleSheet.create({
   container: {
-    paddingLeft: paddingLeft,
-    paddingRight: paddingRight,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cardContainer: {
+    width: imageWidth,
+    height: imageWidth / 320 * 180,
   },
   image: {
     width: imageWidth,
@@ -42,5 +43,6 @@ const styles = {
     borderBottomWidth: 0,
     borderColor: BACKGROUND_COLOR
   },
-};
+});
+
 export { AlbumArt };
