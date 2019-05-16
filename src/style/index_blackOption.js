@@ -1,21 +1,23 @@
-const BACKGROUND_COLOR = '#FBCD17'
+// const BACKGROUND_COLOR = '#FBCD17'
+const BACKGROUND_COLOR = 'black'
 const MINIPLAYER_BACKGROUND_COLOR = BACKGROUND_COLOR
-const TEXT_COLOR = '#7D6B7D'
+
+// const TEXT_COLOR = '#4F0645'
+const TEXT_COLOR = '#FBCD17'
 
 
 /**
  * `../commonComponents/Item.js` styles
  */
-const CHANNEL_TITLE_COLOR = 'white'
-const VIEWS_COUNT_COLOR = 'white'
-const TITLE_COLOR =TEXT_COLOR
-export const ITEM_CONTAINER_COLOR = '#C0C480'
+const CHANNEL_TITLE_COLOR = TEXT_COLOR
+const VIEWS_COUNT_COLOR = TEXT_COLOR
+const TITLE_COLOR = 'white'
 
 /**
  * `common Components` styles
  */
 
-const COMMON_COMPONENTS_COLOR = '#FF665A'
+const COMMON_COMPONENTS_COLOR = '#FBCD17'
 const THUMP_COLOR = COMMON_COMPONENTS_COLOR
 /**
  * `../commonComponents/MiniPlayer.js` style
@@ -36,7 +38,7 @@ const PLAY_BUTTON_SIZE = 48;
  * `../commonComponents/SeekBar.js`
  */
 const MIN_TRACK_TINT_COLOR = COMMON_COMPONENTS_COLOR
-const MAX_TRACK_TINT_COLOR = 'white'
+const MAX_TRACK_TINT_COLOR = 'rgba(255, 255, 255, 0.14)'
 
 /**
  * `../commonComponents/Item.js`

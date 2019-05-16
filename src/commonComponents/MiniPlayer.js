@@ -8,7 +8,8 @@ import * as actions from '../redux/actions'
 import TextTicker from 'react-native-text-ticker'
 import {
     MINIPLAYER_BACKGROUND_COLOR, THUMP_COLOR, MINI_TEXT_COLOR,
-    BUTTON_BORDER_COLOR, COMMON_COMPONENTS_COLOR, MINI_BUTTON_SIZE
+    BUTTON_BORDER_COLOR, COMMON_COMPONENTS_COLOR, MINI_BUTTON_SIZE,
+    MIN_TRACK_TINT_COLOR, MAX_TRACK_TINT_COLOR
 } from '../style'
 import { Icon } from 'react-native-elements'
 
@@ -16,12 +17,7 @@ import { Icon } from 'react-native-elements'
 
 
 class MiniPlayer extends TrackPlayer.ProgressComponent {
-    constructor(props) {
-        super(props);
-        this.state = {
-            keyboardDidShow: false
-        }
-    }
+    
     _keyboardDidShow() {
         this.setState({ keyboardDidShow: true })
     }
@@ -39,31 +35,35 @@ class MiniPlayer extends TrackPlayer.ProgressComponent {
         this.props.syncPaused(false)
         TrackPlayer.play();
     }
-    componentDidMount() {
-        this.keyboardDidShowListener = Keyboard.addListener(
-            'keyboardDidShow',
-            this._keyboardDidShow.bind(this),
-        );
-        this.keyboardDidHideListener = Keyboard.addListener(
-            'keyboardDidHide',
-            this._keyboardDidHide.bind(this),
-        );
-        this.onTrackChange = TrackPlayer.addEventListener('playback-track-changed', async (data) => {
+    // componentDidMount() {
+    //     this.keyboardDidShowListener = Keyboard.addListener(
+    //         'keyboardDidShow',
+    //         this._keyboardDidShow.bind(this),
+    //     );
+    //     this.keyboardDidHideListener = Keyboard.addListener(
+    //         'keyboardDidHide',
+    //         this._keyboardDidHide.bind(this),
+    //     );
+    //     this.onTrackChange = TrackPlayer.addEventListener('playback-track-changed', async (data) => {
 
-            console.log('---------------------')
-            // console.log('track changed')
-            let track = await TrackPlayer.getTrack(data.nextTrack);
-            /**
-             * sync track to redux store:
-             */
-            if (track) {
-                this.props.syncTrack(track)
-                this.props.syncPaused(false)
-            } else {
-                this.props.syncPaused(true)
-            }
-        });
+    //         console.log('---------------------')
+    //         // console.log('track changed')
+    //         let track = await TrackPlayer.getTrack(data.nextTrack);
+    //         /**
+    //          * sync track to redux store:
+    //          */
+    //         if (track) {
+    //             this.props.syncTrack(track)
+    //             this.props.syncPaused(false)
+    //         } else {
+    //             this.props.syncPaused(true)
+    //         }
+    //     });
+    // }
+    componentDidMount(){
+        super.componentDidMount()
     }
+
     render() {
         const { textStyle, containerStyle, upButtonStyle, playButtonStyle, miniPlayerStyle,
             textContainerStyle
@@ -72,6 +72,7 @@ class MiniPlayer extends TrackPlayer.ProgressComponent {
         const { duration, title } = this.props.track ? this.props.track : {};
 
         return (
+
             <View>
                 {!this.props.miniPlayerState || this.state.keyboardDidShow ?
                     <View /> :
@@ -82,8 +83,8 @@ class MiniPlayer extends TrackPlayer.ProgressComponent {
                             onSlidingComplete={async value => { await TrackPlayer.seekTo(value) }}
                             value={this.state.position}
                             style={styles.slider}
-                            minimumTrackTintColor='#fff'
-                            maximumTrackTintColor='rgba(255, 255, 255, 0.14)'
+                            minimumTrackTintColor={MIN_TRACK_TINT_COLOR}
+                            maximumTrackTintColor={MAX_TRACK_TINT_COLOR}
                             thumbStyle={styles.thumb}
                             trackStyle={styles.track}
                         />
@@ -140,11 +141,14 @@ class MiniPlayer extends TrackPlayer.ProgressComponent {
     }
 }
 const styles = {
+    /**
+     * `slider`: is a container holds `track` (progress bar).
+     */
     slider: {
-        height: 1
+        height: 1,
     },
     track: {
-        height: 1,
+        height: 2,
         borderRadius: 1,
     },
     thumb: {
@@ -200,3 +204,4 @@ const mapStateToProps = state => ({
 
 });
 export default connect(mapStateToProps, actions)(MiniPlayer);
+

@@ -15,12 +15,6 @@ const ItemsListVertical = ({ children, isLoading, onCloseToEdge,
     return (
         <ScrollView
             style={{ paddingTop: 7 }}
-            // onScroll={(event) => {
-            //     onScroll123(event)
-            //     if (isCloseToEdge(event.nativeEvent)) {
-            //         onCloseToEdge();
-            //     }
-            // }}
             onScroll={(event) => {
                 onScroll(event)
                 if(isCloseToEdge(event.nativeEvent)) {

@@ -36,7 +36,7 @@ class PlaybackControl extends TrackPlayer.ProgressComponent {
           activeOpacity={0.0}
           onPress={onPressAuto}
           disabled={autoDisabled}>
-          <Text style={[{ color: TEXT_COLOR }, autoOn ? [] : styles.off]}>
+          <Text style={[{ color: COMMON_COMPONENTS_COLOR }, autoOn ? [] : styles.off]}>
             AUTO
           </Text>
         </TouchableOpacity>

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Button,BackHandler } from 'react-native';
+import { View, Button, BackHandler } from 'react-native';
 import { SearchBar } from "react-native-elements";
 import { Item, ItemsListVertical } from '../commonComponents'
 import axios from 'axios';
@@ -36,18 +36,41 @@ export default class SearchScreen extends Component {
     this.offset = 0;
   }
   onScroll = (event) => {
-    var currentOffset = event.nativeEvent.contentOffset.y;
-    var direction = currentOffset > this.offset ? 'down' : 'up';
-    this.offset = currentOffset;
-    console.log(direction);
-    switch (direction) {
-      case 'down':
-        this.setState({ showSearchBar: false })
-        break;
-      case 'up':
-        this.setState({ showSearchBar: true })
-        break;
+    // var currentOffset = event.nativeEvent.contentOffset.y;
+    // var direction = currentOffset > this.offset ? 'down' : 'up';
+    // this.offset = currentOffset;
+    // console.log(direction);
+    // switch (direction) {
+    //   case 'down':
+    //     this.setState({ showSearchBar: false }, ()=>{
+    //       console.log('down')
+    //     })
+    //     break;
+    //   case 'up':
+    //     this.setState({ showSearchBar: true }, () => {
+    //       console.log('up')
+    //     })
+    //     break;
+    //   default:
+    //     this.setState({ showSearchBar: true }, () => {
+    //       console.log('default')
+    //     });
+    //     break;
+
+    // }
+    const currentOffset = event.nativeEvent.contentOffset.y;
+    const dif = currentOffset - (this.offset || 0);
+
+    if (Math.abs(dif) < 3) {
+      console.log('unclear');
+    } else if (dif < 0) {
+      console.log('up123');
+    } else {
+      console.log('down');
     }
+    console.log('current: ', currentOffset);
+    console.log('previous: ', this.offset) 
+    this.offset = currentOffset;
   }
   getVideoDetails(videoId) {
     return axios.get('https://www.googleapis.com/youtube/v3/videos', {
@@ -97,7 +120,7 @@ export default class SearchScreen extends Component {
     });
   }
   // onHardwareBackPress(){
-    
+
   //   let routeName = this.props.navigation.state.routeName
   //   console.log(routeName)
   //   switch (routeName) {
@@ -117,6 +140,9 @@ export default class SearchScreen extends Component {
   // }
   // componentWillUnmount(){
   //   this.backHandler.remove()
+  // }
+  // componentDidMount(){
+  //   this.onSearch("nhạc trẻ việt", 7)
   // }
   render() {
     return (
@@ -147,7 +173,7 @@ export default class SearchScreen extends Component {
             if (!this.state.isLoading && this.state.listItem.length < 50 && this.state.listItem.length != 0)
               this.onSearch(this.state.searchInput, 5, this.state.nextPageToken)
           }}
-          onScroll={this.onScroll.bind(this)}
+          onScroll={() => {}}
         >
           {this.state.listItem.map((item, itemKey) => {
             return (

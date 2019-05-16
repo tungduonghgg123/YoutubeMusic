@@ -28,6 +28,7 @@
     "react-navigation-material-bottom-tabs": "^1.0.0",
     "react-navigation-tabs": "^2.1.2",
     "react-redux": "^7.0.3",
+    "react-timeout": "^1.2.0",
     "redux": "^4.0.1",
     "redux-devtools-extension": "^2.13.8",
     "redux-thunk": "^2.3.0"

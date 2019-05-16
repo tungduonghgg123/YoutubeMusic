@@ -84,7 +84,10 @@ export default class Main extends Component {
     /**
      * WORKING ON IT: setup player immediately after the application is launched.
      */
-    TrackPlayer.setupPlayer();
+    TrackPlayer.setupPlayer({
+      maxBuffer: 1000,
+      minBuffer: 100
+    });
     TrackPlayer.updateOptions({
       stopWithApp: true,
       capabilities: [

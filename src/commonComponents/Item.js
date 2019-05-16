@@ -1,11 +1,13 @@
 import React from 'react';
 import { Image, Text, View } from 'react-native';
 import { ListItem } from "react-native-elements";
-import { CHANNEL_TITLE_COLOR, VIEWS_COUNT_COLOR, TITLE_COLOR,
-    DURATION_COLOR, DURATION_BACKGROUND_COLOR} from '../style'
+import {
+    CHANNEL_TITLE_COLOR, VIEWS_COUNT_COLOR, TITLE_COLOR,
+    DURATION_COLOR, DURATION_BACKGROUND_COLOR, ITEM_CONTAINER_COLOR, BACKGROUND_COLOR
+} from '../style'
 
 const Item = ({ item, onPress }) => {
-    const {durationStyle, containerStyle, channelTitleStyle, viewCountStyle} = styles;
+    const { durationStyle, containerStyle, channelTitleStyle, viewCountStyle } = styles;
     return (
         <ListItem
             containerStyle={containerStyle}
@@ -26,11 +28,11 @@ const Item = ({ item, onPress }) => {
             titleProps={{ numberOfLines: 3 }}
             subtitle={
                 <View>
-                    <Text 
-                        numberOfLines={1} 
-                        style={channelTitleStyle} 
+                    <Text
+                        numberOfLines={1}
+                        style={channelTitleStyle}
                     >
-                    {item.snippet.channelTitle}
+                        {item.snippet.channelTitle}
                     </Text>
                     <Text style={viewCountStyle}>{item.statistics.viewCount + ' views'}</Text>
                 </View>
@@ -46,12 +48,17 @@ export { Item }
 
 const styles = {
     containerStyle: {
-         alignItems: 'flex-start', 
-         backgroundColor: null, 
-         paddingTop: 2, 
-         paddingBottom: 2 
+        alignItems: 'flex-start',
+        backgroundColor: null,
+        // marginBottom: 10,
+        padding: 0,
+        paddingLeft: 24,
+        paddingRight: 24,
+        // borderWidth: 1,
+        // // borderBottomWidth: 1,
+        // borderColor: ITEM_CONTAINER_COLOR
     },
-    durationStyle : {
+    durationStyle: {
         position: 'absolute',
         bottom: 7,
         right: 5,

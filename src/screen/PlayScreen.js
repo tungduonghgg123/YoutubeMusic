@@ -4,7 +4,8 @@ import {
   Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl, Spinner,
   Item, ItemsListVertical
 } from '../commonComponents'
-import { StatusBar, Button, SafeAreaView, Text, View, ScrollView, BackHandler } from 'react-native';
+import MiniPlayer from '../commonComponents/MiniPlayer'
+import { StatusBar, Button, SafeAreaView, Text, View, ScrollView, BackHandler, Alert } from 'react-native';
 import axios from 'axios';
 import memoize from "memoize-one";
 import moment from 'moment';
@@ -14,21 +15,26 @@ import { BACKGROUND_COLOR } from '../style'
 import { connect } from 'react-redux';
 import * as actions from '../redux/actions'
 
+import ReactTimeout from 'react-timeout'
 
 
 
+function timeout(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 class PlayScreen extends Component {
   constructor(props) {
     console.log('initialized')
     super(props);
     this.state = {
-      autoOn: true,
+      autoOn: false,
       repeatOn: false,
       mode: 'youtube',
       nextPageToken: '',
       isLoading: false,
     };
+    this.shouldQueueEndedEventRun = true;
     this.props.miniPlayerOff();
   }
   onPressPause() {
@@ -64,8 +70,6 @@ class PlayScreen extends Component {
       default:
         return true;
     }
-
-
   }
   playSuggestedNextVideo() {
     if (this.props.listItem[0] && this.props.listItem[0].id) {
@@ -81,7 +85,28 @@ class PlayScreen extends Component {
   }
   async getTheTrackQueue() {
     let tracks = await TrackPlayer.getQueue();
+    let state = await TrackPlayer.getState()
+    console.log(state)
     console.log(tracks)
+    switch (state) {
+      case TrackPlayer.STATE_PLAYING:
+        console.log('playing')
+        break;
+      case TrackPlayer.STATE_PAUSED:
+        console.log('paused')
+        break;
+      case TrackPlayer.STATE_BUFFERING:
+        console.log('buffering')
+        break;
+      case TrackPlayer.STATE_NONE:
+        console.log('state none')
+        break;
+      case TrackPlayer.STATE_STOPPED:
+        console.log('state stopped')
+        break;
+      default:
+        break;
+    }
 
   }
   memoizedLoad = memoize(async (videoId) => {
@@ -134,6 +159,7 @@ class PlayScreen extends Component {
   }
 
   async componentDidMount() {
+
     this.onTrackChange = TrackPlayer.addEventListener('playback-track-changed', async (data) => {
 
       if (data.nextTrack === 'helperTrack') {
@@ -158,7 +184,38 @@ class PlayScreen extends Component {
       }
     });
     this.onQueueEnded = TrackPlayer.addEventListener('playback-queue-ended', async (data) => {
+      console.log(this.shouldQueueEndedEventRun)
+      if (!this.shouldQueueEndedEventRun)
+        return;
       console.log('queue ended event')
+      let currentPos = await TrackPlayer.getPosition();
+      let duration = await this.props.track.duration;
+      /**
+       * `why duration - 1 ` ??, because some tracks, 
+       * the progress time is slightly larger (common is 1) than track's duration when the track ends.
+       * This makes sure TRack only be changed when tt really ends.
+       */
+      if (currentPos <= duration - 1) {
+        let buffered = await TrackPlayer.getBufferedPosition();
+        currentPos = await TrackPlayer.getPosition()
+        while (buffered < currentPos) {
+          console.log('fired')
+          TrackPlayer.play();
+          this.shouldQueueEndedEventRun = false;
+          TrackPlayer.play();
+          // setTimeout(() => {
+          //   this.shouldQueueEndedEventRun = true;
+          //   console.log('after time out')
+          // }, 20000)
+          await timeout(20000);
+          TrackPlayer.play();
+          this.shouldQueueEndedEventRun = true;
+          buffered = await TrackPlayer.getBufferedPosition();
+          currentPos = await TrackPlayer.getPosition()
+
+        }
+        return;
+      }
       if (this.state.repeatOn) {
         TrackPlayer.seekTo(0);
         this.onPressPlay()
@@ -189,34 +246,34 @@ class PlayScreen extends Component {
           console.log('playing')
           // this.onPressPlay()
           break;
-        case TrackPlayer.STATE_PAUSED:
-          console.log('paused')
-          break;
-        case TrackPlayer.STATE_BUFFERING:
-          console.log('buffering')
-          /**
-           * `iOS handler` when Track Player are busy `buffering` 
-           */
-          // if(this.prevPlaybackState === 'playing'){
-          //   let helperTrack = {
-          //     id: 'helperTrack', 
-          //     url: 'somellink',
-          //     title: 'helper Title', 
-          //     artist: 'tung duong',
-          //   }
-          //   await TrackPlayer.add(helperTrack)
-          //   await TrackPlayer.skip(helperTrack.id);
-          //   await TrackPlayer.skipToPrevious();
-          //   await TrackPlayer.remove(helperTrack.id)
-          // }
+        // case TrackPlayer.STATE_PAUSED:
+        //   console.log('paused')
+        //   break;
+        // case TrackPlayer.STATE_BUFFERING:
+        //   console.log('buffering')
+        //   /**
+        //    * `iOS handler` when Track Player are busy `buffering` 
+        //    */
+        //   // if(this.prevPlaybackState === 'playing'){
+        //   //   let helperTrack = {
+        //   //     id: 'helperTrack', 
+        //   //     url: 'somellink',
+        //   //     title: 'helper Title', 
+        //   //     artist: 'tung duong',
+        //   //   }
+        //   //   await TrackPlayer.add(helperTrack)
+        //   //   await TrackPlayer.skip(helperTrack.id);
+        //   //   await TrackPlayer.skipToPrevious();
+        //   //   await TrackPlayer.remove(helperTrack.id)
+        //   // }
 
-          break;
-        case TrackPlayer.STATE_NONE:
-          console.log('state none')
-          break;
-        case TrackPlayer.STATE_STOPPED:
-          console.log('state stopped')
-          break;
+        //   break;
+        // case TrackPlayer.STATE_NONE:
+        //   console.log('state none')
+        //   break;
+        // case TrackPlayer.STATE_STOPPED:
+        //   console.log('state stopped')
+        //   break;
         default:
           break;
 
@@ -347,11 +404,12 @@ class PlayScreen extends Component {
               onForward={this.playSuggestedNextVideo.bind(this)}
               onBack={this.onPressBack.bind(this)}
             />
+          {/* <MiniPlayer/> */}
           </View>
           {this.props.loading ?
             <Spinner /> : <View style={{ flex: 1 }} />
           }
-          <Button
+          {/* <Button
             title='get current position'
             onPress={async () => {
               let position = await TrackPlayer.getPosition()
@@ -359,7 +417,7 @@ class PlayScreen extends Component {
               console.log(bufferedPosition)
               console.log(position)
             }} />
-          <Button title='stop' onPress={() => { TrackPlayer.stop() }} />
+          <Button title='stop' onPress={() => { TrackPlayer.stop() }} /> */}
           <ItemsListVertical isLoading={this.state.isLoading}>
             {this.props.listItem.map((item, itemKey) => {
               return (

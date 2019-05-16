@@ -40,9 +40,9 @@ class HomeScreen extends Component {
       params: {
         part: 'snippet',
         chart: 'mostPopular',
+        regionCode: 'VN',
         maxResults: maxResults,
         pageToken: pageToken,
-        regionCode: 'VN',
         key: process.env.YOUTUBE_API_KEY
       }
     }).then(response => {
@@ -83,10 +83,14 @@ class HomeScreen extends Component {
   //   BackHandler.removeEventListener('hardwareBackPress', this.onHardwareBackPress);
   // }
   onScroll = (event) => {
-    var currentOffset = event.nativeEvent.contentOffset.y;
-    var direction = currentOffset > this.offset ? 'down' : 'up';
-    this.offset = currentOffset;
-    console.log(direction);
+    // var currentOffset = event.nativeEvent.contentOffset.y;
+    // var direction = currentOffset > this.offset ? 'down' : 'up';
+    // console.log('current: ', currentOffset);
+    // console.log('previou: ', this.offset) 
+    // this.offset = currentOffset;
+
+    // console.log(direction);
+    // console.log('-------------')
   }
   render() {
     return (
