@@ -163,6 +163,7 @@ const styles = {
         fontSize: 10,
     },
     textContainerStyle: {
+        flex: 1,
         width: 300,
         paddingLeft: 12,
         paddingRight: 12,

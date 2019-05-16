@@ -1,9 +1,9 @@
 import React from 'react';
-import { Image, Text, View } from 'react-native';
+import { Image, Text, View, Platform } from 'react-native';
 import { ListItem } from "react-native-elements";
 import {
     CHANNEL_TITLE_COLOR, VIEWS_COUNT_COLOR, TITLE_COLOR,
-    DURATION_COLOR, DURATION_BACKGROUND_COLOR, ITEM_CONTAINER_COLOR, BACKGROUND_COLOR
+    DURATION_COLOR, DURATION_BACKGROUND_COLOR, THUMBNAIL_HEIGHT,THUMBNAIL_WIDTH
 } from '../style'
 
 const Item = ({ item, onPress }) => {
@@ -15,7 +15,7 @@ const Item = ({ item, onPress }) => {
                 <View>
                     <Image
                         resizeMode='contain'
-                        style={{ width: 160, height: 100 }}
+                        style={{ width: THUMBNAIL_WIDTH, height: THUMBNAIL_HEIGHT, backgroundColor: 'black' }}
                         source={{ uri: item.snippet.thumbnails.medium.url }}
                     />
                     <Text style={durationStyle}>
@@ -24,8 +24,8 @@ const Item = ({ item, onPress }) => {
                 </View>
             }
             title={item.snippet.title}
-            titleStyle={{ color: TITLE_COLOR }}
-            titleProps={{ numberOfLines: 3 }}
+            titleStyle={{ color: TITLE_COLOR, fontSize: 10 }}
+            titleProps={{ numberOfLines: Platform.OS === 'ios'? 4:3 }}
             subtitle={
                 <View>
                     <Text
@@ -50,13 +50,9 @@ const styles = {
     containerStyle: {
         alignItems: 'flex-start',
         backgroundColor: null,
-        // marginBottom: 10,
-        padding: 0,
-        paddingLeft: 24,
-        paddingRight: 24,
-        // borderWidth: 1,
-        // // borderBottomWidth: 1,
-        // borderColor: ITEM_CONTAINER_COLOR
+        paddingTop: 0,
+        height: THUMBNAIL_HEIGHT,
+        marginBottom: 5
     },
     durationStyle: {
         position: 'absolute',
@@ -72,9 +68,11 @@ const styles = {
         fontWeight: 'bold',
     },
     channelTitleStyle: {
-        color: CHANNEL_TITLE_COLOR
+        color: CHANNEL_TITLE_COLOR,
+        fontSize: 10
     },
     viewCountStyle: {
-        color: VIEWS_COUNT_COLOR
+        color: VIEWS_COUNT_COLOR,
+        fontSize: 10
     }
 }

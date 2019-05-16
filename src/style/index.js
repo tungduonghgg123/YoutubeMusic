@@ -43,6 +43,8 @@ const MAX_TRACK_TINT_COLOR = 'white'
  */
 const DURATION_COLOR = 'white'
 const DURATION_BACKGROUND_COLOR = 'black'
+export const THUMBNAIL_WIDTH = 160;
+export const THUMBNAIL_HEIGHT = 90;
 
 /**
  * `../screen/Main.js`
