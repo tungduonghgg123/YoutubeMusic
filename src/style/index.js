@@ -43,6 +43,8 @@ const MAX_TRACK_TINT_COLOR = 'white'
  */
 const DURATION_COLOR = 'white'
 const DURATION_BACKGROUND_COLOR = 'black'
+const LIVE_COLOR = 'red'
+const LIVE_BACKGROUND_COLOR = 'black'
 
 /**
  * `../screen/Main.js`
@@ -58,6 +60,8 @@ export {
     INDICATOR_COLOR,
     DURATION_BACKGROUND_COLOR,
     DURATION_COLOR,
+    LIVE_BACKGROUND_COLOR,
+    LIVE_COLOR,
     MAX_TRACK_TINT_COLOR,
     MIN_TRACK_TINT_COLOR,
     HEADER_BUTTON_SIZE,

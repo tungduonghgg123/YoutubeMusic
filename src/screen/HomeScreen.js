@@ -25,7 +25,7 @@ class HomeScreen extends Component {
       headers: { "X-Origin": "https://explorer.apis.google.com" },
       params: {
         part: 'snippet,statistics,contentDetails',
-        fields: 'nextPageToken,items(snippet,statistics(viewCount),contentDetails(duration))',
+        fields: 'nextPageToken,items(id,snippet,statistics(viewCount),contentDetails(duration))',
         chart: 'mostPopular',
         regionCode: 'VN',
         maxResults: maxResults,
