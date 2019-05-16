@@ -106,7 +106,8 @@ class PlayScreen extends Component {
     }
   }
   initializeTrack(videoId) {
-    return axios.get('https://www.googleapis.com/youtube/v3/videos', {
+    return axios.get('https://content.googleapis.com/youtube/v3/videos', {
+      headers: { "X-Origin": "https://explorer.apis.google.com" },
       params: {
         part: 'snippet,statistics,contentDetails',
         id: videoId,
@@ -264,7 +265,8 @@ class PlayScreen extends Component {
   };
 
   getVideoDetails(videoId) {
-    return axios.get('https://www.googleapis.com/youtube/v3/videos', {
+    return axios.get('https://content.googleapis.com/youtube/v3/videos', {
+      headers: { "X-Origin": "https://explorer.apis.google.com" },
       params: {
         part: "snippet,statistics,contentDetails",
         id: videoId,
@@ -280,7 +282,8 @@ class PlayScreen extends Component {
 
   getNextVideos(relatedToVideoId, maxResults, pageToken) {
     this.setState({ isLoading: true })
-    axios.get('https://www.googleapis.com/youtube/v3/search', {
+    axios.get('https://content.googleapis.com/youtube/v3/search', {
+      headers: { "X-Origin": "https://explorer.apis.google.com" },
       params: {
         part: 'snippet',
         maxResults: maxResults,
