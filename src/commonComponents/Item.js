@@ -3,11 +3,12 @@ import { Image, Text, View, Platform } from 'react-native';
 import { ListItem } from "react-native-elements";
 import {
     CHANNEL_TITLE_COLOR, VIEWS_COUNT_COLOR, TITLE_COLOR,
-    DURATION_COLOR, DURATION_BACKGROUND_COLOR, THUMBNAIL_HEIGHT,THUMBNAIL_WIDTH
+    DURATION_COLOR, DURATION_BACKGROUND_COLOR, THUMBNAIL_HEIGHT,THUMBNAIL_WIDTH,
+    LIVE_COLOR, LIVE_BACKGROUND_COLOR,
 } from '../style'
 
 const Item = ({ item, onPress }) => {
-    const { durationStyle, containerStyle, channelTitleStyle, viewCountStyle } = styles;
+    const { durationStyle, liveStyle, containerStyle, channelTitleStyle, viewCountStyle } = styles;
     return (
         <ListItem
             containerStyle={containerStyle}
@@ -18,9 +19,15 @@ const Item = ({ item, onPress }) => {
                         style={{ width: THUMBNAIL_WIDTH, height: THUMBNAIL_HEIGHT, backgroundColor: 'black' }}
                         source={{ uri: item.snippet.thumbnails.medium.url }}
                     />
-                    <Text style={durationStyle}>
-                        {item.contentDetails.duration}
-                    </Text>
+                    {item.snippet.liveBroadcastContent == 'none' ?
+                        <Text style={durationStyle}>
+                            {item.contentDetails.duration}
+                        </Text>
+                        :
+                        <Text style={liveStyle}>
+                            {item.snippet.liveBroadcastContent}
+                        </Text>
+                    }
                 </View>
             }
             title={item.snippet.title}
@@ -60,6 +67,19 @@ const styles = {
         right: 5,
         color: DURATION_COLOR,
         backgroundColor: DURATION_BACKGROUND_COLOR,
+        opacity: 0.7,
+        padding: 2,
+        borderRadius: 2,
+        overflow: 'hidden',
+        fontSize: 12,
+        fontWeight: 'bold',
+    },
+    liveStyle: {
+        position: 'absolute',
+        bottom: 7,
+        right: 5,
+        color: LIVE_COLOR,
+        backgroundColor: LIVE_BACKGROUND_COLOR,
         opacity: 0.7,
         padding: 2,
         borderRadius: 2,
