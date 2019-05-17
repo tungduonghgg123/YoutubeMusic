@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, TouchableOpacity, Image, Text } from 'react-native';
+import { View, TouchableOpacity, Image, Text, Dimensions } from 'react-native';
 import TextTicker from 'react-native-text-ticker'
-import { TEXT_COLOR, COMMON_COMPONENTS_COLOR } from '../style'
+import { TEXT_COLOR, COMMON_COMPONENTS_COLOR, DISABLED_OPACITY } from '../style'
 import { Icon} from 'react-native-elements'
 
 /**
@@ -53,6 +53,7 @@ const TrackDetails = ({ channelTitle, title, onMorePress, onAddPress, downloadDi
         </View>
     )
 }
+const textWidth = Dimensions.get('window').width*4/5;
 const styles = {
     buttonStyle: {
     },
@@ -72,7 +73,7 @@ const styles = {
         fontSize: 15
     },
     titleContainerStyle: {
-        width: 300,
+        width: textWidth,
         paddingLeft: 12,
         paddingRight: 12,
         justifyContent: 'center',
@@ -83,7 +84,7 @@ const styles = {
         alignItems: 'center',
     },
     off: {
-        opacity: 0.30,
+        opacity: DISABLED_OPACITY,
       }
 }
 export { TrackDetails };

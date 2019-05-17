@@ -16,7 +16,7 @@ import { connect } from 'react-redux';
 import * as actions from '../redux/actions'
 
 import ReactTimeout from 'react-timeout'
-
+import { getTrackQueue, getTrackPlayerState, isCloseToEdge, getTrackDetails, getNextVideos } from '../utils'
 
 
 function timeout(ms) {
@@ -25,10 +25,9 @@ function timeout(ms) {
 
 class PlayScreen extends Component {
   constructor(props) {
-    console.log('initialized')
     super(props);
     this.state = {
-      autoOn: false,
+      autoOn: true,
       repeatOn: false,
       mode: 'youtube',
       nextPageToken: '',
@@ -58,7 +57,6 @@ class PlayScreen extends Component {
         this.setState({ repeatOn: false })
       }
     });
-
   }
   onDownPress() {
     let routeName = this.props.navigation.state.routeName
@@ -71,43 +69,14 @@ class PlayScreen extends Component {
         return true;
     }
   }
+  async onPressBack() {
+    await TrackPlayer.skipToPrevious();
+  }
   playSuggestedNextVideo() {
     if (this.props.listItem[0] && this.props.listItem[0].id) {
       let videoId = this.props.listItem[0].id;
       this.memoizedLoad(videoId)
     }
-  }
-  async onPressBack() {
-    await TrackPlayer.skipToPrevious();
-  }
-  async onPressForward() {
-    await TrackPlayer.skipToNext();
-  }
-  async getTheTrackQueue() {
-    let tracks = await TrackPlayer.getQueue();
-    let state = await TrackPlayer.getState()
-    console.log(state)
-    console.log(tracks)
-    switch (state) {
-      case TrackPlayer.STATE_PLAYING:
-        console.log('playing')
-        break;
-      case TrackPlayer.STATE_PAUSED:
-        console.log('paused')
-        break;
-      case TrackPlayer.STATE_BUFFERING:
-        console.log('buffering')
-        break;
-      case TrackPlayer.STATE_NONE:
-        console.log('state none')
-        break;
-      case TrackPlayer.STATE_STOPPED:
-        console.log('state stopped')
-        break;
-      default:
-        break;
-    }
-
   }
   memoizedLoad = memoize(async (videoId) => {
     if (!videoId)
@@ -117,7 +86,7 @@ class PlayScreen extends Component {
      *  */
     this.onPressPause()
     this.props.syncLoading(true)
-    let track = await this.initializeTrack(videoId)
+    let track = await getTrackDetails(videoId)
     this.addAndPlay(track)
   })
   async addAndPlay(track) {
@@ -130,35 +99,31 @@ class PlayScreen extends Component {
       this.onPressPlay();
     }
   }
-  initializeTrack(videoId) {
-    return axios.get('https://content.googleapis.com/youtube/v3/videos', {
-      headers: { "X-Origin": "https://explorer.apis.google.com" },
-      params: {
-        part: 'snippet,statistics,contentDetails',
-        id: videoId,
-        fields: 'items(id,snippet,statistics(viewCount),contentDetails(duration))',
-        key: process.env.YOUTUBE_API_KEY
-      }
-    }).then(response => {
-      let duration = response.data.items[0].contentDetails.duration;
-      const track = {
-        id: videoId,
-        url: `http://119.81.246.233:3000/play/${videoId}`, // Load media from server
-        title: response.data.items[0].snippet.title,
-        artist: response.data.items[0].snippet.channelTitle,
-        description: response.data.items[0].snippet.description,
-        date: response.data.items[0].snippet.publishedAt,
-        thumbnail: {
-          url: response.data.items[0].snippet.thumbnails.medium.url
-        },
-        duration: moment.duration(duration).asSeconds()
-      };
-      this.props.syncTrack(track)
-      return track;
-    })
-      .catch(error => console.log(error))
-  }
+  componentWillUnmount() {
+    // Removes the event handler
 
+    this.onTrackChange.remove();
+    this.onQueueEnded.remove();
+    this.onPlaybackStateChange.remove();
+    BackHandler.removeEventListener('hardwareBackPress', this.onDownPress);
+
+  }
+  playFromYoutube(videoId) {
+    if (videoId) {
+      this.memoizedLoad(videoId)
+    } else {
+      this.memoizedLoad(this.props.navigation.getParam('videoId'));
+    }
+  }
+  async setNextVideos(relatedToVideoId, maxResults, pageToken) {
+    this.setState({ isLoading: true });
+    let { nextVideos, nextPageToken } = await getNextVideos(relatedToVideoId, maxResults, pageToken);
+    this.props.appendNextTracks(nextVideos);
+    this.setState({
+      nextPageToken: nextPageToken,
+      isLoading: false
+    })
+  }
   async componentDidMount() {
 
     this.onTrackChange = TrackPlayer.addEventListener('playback-track-changed', async (data) => {
@@ -167,16 +132,16 @@ class PlayScreen extends Component {
         console.log('helper track ON')
         return;
       }
-      console.log('---------------------')
+      // console.log('---------------------')
       // console.log('track changed')
-      this.getTheTrackQueue()
+      // getTrackQueue()
       let track = await TrackPlayer.getTrack(data.nextTrack);
       /**
        * sync track to redux store:
        */
       if (track) {
         this.props.addNextTracks([])
-        this.getNextVideos(data.nextTrack, 7)
+        this.setNextVideos(data.nextTrack, 7)
 
         this.props.syncTrack(track)
         this.props.syncPaused(false)
@@ -240,7 +205,7 @@ class PlayScreen extends Component {
       this.props.syncPaused(true)
     });
     this.onPlaybackStateChange = TrackPlayer.addEventListener('playback-state', async (playbackState) => {
-
+      getTrackPlayerState()
       switch (playbackState.state) {
         case TrackPlayer.STATE_PLAYING:
           this.props.syncLoading(false);
@@ -289,97 +254,23 @@ class PlayScreen extends Component {
     this.playFromYoutube()
 
   }
-  componentWillUnmount() {
-    // Removes the event handler
-
-    this.onTrackChange.remove();
-    this.onQueueEnded.remove();
-    this.onPlaybackStateChange.remove();
-    BackHandler.removeEventListener('hardwareBackPress', this.onDownPress);
-
-  }
-  playFromYoutube(videoId) {
-    if (videoId) {
-      this.memoizedLoad(videoId)
-    } else {
-      this.memoizedLoad(this.props.navigation.getParam('videoId'));
-    }
-  }
-  /**
-   * not working at the moment.
-   */
-  playFromLocal() {
-    TrackPlayer.add(localTracks).then(() => {
-      console.log('track added');
-      this.onPressPlay()
-    })
-
-  }
-  isCloseToEdge({ layoutMeasurement, contentOffset, contentSize }) {
-    const paddingToBottom = 20;
-    return layoutMeasurement.height + contentOffset.y >=
-      contentSize.height - paddingToBottom;
-  };
-
-  getVideoDetails(videoId) {
-    return axios.get('https://content.googleapis.com/youtube/v3/videos', {
-      headers: { "X-Origin": "https://explorer.apis.google.com" },
-      params: {
-        part: "snippet,statistics,contentDetails",
-        id: videoId,
-        fields: 'items(id,snippet,statistics(viewCount),contentDetails(duration))',
-        key: process.env.YOUTUBE_API_KEY
-      }
-    }).then((response) => {
-      return response.data.items
-    }).catch((error) => {
-      console.log(error);
-    });
-  }
-
-  getNextVideos(relatedToVideoId, maxResults, pageToken) {
-    this.setState({ isLoading: true })
-    axios.get('https://content.googleapis.com/youtube/v3/search', {
-      headers: { "X-Origin": "https://explorer.apis.google.com" },
-      params: {
-        part: 'snippet',
-        maxResults: maxResults,
-        type: 'video',
-        relatedToVideoId: relatedToVideoId,
-        pageToken: pageToken,
-        key: process.env.YOUTUBE_API_KEY
-      }
-    }).then(response => {
-      const videoIds = response.data.items.map(item => item.id.videoId)
-      this.getVideoDetails(videoIds.join()).then(videos => {
-        videos.map(video => {
-          const duration = moment.duration(video.contentDetails.duration)
-          video.contentDetails.duration = duration.asHours() < 1 ? moment(duration._data).format("m:ss") : moment(duration._data).format("H:mm:ss")
-          video.statistics.viewCount = numberFormatter(video.statistics.viewCount);
-          this.props.appendNextTracks(video)
-        })
-      })
-      this.setState({
-        nextPageToken: response.data.nextPageToken,
-        isLoading: false
-      })
-    })
-  };
-
   render() {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: BACKGROUND_COLOR }}>
         <ScrollView stickyHeaderIndices={[0, 2]}
           onScroll={({ nativeEvent }) => {
-            if (!this.state.isLoading && this.isCloseToEdge(nativeEvent) && this.props.listItem.length < 30 && this.props.listItem.length != 0) {
-              this.getNextVideos(this.props.track.id, 1, this.state.nextPageToken)
+            if (!this.state.isLoading && isCloseToEdge(nativeEvent) &&
+              this.props.listItem.length < 30 && this.props.listItem.length != 0) {
+              this.setNextVideos(this.props.track.id, 1, this.state.nextPageToken)
             }
           }}
           scrollEventThrottle={5000}
         >
           <Header
             message="playing from Youtube"
-            onQueuePress={this.getTheTrackQueue.bind(this)}
+            onQueuePress={() => {
+              getTrackQueue()
+            }}
             onDownPress={this.onDownPress.bind(this)}
           />
           <AlbumArt url={!this.props.track.url ? "" : this.props.track.thumbnail.url} description={this.props.track.description} />
@@ -407,7 +298,7 @@ class PlayScreen extends Component {
               onForward={this.playSuggestedNextVideo.bind(this)}
               onBack={this.onPressBack.bind(this)}
             />
-          {/* <MiniPlayer/> */}
+            {/* <MiniPlayer/> */}
           </View>
           {this.props.loading ?
             <Spinner /> : <View style={{ flex: 1 }} />
@@ -449,18 +340,3 @@ const mapStateToProps = state => ({
 
 export default connect(mapStateToProps, actions)(PlayScreen)
 
-function numberFormatter(num, digits) {
-  var si = [
-    { value: 1, symbol: "" },
-    { value: 1E3, symbol: "K" },
-    { value: 1E6, symbol: "M" },
-    { value: 1E9, symbol: "B" }
-  ];
-  for (var i = si.length - 1; i > 0; i--) {
-    if (num >= si[i].value) {
-      break;
-    }
-  }
-  var rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
-  return (num / si[i].value).toFixed(digits).replace(rx, "$1") + si[i].symbol;
-}

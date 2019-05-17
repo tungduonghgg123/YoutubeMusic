@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import TrackPlayer from 'react-native-track-player';
-import { View, SafeAreaView, Image, TouchableOpacity, Keyboard } from 'react-native';
+import { View, SafeAreaView, TouchableOpacity, Keyboard, Dimensions } from 'react-native';
 import Slider from 'react-native-slider';
 import NavigationService from '../service/NavigationService';
 import { connect } from 'react-redux';
@@ -12,6 +12,7 @@ import {
     MIN_TRACK_TINT_COLOR, MAX_TRACK_TINT_COLOR
 } from '../style'
 import { Icon } from 'react-native-elements'
+
 
 
 
@@ -69,7 +70,6 @@ class MiniPlayer extends TrackPlayer.ProgressComponent {
         } = styles;
 
         const { duration, title } = this.props.track ? this.props.track : {};
-
         return (
 
             <View>
@@ -87,7 +87,7 @@ class MiniPlayer extends TrackPlayer.ProgressComponent {
                             thumbStyle={styles.thumb}
                             trackStyle={styles.track}
                         />
-                        <View style={containerStyle}>
+                        <View style={containerStyle} >
                             <TouchableOpacity onPress={this.onUpPress.bind(this)}>
                                 <Icon
                                     name='expand-less'
@@ -112,7 +112,7 @@ class MiniPlayer extends TrackPlayer.ProgressComponent {
                             </TouchableOpacity>
 
                             {!this.props.paused ?
-                                <TouchableOpacity onPress={this.onPressPause.bind(this)}>
+                                <TouchableOpacity onPress={this.onPressPause.bind(this)} >
                                     <View style={playButtonStyle}>
                                         <Icon
                                             name='pause'
@@ -139,6 +139,7 @@ class MiniPlayer extends TrackPlayer.ProgressComponent {
         )
     }
 }
+const textWidth = Dimensions.get('window').width*4/5;
 const styles = {
     /**
      * `slider`: is a container holds `track` (progress bar).
@@ -163,7 +164,7 @@ const styles = {
     },
     textContainerStyle: {
         flex: 1,
-        width: 300,
+        width: textWidth,
         paddingLeft: 12,
         paddingRight: 12,
         justifyContent: 'center',

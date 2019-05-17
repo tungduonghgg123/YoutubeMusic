@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { TEXT_COLOR, COMMON_COMPONENTS_COLOR, HEADER_BUTTON_SIZE, 
-  PLAY_BUTTON_SIZE, BUTTON_BORDER_COLOR  } from '../style'
+  PLAY_BUTTON_SIZE, BUTTON_BORDER_COLOR, DISABLED_OPACITY  } from '../style'
 import { Icon} from 'react-native-elements'
 
 class PlaybackControl extends TrackPlayer.ProgressComponent {
@@ -126,6 +126,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   off: {
-    opacity: 0.30,
+    opacity: DISABLED_OPACITY,
   }
 })

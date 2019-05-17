@@ -1,7 +1,7 @@
 const BACKGROUND_COLOR = '#FBCD17'
 const MINIPLAYER_BACKGROUND_COLOR = BACKGROUND_COLOR
 const TEXT_COLOR = '#7D6B7D'
-
+export const DISABLED_OPACITY = 0.5;
 
 /**
  * `../commonComponents/Item.js` styles

@@ -33,7 +33,6 @@ class HomeScreen extends Component {
         key: process.env.YOUTUBE_API_KEY
       }
     }).then(response => {
-      console.log(response)
       response.data.items.map(video => {
         if (video.snippet.categoryId == '10') {
           const duration = moment.duration(video.contentDetails.duration)
