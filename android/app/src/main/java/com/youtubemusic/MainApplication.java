@@ -1,5 +1,5 @@
 package com.youtubemusic;
-
+import com.rnnestedscrollview.RNNestedScrollViewPackage;
 import android.app.Application;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 
@@ -30,7 +30,8 @@ public class MainApplication extends Application implements ReactApplication {
             new ReanimatedPackage(),
             new VectorIconsPackage(),
             new TrackPlayer(),
-            new RNGestureHandlerPackage()
+            new RNGestureHandlerPackage(),
+            new RNNestedScrollViewPackage()
       );
     }
 

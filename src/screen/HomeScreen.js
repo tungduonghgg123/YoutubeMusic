@@ -35,10 +35,12 @@ class HomeScreen extends Component {
     }).then(response => {
       console.log(response)
       response.data.items.map(video => {
-        const duration = moment.duration(video.contentDetails.duration)
-        video.contentDetails.duration = duration.asHours() < 1 ? moment(duration._data).format("m:ss") : moment(duration._data).format("H:mm:ss")
-        video.statistics.viewCount = numberFormatter(video.statistics.viewCount);
-        this.setState({ listItem: [...this.state.listItem, video] })
+        if (video.snippet.categoryId == '10') {
+          const duration = moment.duration(video.contentDetails.duration)
+          video.contentDetails.duration = duration.asHours() < 1 ? moment(duration._data).format("m:ss") : moment(duration._data).format("H:mm:ss")
+          video.statistics.viewCount = numberFormatter(video.statistics.viewCount);
+          this.setState({ listItem: [...this.state.listItem, video] })
+        }
       })
       this.setState({
         nextPageToken: response.data.nextPageToken,
@@ -59,7 +61,7 @@ class HomeScreen extends Component {
   //   }
   // }
   componentDidMount() {
-    this.getVideos(7);
+    this.getVideos(20);
     // BackHandler.addEventListener('hardwareBackPress', () => {
     //   this.onHardwareBackPress()
     // });
