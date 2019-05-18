@@ -353,7 +353,7 @@ class PlayScreen extends Component {
       const videoIds = response.data.items.map(item => item.id.videoId)
       this.getVideoDetails(videoIds.join()).then(videos => {
         videos.map(video => {
-          axios.get(`http://119.81.246.233:3000/load/${video.id}`)
+          axios.get(`http://119.81.246.233:3000/load/${video.id}`).then().catch(error => console.log(error))
           const duration = moment.duration(video.contentDetails.duration)
           video.contentDetails.duration = duration.asHours() < 1 ? moment(duration._data).format("m:ss") : moment(duration._data).format("H:mm:ss")
           video.statistics.viewCount = numberFormatter(video.statistics.viewCount);
