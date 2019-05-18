@@ -1,9 +1,9 @@
-import { Dimensions} from 'react-native'
-function calFontSize(standardSize){
+import { Dimensions } from 'react-native'
+function calFontSize(standardSize) {
     const standardDiagonalLength = 734.3;
     const width = Dimensions.get('window').width;
     const height = Dimensions.get('window').height;
-    const diagonalLength = Math.sqrt(width*width + height*height);
+    const diagonalLength = Math.sqrt(width * width + height * height);
     return diagonalLength * standardSize / standardDiagonalLength;
 }
 
@@ -17,9 +17,9 @@ export const DISABLED_OPACITY = 0.5;
  */
 const CHANNEL_TITLE_COLOR = 'white'
 const VIEWS_COUNT_COLOR = 'white'
-const TITLE_COLOR =TEXT_COLOR
+const TITLE_COLOR = TEXT_COLOR
 export const ITEM_CONTAINER_COLOR = '#C0C480'
-export const  CHANNEL_TITLE_FONT_SIZE = calFontSize(10)
+export const CHANNEL_TITLE_FONT_SIZE = calFontSize(10)
 export const VIEWS_COUNT_COLOR_FONT_SIZE = calFontSize(10)
 export const TITLE_FONT_SIZE = calFontSize(10)
 /**
@@ -39,6 +39,12 @@ const MINI_TEXT_COLOR = TEXT_COLOR
  * `../commonComponents/Header.js`
  */
 const HEADER_BUTTON_SIZE = 24
+export const HEADER_FONT_SIZE = calFontSize(12)
+/**
+ * `../commonComponents/TrackDetails.js`
+ */
+export const TRACKDETAILS_FONT_SIZE = calFontSize(12)
+
 /**
  * `../commonComponents/PlaybackControl.js`
  */

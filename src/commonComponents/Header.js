@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { Icon } from 'react-native-elements'
-import {HEADER_BUTTON_SIZE, COMMON_COMPONENTS_COLOR, TEXT_COLOR} from '../style'
+import {HEADER_BUTTON_SIZE, COMMON_COMPONENTS_COLOR, TEXT_COLOR, HEADER_FONT_SIZE} from '../style'
 const Header = ({ message, onDownPress, onQueuePress, onMessagePress }) => {
     const { textStyle, containerStyle, buttonStyle } = styles;
     return (
@@ -33,7 +33,7 @@ const styles = {
         textAlign: 'center',
         color: TEXT_COLOR,
         fontWeight: 'bold',
-        fontSize: 12,
+        fontSize: HEADER_FONT_SIZE
     },
     containerStyle: {
         justifyContent: 'space-between',

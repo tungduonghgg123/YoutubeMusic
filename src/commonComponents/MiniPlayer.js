@@ -9,7 +9,7 @@ import TextTicker from 'react-native-text-ticker'
 import {
     MINIPLAYER_BACKGROUND_COLOR, THUMP_COLOR, MINI_TEXT_COLOR,
     BUTTON_BORDER_COLOR, COMMON_COMPONENTS_COLOR, MINI_BUTTON_SIZE,
-    MIN_TRACK_TINT_COLOR, MAX_TRACK_TINT_COLOR
+    MIN_TRACK_TINT_COLOR, MAX_TRACK_TINT_COLOR, TITLE_FONT_SIZE
 } from '../style'
 import { Icon } from 'react-native-elements'
 
@@ -160,7 +160,7 @@ const styles = {
         textAlign: 'center',
         color: MINI_TEXT_COLOR,
         fontWeight: 'bold',
-        fontSize: 10,
+        fontSize: TITLE_FONT_SIZE
     },
     textContainerStyle: {
         flex: 1,
