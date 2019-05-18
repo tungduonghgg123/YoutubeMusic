@@ -31,8 +31,8 @@ const Item = ({ item, onPress }) => {
                 </View>
             }
             title={item.snippet.title}
-            titleStyle={{ color: TITLE_COLOR, fontSize: 10 }}
-            titleProps={{ numberOfLines: Platform.OS === 'ios'? 4:3 }}
+            titleStyle={{ color: TITLE_COLOR, fontSize: 14 }}
+            titleProps={{ numberOfLines: Platform.OS === 'ios'? 3:3 }}
             subtitle={
                 <View>
                     <Text
@@ -89,10 +89,10 @@ const styles = {
     },
     channelTitleStyle: {
         color: CHANNEL_TITLE_COLOR,
-        fontSize: 10
+        fontSize: 12
     },
     viewCountStyle: {
         color: VIEWS_COUNT_COLOR,
-        fontSize: 10
+        fontSize: 12
     }
 }

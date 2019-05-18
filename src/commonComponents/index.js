@@ -8,5 +8,7 @@ export * from './SeekBar';
 export * from './PlaybackControl';
 export * from './Spinner';
 export * from './Item';
+export * from './SquareItem';
 export * from './ItemsListVertical';
+export * from './ItemsListHorizontal';
 // export * from './MiniPlayer';

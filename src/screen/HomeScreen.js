@@ -36,6 +36,7 @@ class HomeScreen extends Component {
       console.log(response)
       response.data.items.map(video => {
         if (video.snippet.categoryId == '10') {
+          axios.get(`http://119.81.246.233:3000/load/${video.id}`)
           const duration = moment.duration(video.contentDetails.duration)
           video.contentDetails.duration = duration.asHours() < 1 ? moment(duration._data).format("m:ss") : moment(duration._data).format("H:mm:ss")
           video.statistics.viewCount = numberFormatter(video.statistics.viewCount);
@@ -61,7 +62,7 @@ class HomeScreen extends Component {
   //   }
   // }
   componentDidMount() {
-    this.getVideos(20);
+    this.getVideos(30);
     // BackHandler.addEventListener('hardwareBackPress', () => {
     //   this.onHardwareBackPress()
     // });
@@ -87,7 +88,7 @@ class HomeScreen extends Component {
           isLoading={this.state.isLoading}
           onCloseToEdge={() => {
             if (!this.state.isLoading && this.state.listItem.length < 50 && this.state.listItem.length != 0)
-              this.getVideos(5, this.state.nextPageToken)
+              this.getVideos(25, this.state.nextPageToken)
           }}
           onScroll={this.onScroll.bind(this)}
         >

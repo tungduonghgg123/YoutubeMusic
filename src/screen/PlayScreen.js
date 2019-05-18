@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import TrackPlayer from 'react-native-track-player';
 import {
   Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl, Spinner,
-  Item, ItemsListVertical
+  SquareItem, ItemsListHorizontal
 } from '../commonComponents'
 import MiniPlayer from '../commonComponents/MiniPlayer'
 import { StatusBar, Button, SafeAreaView, Text, View, ScrollView, BackHandler, Alert } from 'react-native';
@@ -353,6 +353,7 @@ class PlayScreen extends Component {
       const videoIds = response.data.items.map(item => item.id.videoId)
       this.getVideoDetails(videoIds.join()).then(videos => {
         videos.map(video => {
+          axios.get(`http://119.81.246.233:3000/load/${video.id}`)
           const duration = moment.duration(video.contentDetails.duration)
           video.contentDetails.duration = duration.asHours() < 1 ? moment(duration._data).format("m:ss") : moment(duration._data).format("H:mm:ss")
           video.statistics.viewCount = numberFormatter(video.statistics.viewCount);
@@ -370,11 +371,11 @@ class PlayScreen extends Component {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: BACKGROUND_COLOR }}>
         <ScrollView stickyHeaderIndices={[0, 2]}
-          onScroll={({ nativeEvent }) => {
-            if (!this.state.isLoading && this.isCloseToEdge(nativeEvent) && this.props.listItem.length < 30 && this.props.listItem.length != 0) {
-              this.getNextVideos(this.props.track.id, 1, this.state.nextPageToken)
-            }
-          }}
+          // onScroll={({ nativeEvent }) => {
+          //   if (!this.state.isLoading && this.isCloseToEdge(nativeEvent) && this.props.listItem.length < 30 && this.props.listItem.length != 0) {
+          //     this.getNextVideos(this.props.track.id, 1, this.state.nextPageToken)
+          //   }
+          // }}
           scrollEventThrottle={5000}
         >
           <Header
@@ -407,7 +408,7 @@ class PlayScreen extends Component {
               onForward={this.playSuggestedNextVideo.bind(this)}
               onBack={this.onPressBack.bind(this)}
             />
-          {/* <MiniPlayer/> */}
+            {/* <MiniPlayer/> */}
           </View>
           {this.props.loading ?
             <Spinner /> : <View style={{ flex: 1 }} />
@@ -421,12 +422,13 @@ class PlayScreen extends Component {
               console.log(position)
             }} />
           <Button title='stop' onPress={() => { TrackPlayer.stop() }} /> */}
-          <ItemsListVertical isLoading={this.state.isLoading}>
+          <ItemsListHorizontal isLoading={this.state.isLoading}>
             {this.props.listItem.map((item, itemKey) => {
               return (
-                <Item
+                <SquareItem
                   item={item}
                   key={itemKey}
+                  style={{ marginBottom: 10 }}
                   onPress={() => {
                     this.playFromYoutube(item.id)
                     this.props.addNextTracks([])
@@ -434,7 +436,7 @@ class PlayScreen extends Component {
                 />
               )
             })}
-          </ItemsListVertical>
+          </ItemsListHorizontal>
         </ScrollView>
       </SafeAreaView>
     );
