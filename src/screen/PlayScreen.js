@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import TrackPlayer from 'react-native-track-player';
 import {
   Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl, Spinner,
-  Item, ItemsListVertical
+  SquareItem, ItemsListHorizontal
 } from '../commonComponents'
 import MiniPlayer from '../commonComponents/MiniPlayer'
 import { StatusBar, Button, SafeAreaView, Text, View, ScrollView, BackHandler, Alert } from 'react-native';
@@ -312,12 +312,13 @@ class PlayScreen extends Component {
               console.log(position)
             }} />
           <Button title='stop' onPress={() => { TrackPlayer.stop() }} /> */}
-          <ItemsListVertical isLoading={this.state.isLoading}>
+          <ItemsListHorizontal isLoading={this.state.isLoading}>
             {this.props.listItem.map((item, itemKey) => {
               return (
-                <Item
+                <SquareItem
                   item={item}
                   key={itemKey}
+                  style={{ marginBottom: 10 }}
                   onPress={() => {
                     this.playFromYoutube(item.id)
                     this.props.addNextTracks([])
@@ -325,7 +326,7 @@ class PlayScreen extends Component {
                 />
               )
             })}
-          </ItemsListVertical>
+          </ItemsListHorizontal>
         </ScrollView>
       </SafeAreaView>
     );

@@ -3,6 +3,8 @@ import { View, Image, ScrollView, Dimensions, Text, TouchableOpacity, StyleSheet
 import CardFlip from 'react-native-card-flip';
 import { BACKGROUND_COLOR, TEXT_COLOR } from '../style'
 import NestedScrollView from 'react-native-nested-scroll-view'
+const imageWidth = Dimensions.get('window').width - 48;
+
 const AlbumArt = ({ url, description }) => {
   return (
     <View style={styles.container}>
@@ -25,7 +27,6 @@ const AlbumArt = ({ url, description }) => {
   )
 }
 
-const imageWidth = Dimensions.get('window').width - 48;
 
 const styles = StyleSheet.create({
   container: {
@@ -40,10 +41,10 @@ const styles = StyleSheet.create({
   image: {
     width: imageWidth,
     height: imageWidth / 320 * 180,
-    borderWidth: 1,
-    borderRadius: 15,
-    borderBottomWidth: 0,
-    borderColor: BACKGROUND_COLOR
+    // borderWidth: 1,
+    // borderRadius: '50%',
+    // borderBottomWidth: 0,
+    // borderColor: BACKGROUND_COLOR
   },
 });
 

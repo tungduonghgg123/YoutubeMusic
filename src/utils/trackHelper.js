@@ -140,7 +140,7 @@ function numberFormatter(num, digits) {
   /**
    * not working at the moment.
    */
-  playFromLocal() {
+  function playFromLocal() {
     TrackPlayer.add(localTracks).then(() => {
       console.log('track added');
       this.onPressPlay()

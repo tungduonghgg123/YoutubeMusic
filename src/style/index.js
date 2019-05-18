@@ -1,3 +1,12 @@
+import { Dimensions} from 'react-native'
+function calFontSize(standardSize){
+    const standardDiagonalLength = 734.3;
+    const width = Dimensions.get('window').width;
+    const height = Dimensions.get('window').height;
+    const diagonalLength = Math.sqrt(width*width + height*height);
+    return diagonalLength * standardSize / standardDiagonalLength;
+}
+
 const BACKGROUND_COLOR = '#FBCD17'
 const MINIPLAYER_BACKGROUND_COLOR = BACKGROUND_COLOR
 const TEXT_COLOR = '#7D6B7D'
@@ -10,7 +19,9 @@ const CHANNEL_TITLE_COLOR = 'white'
 const VIEWS_COUNT_COLOR = 'white'
 const TITLE_COLOR =TEXT_COLOR
 export const ITEM_CONTAINER_COLOR = '#C0C480'
-
+export const  CHANNEL_TITLE_FONT_SIZE = calFontSize(10)
+export const VIEWS_COUNT_COLOR_FONT_SIZE = calFontSize(10)
+export const TITLE_FONT_SIZE = calFontSize(10)
 /**
  * `common Components` styles
  */

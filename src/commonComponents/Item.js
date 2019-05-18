@@ -4,7 +4,7 @@ import { ListItem } from "react-native-elements";
 import {
     CHANNEL_TITLE_COLOR, VIEWS_COUNT_COLOR, TITLE_COLOR,
     DURATION_COLOR, DURATION_BACKGROUND_COLOR, THUMBNAIL_HEIGHT,THUMBNAIL_WIDTH,
-    LIVE_COLOR, LIVE_BACKGROUND_COLOR,
+    LIVE_COLOR, LIVE_BACKGROUND_COLOR, CHANNEL_TITLE_FONT_SIZE, VIEWS_COUNT_COLOR_FONT_SIZE, TITLE_FONT_SIZE
 } from '../style'
 
 const Item = ({ item, onPress }) => {
@@ -16,7 +16,7 @@ const Item = ({ item, onPress }) => {
                 <View>
                     <Image
                         resizeMode='contain'
-                        style={{ width: THUMBNAIL_WIDTH, height: THUMBNAIL_HEIGHT, backgroundColor: 'black' }}
+                        style={{ width: THUMBNAIL_WIDTH, height: THUMBNAIL_HEIGHT }}
                         source={{ uri: item.snippet.thumbnails.medium.url }}
                     />
                     {item.snippet.liveBroadcastContent == 'none' ?
@@ -31,8 +31,8 @@ const Item = ({ item, onPress }) => {
                 </View>
             }
             title={item.snippet.title}
-            titleStyle={{ color: TITLE_COLOR, fontSize: 10 }}
-            titleProps={{ numberOfLines: Platform.OS === 'ios'? 4:3 }}
+            titleStyle={{ color: TITLE_COLOR, fontSize: TITLE_FONT_SIZE}}
+            titleProps={{ numberOfLines: 3 }}
             subtitle={
                 <View>
                     <Text
@@ -44,7 +44,6 @@ const Item = ({ item, onPress }) => {
                     <Text style={viewCountStyle}>{item.statistics.viewCount + ' views'}</Text>
                 </View>
             }
-            subtitleStyle={{ color: 'black', fontSize: 11 }}
             pad={10}
             onPress={onPress}
         />
@@ -89,10 +88,10 @@ const styles = {
     },
     channelTitleStyle: {
         color: CHANNEL_TITLE_COLOR,
-        fontSize: 10
+        fontSize: CHANNEL_TITLE_FONT_SIZE
     },
     viewCountStyle: {
         color: VIEWS_COUNT_COLOR,
-        fontSize: 10
+        fontSize: VIEWS_COUNT_COLOR_FONT_SIZE
     }
 }
