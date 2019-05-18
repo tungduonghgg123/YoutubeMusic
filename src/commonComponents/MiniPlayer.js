@@ -73,7 +73,7 @@ class MiniPlayer extends TrackPlayer.ProgressComponent {
         return (
 
             <View>
-                {!this.props.miniPlayerState || this.state.keyboardDidShow ?
+                {!this.props.miniPlayerState || this.state.keyboardDidShow || !this.props.track.id?
                     <View /> :
                     <View style={miniPlayerStyle}>
                         <Slider
