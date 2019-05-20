@@ -58,8 +58,8 @@ class PlayScreen extends Component {
   onDownPress() {
     // console.log('called')
     //   console.log(this.props.navigation.state.routeName)
-      this.props.navigation.goBack();
-      this.props.miniPlayerOn();
+    this.props.navigation.goBack();
+    this.props.miniPlayerOn();
     return true;
   }
   async onPressBack() {
@@ -93,8 +93,6 @@ class PlayScreen extends Component {
     }
   }
   componentWillUnmount() {
-    // Removes the event handler
-
     this.onTrackChange.remove();
     this.onQueueEnded.remove();
     this.onPlaybackStateChange.remove();
@@ -103,7 +101,6 @@ class PlayScreen extends Component {
       this.onHardwareBackPress();
     }
     );
-
   }
   playFromYoutube(videoId) {
     if (videoId) {
@@ -112,7 +109,7 @@ class PlayScreen extends Component {
       this.memoizedLoad(this.props.navigation.getParam('videoId'));
     }
   }
-  async setNextVideos(relatedToVideoId, maxResults, pageToken) {
+  async getSuggestedNextTracks(relatedToVideoId, maxResults, pageToken) {
     this.setState({ isLoading: true });
     let { nextVideos, nextPageToken } = await getNextVideos(relatedToVideoId, maxResults, pageToken);
     this.props.appendNextTracks(nextVideos);
@@ -122,13 +119,11 @@ class PlayScreen extends Component {
     })
   }
   async componentDidMount() {
-
     this.onTrackChange = TrackPlayer.addEventListener('playback-track-changed', async (data) => {
-
-      if (data.nextTrack === 'helperTrack') {
-        console.log('helper track ON')
-        return;
-      }
+      // if (data.nextTrack === 'helperTrack') {
+      //   console.log('helper track ON')
+      //   return;
+      // }
       // console.log('---------------------')
       // console.log('track changed')
       // getTrackQueue()
@@ -137,45 +132,33 @@ class PlayScreen extends Component {
        * sync track to redux store:
        */
       if (track) {
-        this.props.addNextTracks([])
-        this.setNextVideos(data.nextTrack, 7)
-
         this.props.syncTrack(track)
+        this.props.setSuggestedNextTracks([])
+        this.getSuggestedNextTracks(data.nextTrack, 7)
         this.props.syncPaused(false)
       } else {
         this.props.syncPaused(true)
       }
     });
     this.onQueueEnded = TrackPlayer.addEventListener('playback-queue-ended', async (data) => {
-      console.log(this.shouldQueueEndedEventRun)
       if (!this.shouldQueueEndedEventRun)
         return;
-      // console.log('queue ended event')
       let currentPos = await TrackPlayer.getPosition();
       let duration = await this.props.track.duration;
-      /**
-       * `why duration - 1 ` ??, because some tracks, 
-       * the progress time is slightly larger (common is 1) than track's duration when the track ends.
-       * This makes sure TRack only be changed when tt really ends.
-       */
-      if (currentPos <= duration - 1) {
+
+      if ( duration - currentPos > 1) {
         let buffered = await TrackPlayer.getBufferedPosition();
         currentPos = await TrackPlayer.getPosition()
         while (buffered < currentPos) {
-          console.log('fired')
+          console.log('auto re-buffering')
           TrackPlayer.play();
           this.shouldQueueEndedEventRun = false;
           TrackPlayer.play();
-          // setTimeout(() => {
-          //   this.shouldQueueEndedEventRun = true;
-          //   console.log('after time out')
-          // }, 20000)
           await timeout(20000);
           TrackPlayer.play();
           this.shouldQueueEndedEventRun = true;
           buffered = await TrackPlayer.getBufferedPosition();
           currentPos = await TrackPlayer.getPosition()
-
         }
         return;
       }
@@ -188,27 +171,17 @@ class PlayScreen extends Component {
         this.playSuggestedNextVideo()
         return;
       }
-      /**
-       * `android` when Track Player'b buffered hehinds current position.
-       */
-      // let current = await TrackPlayer.getPosition();
-      // let buffered = await TrackPlayer.getBufferedPosition();
-      // if(current > buffered) {
-      //   TrackPlayer.play();
-      //   console.log('havent ended yet, current > buffered, need to loading ');
-      //   console.log(current)
-      //   console.log(buffered )
-      // }
       this.props.syncPaused(true)
     });
     this.onPlaybackStateChange = TrackPlayer.addEventListener('playback-state', async (playbackState) => {
-      // getTrackPlayerState()
+      getTrackPlayerState()
       switch (playbackState.state) {
-        case TrackPlayer.STATE_PLAYING:
-          this.props.syncLoading(false);
-          console.log('playing')
-          // this.onPressPlay()
+        case TrackPlayer.STATE_NONE:
+          this.onPressPlay()
           break;
+        case TrackPlayer.STATE_PLAYING:
+          this.props.syncLoading(false)
+        break;
         // case TrackPlayer.STATE_PAUSED:
         //   console.log('paused')
         //   break;
@@ -253,10 +226,10 @@ class PlayScreen extends Component {
     this.playFromYoutube()
 
   }
-  onHardwareBackPress(){
-    if(this.props.navigation && this.props.navigation.state) {
+  onHardwareBackPress() {
+    if (this.props.navigation && this.props.navigation.state) {
       let routeName = this.props.navigation.state.routeName;
-      if(routeName === 'Play') {
+      if (routeName === 'Play') {
         this.onDownPress();
         return;
       } else {
@@ -275,7 +248,7 @@ class PlayScreen extends Component {
           onScroll={({ nativeEvent }) => {
             if (!this.state.isLoading && isCloseToEdge(nativeEvent) &&
               this.props.listItem.length < 30 && this.props.listItem.length != 0) {
-              this.setNextVideos(this.props.track.id, 1, this.state.nextPageToken)
+              this.getSuggestedNextTracks(this.props.track.id, 1, this.state.nextPageToken)
             }
           }}
           scrollEventThrottle={5000}
@@ -340,7 +313,7 @@ class PlayScreen extends Component {
                   style={{ marginBottom: 10 }}
                   onPress={() => {
                     this.playFromYoutube(item.id)
-                    this.props.addNextTracks([])
+                    this.props.setSuggestedNextTracks([])
                   }}
                 />
               )

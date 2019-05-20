@@ -144,9 +144,9 @@ export default class SearchScreen extends Component {
   // componentWillUnmount(){
   //   this.backHandler.remove()
   // }
-  // componentDidMount(){
-  //   this.onSearch("nhạc trẻ việt", 7)
-  // }
+  componentDidMount(){
+    this.onSearch("slipyslidy", 7)
+  }
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: BACKGROUND_COLOR, height: '100%' }}>

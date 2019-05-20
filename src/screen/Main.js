@@ -15,6 +15,7 @@ import { BACKGROUND_COLOR, COMMON_COMPONENTS_COLOR, INDICATOR_COLOR} from '../st
 
 YellowBox.ignoreWarnings(['Remote debugger']);
 YellowBox.ignoreWarnings(['Warning: ViewPagerAndroid has been extracted']);
+YellowBox.ignoreWarnings(['Error: Network Error']);
 
 /**
  * `RedBoxes and YellowBoxes are automatically disabled in release (production) builds.`
@@ -43,7 +44,7 @@ const TabNavigator = createMaterialTopTabNavigator({
     }
   },
 }, {
-    initialRouteName: 'Home',
+    initialRouteName: 'Search',
     navigationOptions: {
       header: null,
       headerLeft: null,
