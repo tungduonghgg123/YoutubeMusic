@@ -17,6 +17,7 @@
     "react-native-card-flip": "^1.0.4",
     "react-native-elements": "^1.1.0",
     "react-native-gesture-handler": "^1.2.1",
+    "react-native-loading-spinner-overlay": "^1.0.1",
     "react-native-nested-scroll-view": "^8.0.0",
     "react-native-paper": "^2.15.2",
     "react-native-reanimated": "^1.0.1",

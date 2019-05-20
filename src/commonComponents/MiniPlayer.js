@@ -1,24 +1,22 @@
 import React, { Component } from 'react';
 import TrackPlayer from 'react-native-track-player';
 import { View, SafeAreaView, TouchableOpacity, Keyboard, Dimensions } from 'react-native';
-import Slider from 'react-native-slider';
 import NavigationService from '../service/NavigationService';
 import { connect } from 'react-redux';
 import * as actions from '../redux/actions'
 import TextTicker from 'react-native-text-ticker'
 import {
-    MINIPLAYER_BACKGROUND_COLOR, THUMP_COLOR, MINI_TEXT_COLOR,
+    MINIPLAYER_BACKGROUND_COLOR, MINI_TEXT_COLOR,
     BUTTON_BORDER_COLOR, COMMON_COMPONENTS_COLOR, MINI_BUTTON_SIZE,
-    MIN_TRACK_TINT_COLOR, MAX_TRACK_TINT_COLOR, TITLE_FONT_SIZE
+    TITLE_FONT_SIZE
 } from '../style'
 import { Icon } from 'react-native-elements'
+import { MiniPlayerSlider } from '../commonComponents'
+import { PlayScreen } from '../screen/PlayScreen'
 
 
 
-
-
-class MiniPlayer extends TrackPlayer.ProgressComponent {
-    
+class MiniPlayer extends PlayScreen {
     _keyboardDidShow() {
         this.setState({ keyboardDidShow: true })
     }
@@ -28,14 +26,7 @@ class MiniPlayer extends TrackPlayer.ProgressComponent {
     onUpPress() {
         NavigationService.navigate('Play');
     }
-    onPressPause() {
-        this.props.syncPaused(true)
-        TrackPlayer.pause();
-    }
-    onPressPlay() {
-        this.props.syncPaused(false)
-        TrackPlayer.play();
-    }
+    playFromYoutube() {}
     componentDidMount() {
         super.componentDidMount()
         this.keyboardDidShowListener = Keyboard.addListener(
@@ -46,46 +37,20 @@ class MiniPlayer extends TrackPlayer.ProgressComponent {
             'keyboardDidHide',
             this._keyboardDidHide.bind(this),
         );
-        this.onTrackChange = TrackPlayer.addEventListener('playback-track-changed', async (data) => {
-
-            console.log('---------------------')
-            // console.log('track changed')
-            let track = await TrackPlayer.getTrack(data.nextTrack);
-            /** 
-             * sync track to redux store:
-             */
-            if (track) {
-                this.props.syncTrack(track)
-                this.props.syncPaused(false)
-            } else {
-                this.props.syncPaused(true)
-            }
-        });
     }
-    
-
     render() {
         const { textStyle, containerStyle, upButtonStyle, playButtonStyle, miniPlayerStyle,
             textContainerStyle
         } = styles;
-
         const { duration, title } = this.props.track ? this.props.track : {};
         return (
 
             <View>
-                {!this.props.miniPlayerState || this.state.keyboardDidShow || !this.props.track.id?
+                {!this.props.miniPlayerState || this.state.keyboardDidShow || !this.props.track.id ?
                     <View /> :
                     <View style={miniPlayerStyle}>
-                        <Slider
-                            disabled={true}
-                            maximumValue={duration ? duration : 0}
-                            onSlidingComplete={async value => { await TrackPlayer.seekTo(value) }}
-                            value={this.state.position}
-                            style={styles.slider}
-                            minimumTrackTintColor={MIN_TRACK_TINT_COLOR}
-                            maximumTrackTintColor={MAX_TRACK_TINT_COLOR}
-                            thumbStyle={styles.thumb}
-                            trackStyle={styles.track}
+                        <MiniPlayerSlider
+                            maximumValue={duration}
                         />
                         <View style={containerStyle} >
                             <TouchableOpacity onPress={this.onUpPress.bind(this)}>
@@ -101,7 +66,6 @@ class MiniPlayer extends TrackPlayer.ProgressComponent {
                                         style={textStyle}
                                         animationType='auto'
                                         loop
-                                        bounce
                                         scroll={false}
                                         repeatSpacer={100}
                                         marqueeDelay={1000}
@@ -139,23 +103,8 @@ class MiniPlayer extends TrackPlayer.ProgressComponent {
         )
     }
 }
-const textWidth = Dimensions.get('window').width*4/5;
+const textWidth = Dimensions.get('window').width * 4 / 5;
 const styles = {
-    /**
-     * `slider`: is a container holds `track` (progress bar).
-     */
-    slider: {
-        height: 1,
-    },
-    track: {
-        height: 2,
-        borderRadius: 1,
-    },
-    thumb: {
-        width: 1,
-        height: 1,
-        backgroundColor: THUMP_COLOR
-    },
     textStyle: {
         textAlign: 'center',
         color: MINI_TEXT_COLOR,
@@ -201,7 +150,9 @@ const mapStateToProps = state => ({
     miniPlayerState: state.miniPlayerReducer,
     track: state.syncTrackReducer,
     paused: state.syncPausedReducer,
-    tab: state.tabMeasurementReducer
+    tab: state.tabMeasurementReducer,
+    loading: state.syncLoadingReducer,
+    listItem: state.syncNextTrackListReducer
 
 });
 export default connect(mapStateToProps, actions)(MiniPlayer);

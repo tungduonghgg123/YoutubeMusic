@@ -1,21 +1,17 @@
 import React, { Component } from 'react';
+import { StatusBar, Button, SafeAreaView, Text, View, ScrollView, BackHandler, Alert } from 'react-native';
+// import Spinner from 'react-native-loading-spinner-overlay';
 import TrackPlayer from 'react-native-track-player';
+import memoize from "memoize-one";
+
 import {
   Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl, Spinner,
   SquareItem, ItemsListHorizontal
 } from '../commonComponents'
-import MiniPlayer from '../commonComponents/MiniPlayer'
-import { StatusBar, Button, SafeAreaView, Text, View, ScrollView, BackHandler, Alert } from 'react-native';
-import axios from 'axios';
-import memoize from "memoize-one";
-import moment from 'moment';
-import localTracks from '../storage/tracks'
 import { BACKGROUND_COLOR } from '../style'
 //redux
 import { connect } from 'react-redux';
 import * as actions from '../redux/actions'
-
-import ReactTimeout from 'react-timeout'
 import { getTrackQueue, getTrackPlayerState, isCloseToEdge, getTrackDetails, getNextVideos } from '../utils'
 
 
@@ -249,8 +245,10 @@ class PlayScreen extends Component {
     this.onRemotePause = TrackPlayer.addEventListener('remote-pause'), () => {
       console.log('remote pause')
     }
-    BackHandler.addEventListener('hardwareBackPress', this.onDownPress.bind(this));
-
+    BackHandler.addEventListener('hardwareBackPress', () => {
+        this.onDownPress();
+      }
+    );
     this.playFromYoutube()
 
   }
@@ -303,6 +301,11 @@ class PlayScreen extends Component {
           {this.props.loading ?
             <Spinner /> : <View style={{ flex: 1 }} />
           }
+          {/* <Spinner
+          visible={this.props.loading}
+          textContent={'Loading...'}
+          textStyle={styles.spinnerTextStyle}
+        /> */}
           {/* <Button
             title='get current position'
             onPress={async () => {
@@ -341,3 +344,9 @@ const mapStateToProps = state => ({
 
 export default connect(mapStateToProps, actions)(PlayScreen)
 
+export {PlayScreen}
+const styles = {
+  spinnerTextStyle: {
+    color: '#FFF'
+  },
+}

@@ -11,4 +11,5 @@ export * from './Item';
 export * from './SquareItem';
 export * from './ItemsListVertical';
 export * from './ItemsListHorizontal';
+export * from './MiniPlayerSlider'
 // export * from './MiniPlayer';

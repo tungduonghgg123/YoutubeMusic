@@ -4,6 +4,7 @@ import {createStackNavigator,createAppContainer,
     createMaterialTopTabNavigator, MaterialTopTabBar
 } from 'react-navigation'
 import { PlayScreen, SearchScreen, HomeScreen} from './'
+import PlayScreenChild from '/Users/duongtung/Workspace/YoutubeMusic/playground/PlayScreenChild.js'
 import TrackPlayer from 'react-native-track-player';
 import { Icon } from 'react-native-elements'
 import MiniPlayer from '../commonComponents/MiniPlayer'
