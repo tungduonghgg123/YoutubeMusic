@@ -42,18 +42,16 @@ class PlayScreen extends Component {
     this.props.syncPaused(false)
   }
   onPressRepeat() {
-    this.setState({ repeatOn: !this.state.repeatOn }, () => {
-      if (this.state.repeatOn) {
-        this.setState({ autoOn: false })
-      }
-    });
+    this.props.repeatReverse();
+    // if(this.props.repeatOn){
+    //   this.props.autoModeOff()
+    // }
   }
   onPressAuto() {
-    this.setState({ autoOn: !this.state.autoOn }, () => {
-      if (this.state.autoOn) {
-        this.setState({ repeatOn: false })
-      }
-    });
+    this.props.autoReverse();
+    // if(this.props.autoOn){
+    //   this.props.repeatModeOff()
+    // }
   }
   onDownPress() {
     // console.log('called')
@@ -162,12 +160,12 @@ class PlayScreen extends Component {
         }
         return;
       }
-      if (this.state.repeatOn) {
+      if (this.props.repeatOn) {
         TrackPlayer.seekTo(0);
         this.onPressPlay()
         return;
       }
-      if (this.state.autoOn) {
+      if (this.props.autoOn) {
         this.playSuggestedNextVideo()
         return;
       }
@@ -273,8 +271,8 @@ class PlayScreen extends Component {
             />
             <PlaybackControl
               paused={this.props.paused}
-              autoOn={this.state.autoOn}
-              repeatOn={this.state.repeatOn}
+              autoOn={this.props.autoOn}
+              repeatOn={this.props.repeatOn}
               onPressPause={this.onPressPause.bind(this)}
               onPressPlay={this.onPressPlay.bind(this)}
               onPressRepeat={this.onPressRepeat.bind(this)}
@@ -328,7 +326,9 @@ const mapStateToProps = state => ({
   paused: state.syncPausedReducer,
   track: state.syncTrackReducer,
   loading: state.syncLoadingReducer,
-  listItem: state.syncNextTrackListReducer
+  listItem: state.syncNextTrackListReducer,
+  autoOn: state.syncAutoMode,
+  repeatOn: state.syncRepeatMode,
 });
 
 export default connect(mapStateToProps, actions)(PlayScreen)

@@ -156,7 +156,9 @@ const mapStateToProps = state => ({
     paused: state.syncPausedReducer,
     tab: state.tabMeasurementReducer,
     loading: state.syncLoadingReducer,
-    listItem: state.syncNextTrackListReducer
+    listItem: state.syncNextTrackListReducer,
+    autoOn: state.syncAutoMode,
+    repeatOn: state.syncRepeatMode,
 
 });
 export default connect(mapStateToProps, actions)(MiniPlayer);
