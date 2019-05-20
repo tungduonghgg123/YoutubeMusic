@@ -28,6 +28,7 @@ class PlayScreen extends Component {
       mode: 'youtube',
       nextPageToken: '',
       isLoading: false,
+      isFocused: true
     };
     this.shouldQueueEndedEventRun = true;
     this.props.miniPlayerOff();
@@ -55,15 +56,11 @@ class PlayScreen extends Component {
     });
   }
   onDownPress() {
-    let routeName = this.props.navigation.state.routeName
-    switch (routeName) {
-      case 'Play':
-        this.props.navigation.goBack();
-        this.props.miniPlayerOn();
-        return true;
-      default:
-        return true;
-    }
+    // console.log('called')
+    //   console.log(this.props.navigation.state.routeName)
+      this.props.navigation.goBack();
+      this.props.miniPlayerOn();
+    return true;
   }
   async onPressBack() {
     await TrackPlayer.skipToPrevious();
@@ -101,7 +98,11 @@ class PlayScreen extends Component {
     this.onTrackChange.remove();
     this.onQueueEnded.remove();
     this.onPlaybackStateChange.remove();
-    BackHandler.removeEventListener('hardwareBackPress', this.onDownPress);
+    this.onHardwareBack.remove();
+    BackHandler.removeEventListener('hardwareBackPress', () => {
+      this.onHardwareBackPress();
+    }
+    );
 
   }
   playFromYoutube(videoId) {
@@ -149,7 +150,7 @@ class PlayScreen extends Component {
       console.log(this.shouldQueueEndedEventRun)
       if (!this.shouldQueueEndedEventRun)
         return;
-      console.log('queue ended event')
+      // console.log('queue ended event')
       let currentPos = await TrackPlayer.getPosition();
       let duration = await this.props.track.duration;
       /**
@@ -201,7 +202,7 @@ class PlayScreen extends Component {
       this.props.syncPaused(true)
     });
     this.onPlaybackStateChange = TrackPlayer.addEventListener('playback-state', async (playbackState) => {
-      getTrackPlayerState()
+      // getTrackPlayerState()
       switch (playbackState.state) {
         case TrackPlayer.STATE_PLAYING:
           this.props.syncLoading(false);
@@ -245,12 +246,27 @@ class PlayScreen extends Component {
     this.onRemotePause = TrackPlayer.addEventListener('remote-pause'), () => {
       console.log('remote pause')
     }
-    BackHandler.addEventListener('hardwareBackPress', () => {
-        this.onDownPress();
-      }
+    this.onHardwareBack = BackHandler.addEventListener('hardwareBackPress', () => {
+      this.onHardwareBackPress();
+    }
     );
     this.playFromYoutube()
 
+  }
+  onHardwareBackPress(){
+    if(this.props.navigation && this.props.navigation.state) {
+      let routeName = this.props.navigation.state.routeName;
+      if(routeName === 'Play') {
+        this.onDownPress();
+        return;
+      } else {
+        TrackPlayer.destroy();
+        return;
+      }
+    } else {
+      TrackPlayer.destroy();
+      return;
+    }
   }
   render() {
     return (
@@ -344,7 +360,7 @@ const mapStateToProps = state => ({
 
 export default connect(mapStateToProps, actions)(PlayScreen)
 
-export {PlayScreen}
+export { PlayScreen }
 const styles = {
   spinnerTextStyle: {
     color: '#FFF'

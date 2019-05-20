@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import TrackPlayer from 'react-native-track-player';
-import { View, SafeAreaView, TouchableOpacity, Keyboard, Dimensions } from 'react-native';
+import { View, BackHandler, TouchableOpacity, Keyboard, Dimensions } from 'react-native';
 import NavigationService from '../service/NavigationService';
 import { connect } from 'react-redux';
 import * as actions from '../redux/actions'
@@ -37,6 +37,10 @@ class MiniPlayer extends PlayScreen {
             'keyboardDidHide',
             this._keyboardDidHide.bind(this),
         );
+        this.onHardwareBack = BackHandler.addEventListener('hardwareBackPress', () => {
+            return true;
+          }
+          );
     }
     render() {
         const { textStyle, containerStyle, upButtonStyle, playButtonStyle, miniPlayerStyle,

@@ -109,7 +109,6 @@ export function getNextVideos(relatedToVideoId, maxResults, pageToken) {
           video.statistics.viewCount = numberFormatter(video.statistics.viewCount);
           return video;
         })
-        console.log(nextVideos)
         resolve({
           nextVideos, 
           nextPageToken: response.data.nextPageToken
