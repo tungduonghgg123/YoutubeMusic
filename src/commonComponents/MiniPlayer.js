@@ -17,12 +17,6 @@ import { PlayScreen } from '../screen/PlayScreen'
 
 
 class MiniPlayer extends PlayScreen {
-    constructor(props) {
-        super(props);
-        this.author = 'phuong anh';
-        console.log('who is the author: ' + this.author)
-        
-    }
     _keyboardDidShow() {
         this.setState({ keyboardDidShow: true })
     }
@@ -35,7 +29,6 @@ class MiniPlayer extends PlayScreen {
     playFromYoutube() { }
     componentDidUpdate(){
         console.log('event from MiniPlayer')
-
     }
     componentDidMount() {
         super.componentDidMount()
@@ -167,8 +160,8 @@ const mapStateToProps = state => ({
     tab: state.tabMeasurementReducer,
     loading: state.syncLoadingReducer,
     listItem: state.syncNextTrackListReducer,
-    autoOn: state.syncAutoMode,
-    repeatOn: state.syncRepeatMode,
+    autoOn: state.syncAutoModeReducer,
+    repeatOn: state.syncRepeatModeReducer,
 
 });
 export default connect(mapStateToProps, actions)(MiniPlayer);

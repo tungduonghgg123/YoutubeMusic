@@ -4,6 +4,7 @@ export const PAUSED = 'pause_on';
 export const LOADING ='loading'
 
 export const SYNCTRACK ='sync_track';
+export const SYNCTRACKID = 'sync_track_id';
 export const SYNCPOSITION = 'sync_current_position';
 export const SET_NEXTTRACK_LIST ='set_next_tracks';
 export const APPEND_NEXTTRACK_LIST ='append_next_tracks';
@@ -13,3 +14,4 @@ export const AUTO_REVERSE ='sync_auto_mode_reverse';
 export const REPEAT_ON = 'sync_repeat_mode_on';
 export const REPEAT_OFF ='sync_repeat_mode_off';
 export const REPEAT_REVERSE ='sync_repeat_mode_reverse';
+

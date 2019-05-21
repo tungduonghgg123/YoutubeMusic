@@ -1,6 +1,6 @@
 import { AUTO_ON, AUTO_OFF,AUTO_REVERSE, REPEAT_ON, REPEAT_OFF, REPEAT_REVERSE,  } from '../actions/type'
 
-export function syncRepeatMode(state = false, action) {
+export function syncRepeatModeReducer(state = false, action) {
     switch (action.type) {
         case REPEAT_ON:
             state = true;
@@ -14,7 +14,7 @@ export function syncRepeatMode(state = false, action) {
             return state;
     }
 }
-export function syncAutoMode(state = true, action) {
+export function syncAutoModeReducer(state = true, action) {
     switch (action.type) {
         case AUTO_ON:
             state = true;

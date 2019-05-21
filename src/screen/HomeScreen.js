@@ -97,7 +97,8 @@ class HomeScreen extends Component {
                 item={item}
                 key={itemKey}
                 onPress={() => {
-                  this.props.navigation.navigate('Play', { videoId: item.id })
+                  this.props.syncTrackID(item.id);
+                  this.props.navigation.navigate('Play')
                 }}
               />
             )

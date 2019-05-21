@@ -5,7 +5,8 @@ import { Item, ItemsListVertical } from '../commonComponents'
 import axios from 'axios';
 import moment from 'moment';
 import { BACKGROUND_COLOR, COMMON_COMPONENTS_COLOR, TEXT_COLOR } from '../style'
-
+import { connect } from 'react-redux';
+import * as actions from '../redux/actions'
 
 function numberFormatter(num, digits) {
   var si = [
@@ -23,7 +24,7 @@ function numberFormatter(num, digits) {
   return (num / si[i].value).toFixed(digits).replace(rx, "$1") + si[i].symbol;
 }
 
-export default class SearchScreen extends Component {
+class SearchScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -184,7 +185,8 @@ export default class SearchScreen extends Component {
                 item={item}
                 key={itemKey}
                 onPress={() => {
-                  this.props.navigation.navigate('Play', { videoId: item.id })
+                  this.props.syncTrackID(item.id);
+                  this.props.navigation.navigate('Play')
 
                 }}
               />
@@ -196,6 +198,4 @@ export default class SearchScreen extends Component {
   }
 }
 
-const styles = {
-
-}
+export default connect(null, actions)(SearchScreen)

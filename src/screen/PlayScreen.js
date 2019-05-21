@@ -3,7 +3,6 @@ import { StatusBar, Button, SafeAreaView, Text, View, ScrollView, BackHandler, A
 // import Spinner from 'react-native-loading-spinner-overlay';
 import TrackPlayer from 'react-native-track-player';
 import memoize from "memoize-one";
-
 import {
   Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl, Spinner,
   SquareItem, ItemsListHorizontal
@@ -98,7 +97,7 @@ class PlayScreen extends Component {
     if (videoId) {
       this.memoizedLoad(videoId)
     } else {
-      this.memoizedLoad(this.props.navigation.getParam('videoId'));
+      this.memoizedLoad(this.props.trackID);
     }
   }
   async getSuggestedNextTracks(relatedToVideoId, maxResults, pageToken) {
@@ -170,6 +169,8 @@ class PlayScreen extends Component {
       this.props.syncPaused(true)
     });
     this.onPlaybackStateChange = TrackPlayer.addEventListener('playback-state', async (playbackState) => {
+      if(this.props.miniPlayerState)
+        return;
       getTrackPlayerState()
       switch (playbackState.state) {
         case TrackPlayer.STATE_NONE:
@@ -325,8 +326,10 @@ const mapStateToProps = state => ({
   track: state.syncTrackReducer,
   loading: state.syncLoadingReducer,
   listItem: state.syncNextTrackListReducer,
-  autoOn: state.syncAutoMode,
-  repeatOn: state.syncRepeatMode,
+  autoOn: state.syncAutoModeReducer,
+  repeatOn: state.syncRepeatModeReducer,
+  miniPlayerState: state.miniPlayerReducer,
+  trackID: state.syncTrackIDReducer
 });
 
 export default connect(mapStateToProps, actions)(PlayScreen)
