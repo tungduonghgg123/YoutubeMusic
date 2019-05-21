@@ -25,8 +25,12 @@ export async function getTrackPlayerState() {
   }
 }
 export function getTrackQueue() {
-  TrackPlayer.getQueue().then((tracks) => {
-    console.log(tracks)
+  return new Promise((resolve, reject) => {
+    TrackPlayer.getQueue().then((tracks) => {
+      resolve(tracks)
+    }, (error) => {
+      reject(error)
+    })
   })
 }
 /**

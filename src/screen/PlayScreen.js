@@ -23,8 +23,6 @@ class PlayScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      autoOn: true,
-      repeatOn: false,
       mode: 'youtube',
       nextPageToken: '',
       isLoading: false,
@@ -254,7 +252,7 @@ class PlayScreen extends Component {
           <Header
             message="playing from Youtube"
             onQueuePress={() => {
-              getTrackQueue()
+              this.props.navigation.navigate('Queue')
             }}
             onDownPress={this.onDownPress.bind(this)}
           />
@@ -293,7 +291,7 @@ class PlayScreen extends Component {
           textContent={'Loading...'}
           textStyle={styles.spinnerTextStyle}
         /> */}
-          {/* <Button
+          <Button
             title='get current position'
             onPress={async () => {
               let position = await TrackPlayer.getPosition()
@@ -301,7 +299,7 @@ class PlayScreen extends Component {
               console.log(bufferedPosition)
               console.log(position)
             }} />
-          <Button title='stop' onPress={() => { TrackPlayer.stop() }} /> */}
+          <Button title='stop' onPress={() => { TrackPlayer.stop() }} />
           <ItemsListHorizontal isLoading={this.state.isLoading}>
             {this.props.listItem.map((item, itemKey) => {
               return (

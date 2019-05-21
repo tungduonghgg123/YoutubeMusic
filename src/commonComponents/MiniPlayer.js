@@ -47,10 +47,12 @@ class MiniPlayer extends PlayScreen {
             textContainerStyle
         } = styles;
         const { duration, title } = this.props.track ? this.props.track : {};
+        console.log(!this.props.miniPlayerState, this.state.keyboardDidShow, !this.props.track.id)
+        console.log(this.props.track)
         return (
-
             <View>
-                {!this.props.miniPlayerState || this.state.keyboardDidShow || !this.props.track.id ?
+                {/* {!this.props.miniPlayerState || this.state.keyboardDidShow || !this.props.track.id ? */}
+                {false?
                     <View /> :
                     <View style={miniPlayerStyle}>
                         <MiniPlayerSlider
@@ -70,6 +72,7 @@ class MiniPlayer extends PlayScreen {
                                         style={textStyle}
                                         animationType='auto'
                                         loop
+                                        bounce={false}
                                         scroll={false}
                                         repeatSpacer={100}
                                         marqueeDelay={1000}

@@ -1,17 +1,16 @@
 import React, { Component } from 'react';
-import {SafeAreaView, YellowBox} from 'react-native'
-import {createStackNavigator,createAppContainer, 
-    createMaterialTopTabNavigator, MaterialTopTabBar
+import { SafeAreaView, YellowBox } from 'react-native'
+import {
+  createStackNavigator, createAppContainer,
+  createMaterialTopTabNavigator, MaterialTopTabBar
 } from 'react-navigation'
-import { PlayScreen, SearchScreen, HomeScreen} from './'
-import PlayScreenChild from '/Users/duongtung/Workspace/YoutubeMusic/playground/PlayScreenChild.js'
+import { PlayScreen, SearchScreen, HomeScreen, QueueScreen } from './'
 import TrackPlayer from 'react-native-track-player';
 import { Icon } from 'react-native-elements'
 import MiniPlayer from '../commonComponents/MiniPlayer'
 import { Root } from "native-base";
 import NavigationService from '../service/NavigationService';
-import { BACKGROUND_COLOR, COMMON_COMPONENTS_COLOR, INDICATOR_COLOR} from '../style'
-
+import { BACKGROUND_COLOR, COMMON_COMPONENTS_COLOR, INDICATOR_COLOR } from '../style'
 
 YellowBox.ignoreWarnings(['Remote debugger']);
 YellowBox.ignoreWarnings(['Warning: ViewPagerAndroid has been extracted']);
@@ -23,9 +22,9 @@ For now, just let yellowBoxes on
  */
 // YellowBox.ignoreWarnings( ['Possible Unhandled Promise Rejection']);
 
-function SafeAreaMaterialTopTabBar (props) {
+function SafeAreaMaterialTopTabBar(props) {
   return (
-    <SafeAreaView style={{backgroundColor: BACKGROUND_COLOR}}>
+    <SafeAreaView style={{ backgroundColor: BACKGROUND_COLOR }}>
       <MaterialTopTabBar {...props} />
     </SafeAreaView>
   )
@@ -37,14 +36,16 @@ const TabNavigator = createMaterialTopTabNavigator({
       tabBarIcon: <Icon name='home' color={COMMON_COMPONENTS_COLOR} />
     }
   },
-  Search: { 
-    screen: SearchScreen ,
+  Search: {
+    screen: SearchScreen,
     navigationOptions: {
-      tabBarIcon: <Icon name='search'  color={COMMON_COMPONENTS_COLOR}/>
+      tabBarIcon: <Icon name='search' color={COMMON_COMPONENTS_COLOR} />
     }
   },
+  
 }, {
-    initialRouteName: 'Search',
+    // order: ['Home', 'Search'],
+    order: ['Search', 'Home'],
     navigationOptions: {
       header: null,
       headerLeft: null,
@@ -60,10 +61,10 @@ const TabNavigator = createMaterialTopTabNavigator({
       },
     },
     tabBarComponent: SafeAreaMaterialTopTabBar,
-    
+
 
   })
-export {TabNavigator}
+export { TabNavigator }
 const MainNavigator = createStackNavigator({
   Tabs: TabNavigator,
   Play: {
@@ -73,10 +74,16 @@ const MainNavigator = createStackNavigator({
       headerLeft: null
     }
   },
-  Mini: MiniPlayer
+  Queue: {
+    screen: QueueScreen,
+    navigationOptions: {
+      header: null,
+      headerColor: BACKGROUND_COLOR
+    }
+  }
 }, {
-  // initialRouteName: 'Play',
-})
+    // initialRouteName: 'Queue',
+  })
 
 
 const AppContainer = createAppContainer(MainNavigator)
@@ -86,10 +93,7 @@ export default class Main extends Component {
     /**
      * WORKING ON IT: setup player immediately after the application is launched.
      */
-    TrackPlayer.setupPlayer({
-      maxBuffer: 1000,
-      minBuffer: 100
-    });
+    TrackPlayer.setupPlayer();
     TrackPlayer.updateOptions({
       stopWithApp: true,
       capabilities: [
@@ -113,7 +117,7 @@ export default class Main extends Component {
         <AppContainer ref={navigatorRef => {
           NavigationService.setTopLevelNavigator(navigatorRef);
         }} />
-        <MiniPlayer/>
+        <MiniPlayer />
       </Root>
 
     );

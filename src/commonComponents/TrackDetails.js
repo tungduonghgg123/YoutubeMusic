@@ -28,6 +28,7 @@ const TrackDetails = ({ channelTitle, title, onMorePress, onAddPress, downloadDi
                         style={textStyle}
                         animationType='auto'
                         loop
+                        bounce = {false}
                         repeatSpacer={100}
                         marqueeDelay={1000}
                         scroll={false}

@@ -12,4 +12,5 @@ export * from './SquareItem';
 export * from './ItemsListVertical';
 export * from './ItemsListHorizontal';
 export * from './MiniPlayerSlider'
+export * from './QueueHeader'
 // export * from './MiniPlayer';
