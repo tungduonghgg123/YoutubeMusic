@@ -37,7 +37,7 @@ export default class QueueScreen extends Component {
                     message="Music Queue"
                     onBackPress={() => { this.props.navigation.goBack() }}
                 />
-                <ScrollView >
+                <ScrollView style={{marginTop: 20}}>
                     {this.renderQueue()}
                 </ScrollView>
             </SafeAreaView>
@@ -48,7 +48,8 @@ export default class QueueScreen extends Component {
 const styles = {
     containerStyle: {
         backgroundColor: BACKGROUND_COLOR,
-        flex: 1
+        flex: 1,
+        
     },
     titleStyle: {
         fontWeight: 'bold',

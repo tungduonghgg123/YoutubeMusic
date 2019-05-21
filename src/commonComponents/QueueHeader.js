@@ -31,6 +31,7 @@ const styles = {
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'row',
+        
     },
     buttonStyle: {
         position: 'absolute',

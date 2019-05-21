@@ -17,6 +17,12 @@ import { PlayScreen } from '../screen/PlayScreen'
 
 
 class MiniPlayer extends PlayScreen {
+    constructor(props) {
+        super(props);
+        this.author = 'phuong anh';
+        console.log('who is the author: ' + this.author)
+        
+    }
     _keyboardDidShow() {
         this.setState({ keyboardDidShow: true })
     }
@@ -26,7 +32,11 @@ class MiniPlayer extends PlayScreen {
     onUpPress() {
         NavigationService.navigate('Play');
     }
-    playFromYoutube() {}
+    playFromYoutube() { }
+    componentDidUpdate(){
+        console.log('event from MiniPlayer')
+
+    }
     componentDidMount() {
         super.componentDidMount()
         this.keyboardDidShowListener = Keyboard.addListener(
@@ -39,20 +49,17 @@ class MiniPlayer extends PlayScreen {
         );
         this.onHardwareBack = BackHandler.addEventListener('hardwareBackPress', () => {
             return true;
-          }
-          );
+        }
+        );
     }
     render() {
         const { textStyle, containerStyle, upButtonStyle, playButtonStyle, miniPlayerStyle,
             textContainerStyle
         } = styles;
         const { duration, title } = this.props.track ? this.props.track : {};
-        console.log(!this.props.miniPlayerState, this.state.keyboardDidShow, !this.props.track.id)
-        console.log(this.props.track)
         return (
             <View>
-                {/* {!this.props.miniPlayerState || this.state.keyboardDidShow || !this.props.track.id ? */}
-                {false?
+                {!this.props.miniPlayerState || this.state.keyboardDidShow || !this.props.track.id ?
                     <View /> :
                     <View style={miniPlayerStyle}>
                         <MiniPlayerSlider

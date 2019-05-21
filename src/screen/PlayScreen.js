@@ -30,6 +30,7 @@ class PlayScreen extends Component {
     };
     this.shouldQueueEndedEventRun = true;
     this.props.miniPlayerOff();
+    this.author = 'tungduong'
   }
   onPressPause() {
     TrackPlayer.pause();
@@ -52,8 +53,6 @@ class PlayScreen extends Component {
     // }
   }
   onDownPress() {
-    // console.log('called')
-    //   console.log(this.props.navigation.state.routeName)
     this.props.navigation.goBack();
     this.props.miniPlayerOn();
     return true;
@@ -81,9 +80,6 @@ class PlayScreen extends Component {
   async addAndPlay(track) {
     if (track && track.id) {
       await TrackPlayer.add(track)
-      /**
-       * skip to this `track` by using `track id`
-       */
       await TrackPlayer.skip(track.id)
       this.onPressPlay();
     }
@@ -113,6 +109,10 @@ class PlayScreen extends Component {
       nextPageToken: nextPageToken,
       isLoading: false
     })
+  }
+  componentDidUpdate(){
+    console.log('event from Playscreen')
+
   }
   async componentDidMount() {
     this.onTrackChange = TrackPlayer.addEventListener('playback-track-changed', async (data) => {
@@ -291,7 +291,7 @@ class PlayScreen extends Component {
           textContent={'Loading...'}
           textStyle={styles.spinnerTextStyle}
         /> */}
-          <Button
+          {/* <Button
             title='get current position'
             onPress={async () => {
               let position = await TrackPlayer.getPosition()
@@ -299,7 +299,7 @@ class PlayScreen extends Component {
               console.log(bufferedPosition)
               console.log(position)
             }} />
-          <Button title='stop' onPress={() => { TrackPlayer.stop() }} />
+          <Button title='stop' onPress={() => { TrackPlayer.stop() }} /> */}
           <ItemsListHorizontal isLoading={this.state.isLoading}>
             {this.props.listItem.map((item, itemKey) => {
               return (
@@ -332,8 +332,3 @@ const mapStateToProps = state => ({
 export default connect(mapStateToProps, actions)(PlayScreen)
 
 export { PlayScreen }
-const styles = {
-  spinnerTextStyle: {
-    color: '#FFF'
-  },
-}
