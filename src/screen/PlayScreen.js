@@ -11,12 +11,7 @@ import { BACKGROUND_COLOR } from '../style'
 //redux
 import { connect } from 'react-redux';
 import * as actions from '../redux/actions'
-import { getTrackQueue, getTrackPlayerState, isCloseToEdge, getTrackDetails, getNextVideos } from '../utils'
-
-
-function timeout(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+import { isCloseToEdge, getTrackDetails, getNextVideos } from '../utils'
 
 class PlayScreen extends Component {
   constructor(props) {
@@ -24,12 +19,40 @@ class PlayScreen extends Component {
     this.state = {
       mode: 'youtube',
       nextPageToken: '',
-      isLoading: false,
-      isFocused: true
     };
     this.shouldQueueEndedEventRun = true;
+
+  }
+  onHardwareBackPress() {
+    console.log('ahihi')
+    if (!this.props.miniPlayerState) {
+      console.log('play or queue screen')
+      this.onDownPress();
+      //   let routeName = this.props.navigation.state.routeName;
+      //   if (routeName === 'Play') {
+      //       console.log('play screen')
+      //     this.onDownPress();
+      //     return true;
+      //   } else {
+      //     TrackPlayer.destroy();
+      //     return true;
+      //   }
+    }
+    return true;
+  }
+  componentDidMount() {
     this.props.miniPlayerOff();
-    this.author = 'tungduong'
+    this.onHardwareBack = BackHandler.addEventListener('hardwareBackPress', () => {
+      this.onHardwareBackPress();
+    }
+    );
+  }
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', () => {
+      this.onHardwareBackPress();
+    }
+    );
+
   }
   onPressPause() {
     TrackPlayer.pause();
@@ -83,16 +106,7 @@ class PlayScreen extends Component {
       this.onPressPlay();
     }
   }
-  componentWillUnmount() {
-    this.onTrackChange.remove();
-    this.onQueueEnded.remove();
-    this.onPlaybackStateChange.remove();
-    this.onHardwareBack.remove();
-    BackHandler.removeEventListener('hardwareBackPress', () => {
-      this.onHardwareBackPress();
-    }
-    );
-  }
+
   playFromYoutube(videoId) {
     if (videoId) {
       this.memoizedLoad(videoId)
@@ -101,142 +115,13 @@ class PlayScreen extends Component {
     }
   }
   async getSuggestedNextTracks(relatedToVideoId, maxResults, pageToken) {
-    this.setState({ isLoading: true });
+    this.props.syncLoading(true)
     let { nextVideos, nextPageToken } = await getNextVideos(relatedToVideoId, maxResults, pageToken);
     this.props.appendNextTracks(nextVideos);
     this.setState({
       nextPageToken: nextPageToken,
-      isLoading: false
     })
-  }
-  componentDidUpdate(){
-    console.log('event from Playscreen')
-
-  }
-  async componentDidMount() {
-    this.onTrackChange = TrackPlayer.addEventListener('playback-track-changed', async (data) => {
-      // if (data.nextTrack === 'helperTrack') {
-      //   console.log('helper track ON')
-      //   return;
-      // }
-      // console.log('---------------------')
-      // console.log('track changed')
-      // getTrackQueue()
-      let track = await TrackPlayer.getTrack(data.nextTrack);
-      /**
-       * sync track to redux store:
-       */
-      if (track) {
-        this.props.syncTrack(track)
-        this.props.setSuggestedNextTracks([])
-        this.getSuggestedNextTracks(data.nextTrack, 7)
-        this.props.syncPaused(false)
-      } else {
-        this.props.syncPaused(true)
-      }
-    });
-    this.onQueueEnded = TrackPlayer.addEventListener('playback-queue-ended', async (data) => {
-      if (!this.shouldQueueEndedEventRun)
-        return;
-      let currentPos = await TrackPlayer.getPosition();
-      let duration = await this.props.track.duration;
-
-      if ( duration - currentPos > 1) {
-        let buffered = await TrackPlayer.getBufferedPosition();
-        currentPos = await TrackPlayer.getPosition()
-        while (buffered < currentPos) {
-          console.log('auto re-buffering')
-          TrackPlayer.play();
-          this.shouldQueueEndedEventRun = false;
-          TrackPlayer.play();
-          await timeout(20000);
-          TrackPlayer.play();
-          this.shouldQueueEndedEventRun = true;
-          buffered = await TrackPlayer.getBufferedPosition();
-          currentPos = await TrackPlayer.getPosition()
-        }
-        return;
-      }
-      if (this.props.repeatOn) {
-        TrackPlayer.seekTo(0);
-        this.onPressPlay()
-        return;
-      }
-      if (this.props.autoOn) {
-        this.playSuggestedNextVideo()
-        return;
-      }
-      this.props.syncPaused(true)
-    });
-    this.onPlaybackStateChange = TrackPlayer.addEventListener('playback-state', async (playbackState) => {
-      if(this.props.miniPlayerState)
-        return;
-      getTrackPlayerState()
-      switch (playbackState.state) {
-        case TrackPlayer.STATE_NONE:
-          this.onPressPlay()
-          break;
-        case TrackPlayer.STATE_PLAYING:
-          this.props.syncLoading(false)
-        break;
-        // case TrackPlayer.STATE_PAUSED:
-        //   console.log('paused')
-        //   break;
-        // case TrackPlayer.STATE_BUFFERING:
-        //   console.log('buffering')
-        //   /**
-        //    * `iOS handler` when Track Player are busy `buffering` 
-        //    */
-        //   // if(this.prevPlaybackState === 'playing'){
-        //   //   let helperTrack = {
-        //   //     id: 'helperTrack', 
-        //   //     url: 'somellink',
-        //   //     title: 'helper Title', 
-        //   //     artist: 'tung duong',
-        //   //   }
-        //   //   await TrackPlayer.add(helperTrack)
-        //   //   await TrackPlayer.skip(helperTrack.id);
-        //   //   await TrackPlayer.skipToPrevious();
-        //   //   await TrackPlayer.remove(helperTrack.id)
-        //   // }
-
-        //   break;
-        // case TrackPlayer.STATE_NONE:
-        //   console.log('state none')
-        //   break;
-        // case TrackPlayer.STATE_STOPPED:
-        //   console.log('state stopped')
-        //   break;
-        default:
-          break;
-
-      }
-      this.prevPlaybackState = playbackState.state;
-    })
-    this.onRemotePause = TrackPlayer.addEventListener('remote-pause'), () => {
-      console.log('remote pause')
-    }
-    this.onHardwareBack = BackHandler.addEventListener('hardwareBackPress', () => {
-      this.onHardwareBackPress();
-    }
-    );
-    this.playFromYoutube()
-
-  }
-  onHardwareBackPress() {
-    if (this.props.navigation && this.props.navigation.state) {
-      let routeName = this.props.navigation.state.routeName;
-      if (routeName === 'Play') {
-        this.onDownPress();
-        return;
-      } else {
-        TrackPlayer.destroy();
-        return;
-      }
-    } else {
-      TrackPlayer.destroy();
-      return;
-    }
+    this.props.syncLoading(false)
   }
   render() {
     return (

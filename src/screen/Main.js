@@ -15,6 +15,8 @@ import { BACKGROUND_COLOR, COMMON_COMPONENTS_COLOR, INDICATOR_COLOR } from '../s
 YellowBox.ignoreWarnings(['Remote debugger']);
 YellowBox.ignoreWarnings(['Warning: ViewPagerAndroid has been extracted']);
 YellowBox.ignoreWarnings(['Error: Network Error']);
+YellowBox.ignoreWarnings(['Required dispatch_sync to load constants for']);
+YellowBox.ignoreWarnings(['RCTBridge required dispatch_sync']);
 
 /**
  * `RedBoxes and YellowBoxes are automatically disabled in release (production) builds.`
