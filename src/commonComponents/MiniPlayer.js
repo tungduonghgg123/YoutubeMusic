@@ -45,7 +45,8 @@ class MiniPlayer extends PlayScreen {
           if (track) {
             this.props.syncTrack(track)
             this.props.setSuggestedNextTracks([])
-            this.getSuggestedNextTracks(data.nextTrack, 7)
+            let nextTrack = await TrackPlayer.getTrack(data.nextTrack)
+            this.getSuggestedNextTracks(nextTrack.originID, 7)
             this.props.syncPaused(false)
           } else {
             this.props.syncPaused(true)

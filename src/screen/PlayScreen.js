@@ -74,7 +74,16 @@ class PlayScreen extends Component {
     if (track && track.id) {
       getTrackQueue().then(async (tracks) => {
         let numTrack = tracks.length;
-        track.id = 'tungduong_'+ numTrack + '_' + track.id;
+        /**
+         * `track.originID` this is the real VIDEO ID from youtube.
+         * It will be used for fetching `lelated videos `  from youtube
+         */
+        track.originID = track.id;
+        /**
+         * `Modify track ID's PURPOSE:` Because each `video ID` on `Track Player` is needed to be `unique`.
+         * Example: When there are two `identical track`.
+         */
+        track.id = numTrack + '_' + track.id;
         await TrackPlayer.add(track)
         await TrackPlayer.skip(track.id)
         this.onPressPlay();
@@ -105,7 +114,7 @@ class PlayScreen extends Component {
           onScroll={({ nativeEvent }) => {
             if (!this.state.isLoading && isCloseToEdge(nativeEvent) &&
               this.props.listItem.length < 30 && this.props.listItem.length != 0) {
-              this.getSuggestedNextTracks(this.props.track.id, 1, this.state.nextPageToken)
+              this.getSuggestedNextTracks(this.props.track.originID, 1, this.state.nextPageToken)
             }
           }}
           scrollEventThrottle={5000}
@@ -142,17 +151,11 @@ class PlayScreen extends Component {
               onForward={this.playSuggestedNextVideo.bind(this)}
               onBack={this.onPressBack.bind(this)}
             />
-            {/* <MiniPlayer/> */}
           </View>
           {this.props.loading ?
             <Spinner /> : <View style={{ flex: 1 }} />
           }
-          {/* <Spinner
-          visible={this.props.loading}
-          textContent={'Loading...'}
-          textStyle={styles.spinnerTextStyle}
-        /> */}
-          {/* <Button
+          <Button
             title='get current position'
             onPress={async () => {
               let position = await TrackPlayer.getPosition()
@@ -160,7 +163,7 @@ class PlayScreen extends Component {
               console.log(bufferedPosition)
               console.log(position)
             }} />
-          <Button title='stop' onPress={() => { TrackPlayer.stop() }} /> */}
+          <Button title='stop' onPress={() => { TrackPlayer.stop() }} />
           <ItemsListHorizontal isLoading={this.state.isLoading}>
             {this.props.listItem.map((item, itemKey) => {
               return (
@@ -170,7 +173,6 @@ class PlayScreen extends Component {
                   style={{ marginBottom: 10 }}
                   onPress={() => {
                     this.props.syncTrackID(item.id);
-                    // this.playFromYoutube(item.id)
                     this.props.setSuggestedNextTracks([])
                   }}
                 />

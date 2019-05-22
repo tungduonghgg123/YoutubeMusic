@@ -29,7 +29,7 @@ export function getTrackQueue() {
     TrackPlayer.getQueue().then((tracks) => {
       resolve(tracks)
     }, (error) => {
-      reject(error)
+      console.log(error)
     })
   })
 }
@@ -64,7 +64,8 @@ export function getTrackDetails(videoId) {
       };
       resolve(track);
     })
-      .catch(error => reject(error))
+      .catch(error => {
+        console.log(error)})
   })
 }
 /**
@@ -85,13 +86,14 @@ function getVideoInfo(videoId) {
     }).then((response) => {
       resolve(response.data.items)
     }).catch((error) => {
-      reject(error)
+      console.log(error)
     })
   })
 }
 /**
  * get next videos related to video id. 
  */
+
 export function getNextVideos(relatedToVideoId, maxResults, pageToken) {
   return new Promise((resolve, reject) => {
     axios.get('https://content.googleapis.com/youtube/v3/search', {
@@ -118,6 +120,8 @@ export function getNextVideos(relatedToVideoId, maxResults, pageToken) {
             nextPageToken: response.data.nextPageToken
           })
         })
+    }).catch((error) => {
+      console.log(error)
     })
   })
 };
@@ -149,7 +153,7 @@ export function getVideosHomeScreen(maxResults, pageToken) {
         nextPageToken: response.data.nextPageToken,
       })
     }).catch((error) => {
-      reject(error)
+      console.log(error)
     }) 
 
   })
