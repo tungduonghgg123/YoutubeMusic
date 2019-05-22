@@ -28,6 +28,7 @@ class MiniPlayer extends PlayScreen {
         NavigationService.navigate('Play');
     }
     async componentDidMount() {
+        this.author = 'tungduong'
         this.keyboardDidShowListener = Keyboard.addListener(
             'keyboardDidShow',
             this._keyboardDidShow.bind(this),
@@ -41,17 +42,7 @@ class MiniPlayer extends PlayScreen {
         }
         );
         this.onTrackChange = TrackPlayer.addEventListener('playback-track-changed', async (data) => {
-          // if (data.nextTrack === 'helperTrack') {
-          //   console.log('helper track ON')
-          //   return;
-          // }
-          // console.log('---------------------')
-          // console.log('track changed')
-          // getTrackQueue()
           let track = await TrackPlayer.getTrack(data.nextTrack);
-          /**
-           * sync track to redux store:
-           */
           if (track) {
             this.props.syncTrack(track)
             this.props.setSuggestedNextTracks([])
@@ -95,44 +86,15 @@ class MiniPlayer extends PlayScreen {
           this.props.syncPaused(true)
         });
         this.onPlaybackStateChange = TrackPlayer.addEventListener('playback-state', async (playbackState) => {
-          if(this.props.miniPlayerState)
-            return;
+          console.log('event from mini player by ', this.author)
           getTrackPlayerState()
           switch (playbackState.state) {
             case TrackPlayer.STATE_NONE:
-              this.onPressPlay()
+              // this.onPressPlay()
               break;
             case TrackPlayer.STATE_PLAYING:
               this.props.syncLoading(false)
             break;
-            // case TrackPlayer.STATE_PAUSED:
-            //   console.log('paused')
-            //   break;
-            // case TrackPlayer.STATE_BUFFERING:
-            //   console.log('buffering')
-            //   /**
-            //    * `iOS handler` when Track Player are busy `buffering` 
-            //    */
-            //   // if(this.prevPlaybackState === 'playing'){
-            //   //   let helperTrack = {
-            //   //     id: 'helperTrack', 
-            //   //     url: 'somellink',
-            //   //     title: 'helper Title', 
-            //   //     artist: 'tung duong',
-            //   //   }
-            //   //   await TrackPlayer.add(helperTrack)
-            //   //   await TrackPlayer.skip(helperTrack.id);
-            //   //   await TrackPlayer.skipToPrevious();
-            //   //   await TrackPlayer.remove(helperTrack.id)
-            //   // }
-    
-            //   break;
-            // case TrackPlayer.STATE_NONE:
-            //   console.log('state none')
-            //   break;
-            // case TrackPlayer.STATE_STOPPED:
-            //   console.log('state stopped')
-            //   break;
             default:
               break;
     

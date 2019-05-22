@@ -1,16 +1,15 @@
 import React, { Component } from 'react'
 import { View, Text, SafeAreaView, ScrollView } from 'react-native'
 import { Card, CardSection, QueueHeader, Header } from '../commonComponents'
-import { getTrackQueue } from '../utils'
+import { getTrackQueue, handleAndroidBackButton, removeAndroidBackButtonHandler } from '../utils'
 import { BACKGROUND_COLOR, TEXT_COLOR } from '../style'
 export default class QueueScreen extends Component {
-    state = { queue: [] }
-    async componentDidMount() {
-        let queue = await getTrackQueue();
-        this.setState({ queue })
+
+    constructor(props) {
+        super(props);
+        this.state = { queue: [] };
     }
     renderQueue() {
-
         let trackQueue = this.state.queue.map(track => {
             return (
                 <Card key={track.id}>
@@ -37,7 +36,7 @@ export default class QueueScreen extends Component {
                     message="Music Queue"
                     onBackPress={() => { this.props.navigation.goBack() }}
                 />
-                <ScrollView style={{marginTop: 20}}>
+                <ScrollView style={{ marginTop: 20 }}>
                     {this.renderQueue()}
                 </ScrollView>
             </SafeAreaView>
@@ -49,7 +48,7 @@ const styles = {
     containerStyle: {
         backgroundColor: BACKGROUND_COLOR,
         flex: 1,
-        
+
     },
     titleStyle: {
         fontWeight: 'bold',

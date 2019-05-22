@@ -36,6 +36,9 @@ class SearchScreen extends Component {
     };
     this.offset = 0;
   }
+  componentDidMount(){
+    this.onSearch("to the moon", 7)
+  }
   onScroll = (event) => {
     // var currentOffset = event.nativeEvent.contentOffset.y;
     // var direction = currentOffset > this.offset ? 'down' : 'up';
@@ -145,9 +148,7 @@ class SearchScreen extends Component {
   // componentWillUnmount(){
   //   this.backHandler.remove()
   // }
-  componentDidMount(){
-    this.onSearch("slipyslidy", 7)
-  }
+  
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: BACKGROUND_COLOR, height: '100%' }}>

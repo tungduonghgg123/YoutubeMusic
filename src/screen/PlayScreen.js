@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { StatusBar, Button, SafeAreaView, Text, View, ScrollView, BackHandler, Alert } from 'react-native';
-// import Spinner from 'react-native-loading-spinner-overlay';
+import { StatusBar, Button, SafeAreaView, Text, View, ScrollView, Alert } from 'react-native';
 import TrackPlayer from 'react-native-track-player';
 import memoize from "memoize-one";
 import {
@@ -11,7 +10,7 @@ import { BACKGROUND_COLOR } from '../style'
 //redux
 import { connect } from 'react-redux';
 import * as actions from '../redux/actions'
-import { isCloseToEdge, getTrackDetails, getNextVideos } from '../utils'
+import { isCloseToEdge, getTrackDetails, getNextVideos, handleAndroidBackButton, removeAndroidBackButtonHandler } from '../utils'
 
 class PlayScreen extends Component {
   constructor(props) {
@@ -21,39 +20,13 @@ class PlayScreen extends Component {
       nextPageToken: '',
     };
     this.shouldQueueEndedEventRun = true;
+    console.log('initialized')
 
-  }
-  onHardwareBackPress() {
-    console.log('ahihi')
-    if (!this.props.miniPlayerState) {
-      console.log('play or queue screen')
-      this.onDownPress();
-      //   let routeName = this.props.navigation.state.routeName;
-      //   if (routeName === 'Play') {
-      //       console.log('play screen')
-      //     this.onDownPress();
-      //     return true;
-      //   } else {
-      //     TrackPlayer.destroy();
-      //     return true;
-      //   }
-    }
-    return true;
   }
   componentDidMount() {
     this.props.miniPlayerOff();
-    this.onHardwareBack = BackHandler.addEventListener('hardwareBackPress', () => {
-      this.onHardwareBackPress();
-    }
-    );
   }
-  componentWillUnmount() {
-    BackHandler.removeEventListener('hardwareBackPress', () => {
-      this.onHardwareBackPress();
-    }
-    );
 
-  }
   onPressPause() {
     TrackPlayer.pause();
     this.props.syncPaused(true)
