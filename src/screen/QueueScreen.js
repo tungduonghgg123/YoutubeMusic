@@ -5,14 +5,14 @@ import { getTrackQueue, handleAndroidBackButton, removeAndroidBackButtonHandler 
 import { BACKGROUND_COLOR, TEXT_COLOR } from '../style'
 export default class QueueScreen extends Component {
 
-    constructor(props) {
-        super(props);
-        this.state = { queue: [] };
-    }
+
+    state = { queue: [] };
+
+    async componentDidMount() { let queue = await getTrackQueue(); this.setState({ queue }) }
     renderQueue() {
         let trackQueue = this.state.queue.map(track => {
             return (
-                <Card key={track.id}>
+                <Card key={track.id} style={{backgroundColor: BACKGROUND_COLOR}}>
                     <CardSection>
                         <Text style={styles.titleStyle}>
                             {track.title}
@@ -21,6 +21,11 @@ export default class QueueScreen extends Component {
                     <CardSection>
                         <Text style={styles.artistStyle}>
                             {track.artist}
+                        </Text>
+                    </CardSection>
+                    <CardSection>
+                        <Text style={styles.artistStyle}>
+                            {track.id}
                         </Text>
                     </CardSection>
                 </Card>
@@ -33,7 +38,7 @@ export default class QueueScreen extends Component {
         return (
             <SafeAreaView style={styles.containerStyle}>
                 <QueueHeader
-                    message="Music Queue"
+                    message="Played Musics"
                     onBackPress={() => { this.props.navigation.goBack() }}
                 />
                 <ScrollView style={{ marginTop: 20 }}>
@@ -52,9 +57,11 @@ const styles = {
     },
     titleStyle: {
         fontWeight: 'bold',
-        color: TEXT_COLOR
+        color: TEXT_COLOR,
+        backgroundColor: BACKGROUND_COLOR
     },
     artistStyle: {
-        color: TEXT_COLOR
+        color: TEXT_COLOR,
+        backgroundColor: BACKGROUND_COLOR
     }
 }

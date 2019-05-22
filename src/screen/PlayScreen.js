@@ -10,7 +10,7 @@ import { BACKGROUND_COLOR } from '../style'
 //redux
 import { connect } from 'react-redux';
 import * as actions from '../redux/actions'
-import { isCloseToEdge, getTrackDetails, getNextVideos, handleAndroidBackButton, removeAndroidBackButtonHandler } from '../utils'
+import { isCloseToEdge, getTrackDetails, getNextVideos, getTrackQueue } from '../utils'
 
 class PlayScreen extends Component {
   constructor(props) {
@@ -20,8 +20,6 @@ class PlayScreen extends Component {
       nextPageToken: '',
     };
     this.shouldQueueEndedEventRun = true;
-    console.log('initialized')
-
   }
   componentDidMount() {
     this.props.miniPlayerOff();
@@ -72,11 +70,15 @@ class PlayScreen extends Component {
     let track = await getTrackDetails(videoId)
     this.addAndPlay(track)
   })
-  async addAndPlay(track) {
+  addAndPlay(track) {
     if (track && track.id) {
-      await TrackPlayer.add(track)
-      await TrackPlayer.skip(track.id)
-      this.onPressPlay();
+      getTrackQueue().then(async (tracks) => {
+        let numTrack = tracks.length;
+        track.id = 'tungduong_'+ numTrack + '_' + track.id;
+        await TrackPlayer.add(track)
+        await TrackPlayer.skip(track.id)
+        this.onPressPlay();
+      })
     }
   }
 
@@ -167,7 +169,8 @@ class PlayScreen extends Component {
                   key={itemKey}
                   style={{ marginBottom: 10 }}
                   onPress={() => {
-                    this.playFromYoutube(item.id)
+                    this.props.syncTrackID(item.id);
+                    // this.playFromYoutube(item.id)
                     this.props.setSuggestedNextTracks([])
                   }}
                 />

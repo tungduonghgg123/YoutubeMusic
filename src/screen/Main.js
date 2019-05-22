@@ -46,8 +46,8 @@ const TabNavigator = createMaterialTopTabNavigator({
   },
   
 }, {
-    // order: ['Home', 'Search'],
-    order: ['Search', 'Home'],
+    order: ['Home', 'Search'],
+    // order: ['Search', 'Home'],
     navigationOptions: {
       header: null,
       headerLeft: null,

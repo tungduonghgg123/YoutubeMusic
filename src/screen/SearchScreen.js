@@ -36,9 +36,9 @@ class SearchScreen extends Component {
     };
     this.offset = 0;
   }
-  componentDidMount(){
-    this.onSearch("to the moon", 7)
-  }
+  // componentDidMount(){
+  //   this.onSearch("to the moon", 7)
+  // }
   onScroll = (event) => {
     // var currentOffset = event.nativeEvent.contentOffset.y;
     // var direction = currentOffset > this.offset ? 'down' : 'up';
@@ -126,29 +126,6 @@ class SearchScreen extends Component {
       console.log(error);
     });
   }
-  // onHardwareBackPress(){
-
-  //   let routeName = this.props.navigation.state.routeName
-  //   console.log(routeName)
-  //   switch (routeName) {
-  //     case 'Search':
-  //     console.log('called from search screen')
-  //       this.props.navigation.goBack();
-  //       return true;
-  //     default:
-  //       return true;
-  //   }
-  // }
-  // componentDidMount() {
-  //   this.backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
-  //     console.log('hardware back event fired')
-  //     this.onHardwareBackPress()
-  //   });
-  // }
-  // componentWillUnmount(){
-  //   this.backHandler.remove()
-  // }
-  
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: BACKGROUND_COLOR, height: '100%' }}>

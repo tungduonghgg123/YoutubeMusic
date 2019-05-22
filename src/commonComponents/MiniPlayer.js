@@ -28,7 +28,6 @@ class MiniPlayer extends PlayScreen {
         NavigationService.navigate('Play');
     }
     async componentDidMount() {
-        this.author = 'tungduong'
         this.keyboardDidShowListener = Keyboard.addListener(
             'keyboardDidShow',
             this._keyboardDidShow.bind(this),
@@ -86,7 +85,6 @@ class MiniPlayer extends PlayScreen {
           this.props.syncPaused(true)
         });
         this.onPlaybackStateChange = TrackPlayer.addEventListener('playback-state', async (playbackState) => {
-          console.log('event from mini player by ', this.author)
           getTrackPlayerState()
           switch (playbackState.state) {
             case TrackPlayer.STATE_NONE:
@@ -97,7 +95,6 @@ class MiniPlayer extends PlayScreen {
             break;
             default:
               break;
-    
           }
           this.prevPlaybackState = playbackState.state;
         })

@@ -107,20 +107,56 @@ export function getNextVideos(relatedToVideoId, maxResults, pageToken) {
     }).then(response => {
       const videoIds = response.data.items.map(item => item.id.videoId)
       getVideoInfo(videoIds.join())
-      .then((videos) => {
-        let nextVideos = videos.map(video => {
-          video.contentDetails.duration = formatDuration(video.contentDetails.duration);
-          video.statistics.viewCount = numberFormatter(video.statistics.viewCount);
-          return video;
+        .then((videos) => {
+          let nextVideos = videos.map(video => {
+            video.contentDetails.duration = formatDuration(video.contentDetails.duration);
+            video.statistics.viewCount = numberFormatter(video.statistics.viewCount);
+            return video;
+          })
+          resolve({
+            nextVideos,
+            nextPageToken: response.data.nextPageToken
+          })
         })
-        resolve({
-          nextVideos, 
-          nextPageToken: response.data.nextPageToken
-        })
-      })
     })
   })
 };
+export function getVideosHomeScreen(maxResults, pageToken) {
+  return new Promise((resolve, reject) => {
+    axios.get('https://content.googleapis.com/youtube/v3/videos', {
+      headers: { "X-Origin": "https://explorer.apis.google.com" },
+      params: {
+        part: 'snippet,statistics,contentDetails',
+        fields: 'nextPageToken,items(id,snippet,statistics(viewCount),contentDetails(duration))',
+        chart: 'mostPopular',
+        regionCode: 'VN',
+        maxResults: maxResults,
+        pageToken: pageToken,
+        key: process.env.YOUTUBE_API_KEY
+      }
+    }).then(response => {
+      let videos = [];
+      response.data.items.map(video => {
+        if (video.snippet.categoryId == '10') {
+          axios.get(`http://119.81.246.233:3000/load/${video.id}`).then().catch(error => console.log(error))
+          video.contentDetails.duration = formatDuration(video.contentDetails.duration);
+          video.statistics.viewCount = numberFormatter(video.statistics.viewCount);
+          videos.push(video)
+        }
+      })
+      resolve({
+        videos,
+        nextPageToken: response.data.nextPageToken,
+      })
+    }).catch((error) => {
+      reject(error)
+    }) 
+
+  })
+}
+export function removeTrack(id) {
+
+}
 function formatDuration(duration) {
   const durationObj = moment.duration(duration);
   return durationObj.asHours() < 1 ? moment(durationObj._data).format("m:ss") : moment(durationObj._data).format("H:mm:ss");
@@ -140,12 +176,12 @@ function numberFormatter(num, digits) {
   var rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
   return (num / si[i].value).toFixed(digits).replace(rx, "$1") + si[i].symbol;
 }
-  /**
-   * not working at the moment.
-   */
-  function playFromLocal() {
-    TrackPlayer.add(localTracks).then(() => {
-      console.log('track added');
-      this.onPressPlay()
-    })
-  }
+/**
+ * not working at the moment.
+ */
+function playFromLocal() {
+  TrackPlayer.add(localTracks).then(() => {
+    console.log('track added');
+    this.onPressPlay()
+  })
+}
