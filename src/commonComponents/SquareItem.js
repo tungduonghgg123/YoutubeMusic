@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { ImageBackground, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import {
   CHANNEL_TITLE_COLOR, VIEWS_COUNT_COLOR, TITLE_COLOR,
   DURATION_COLOR, DURATION_BACKGROUND_COLOR,
@@ -9,20 +9,22 @@ import {
 const SquareItem = ({ item, style, onPress }) => {
   return (
     <TouchableOpacity style={[style, styles.containerStyle]} onPress={onPress}>
-      <Image
+      <ImageBackground
         resizeMode='contain'
         style={{ width: 160, height: 100 }}
         source={{ uri: item.snippet.thumbnails.medium.url }}
-      />
-      {item.snippet.liveBroadcastContent == 'none' ?
-        <Text style={styles.durationStyle}>
-          {item.contentDetails.duration}
-        </Text>
-        :
-        <Text style={styles.liveStyle}>
-          {item.snippet.liveBroadcastContent}
-        </Text>
-      }
+      >
+
+        {item.snippet.liveBroadcastContent == 'none' ?
+          <Text style={styles.durationStyle}>
+            {item.contentDetails.duration}
+          </Text>
+          :
+          <Text style={styles.liveStyle}>
+            {item.snippet.liveBroadcastContent}
+          </Text>
+        }
+      </ImageBackground>
       <Text style={{ color: TITLE_COLOR, width: 160, fontSize: TITLE_FONT_SIZE}} numberOfLines={3}>{item.snippet.title}</Text>
       <View style={{ color: 'black', fontSize: 11 }}>
         <Text numberOfLines={1} style={styles.channelTitleStyle}>{item.snippet.channelTitle}</Text>
@@ -48,8 +50,8 @@ const styles = StyleSheet.create({
   },
   durationStyle: {
     position: 'absolute',
-    top: 70,
-    left: 145,
+    bottom: 7,
+    right: 5,
     color: DURATION_COLOR,
     backgroundColor: DURATION_BACKGROUND_COLOR,
     opacity: 0.7,
@@ -61,8 +63,8 @@ const styles = StyleSheet.create({
   },
   liveStyle: {
     position: 'absolute',
-    top: 70,
-    left: 145,
+    bottom: 7,
+    right: 5,
     color: LIVE_COLOR,
     backgroundColor: LIVE_BACKGROUND_COLOR,
     opacity: 0.7,
