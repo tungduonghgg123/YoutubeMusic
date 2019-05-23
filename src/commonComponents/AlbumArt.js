@@ -9,17 +9,18 @@ const AlbumArt = ({ url, description }) => {
   return (
     <View style={styles.container}>
       <CardFlip style={styles.cardContainer} ref={(card) => this.card = card}>
-        <TouchableOpacity activeOpacity={1} onPress={() => this.card.flip()}>
+        <TouchableOpacity activeOpacity = {1} onPress={() => this.card.flip()}>
           <Image style={styles.image}
             source={!url ? null : { uri: url }}
             resizeMode={'contain'}
           />
         </TouchableOpacity>
-        <View style={styles.image}>
+        
+        <TouchableOpacity activeOpacity = {1} style={styles.image} onPress={() => { this.card.flip() }}>
           <NestedScrollView>
-            <Text style={{ color: TEXT_COLOR }} onPress={() => { this.card.flip() }}>{description}</Text>
+            <Text style={{ color: TEXT_COLOR }} >{description}</Text>
           </NestedScrollView>
-        </View>
+        </TouchableOpacity>
 
       </CardFlip>
 
