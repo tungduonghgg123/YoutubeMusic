@@ -105,12 +105,8 @@ class MiniPlayer extends PlayScreen {
         this.onRemotePause = TrackPlayer.addEventListener('remote-pause'), () => {
             console.log('remote pause')
         }
-        // this.playFromYoutube()
 
     }
-    // componentDidUpdate() {
-    //     this.playFromYoutube()
-    // }
     componentWillUnmount() {
         this.onTrackChange.remove();
         this.onQueueEnded.remove();
@@ -234,9 +230,6 @@ const mapStateToProps = state => ({
     listItem: state.syncNextTrackListReducer,
     autoOn: state.syncAutoModeReducer,
     repeatOn: state.syncRepeatModeReducer,
-    trackID: state.syncTrackIDReducer
-
-
 });
 export default connect(mapStateToProps, actions)(MiniPlayer);
 

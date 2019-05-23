@@ -89,7 +89,9 @@ class PlayScreen extends Component {
          * Example: When there are two `identical track`.
          */
         track.id = numTrack + '_' + track.id;
+        console.log(track)
         await TrackPlayer.add(track)
+        console.log(await getTrackQueue())
         await TrackPlayer.skip(track.id)
         this.onPressPlay();
       })
@@ -178,7 +180,7 @@ class PlayScreen extends Component {
                   key={itemKey}
                   style={{ marginBottom: 10 }}
                   onPress={() => {
-                    this.props.syncTrackID(item.id);
+                    this.playFromYoutube(item.id);
                     this.props.setSuggestedNextTracks([])
                   }}
                 />
@@ -198,7 +200,6 @@ const mapStateToProps = state => ({
   autoOn: state.syncAutoModeReducer,
   repeatOn: state.syncRepeatModeReducer,
   miniPlayerState: state.miniPlayerReducer,
-  trackID: state.syncTrackIDReducer
 });
 
 export default connect(mapStateToProps, actions)(PlayScreen)
