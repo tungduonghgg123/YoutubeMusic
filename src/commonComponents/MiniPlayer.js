@@ -41,79 +41,82 @@ class MiniPlayer extends PlayScreen {
         }
         );
         this.onTrackChange = TrackPlayer.addEventListener('playback-track-changed', async (data) => {
-          let track = await TrackPlayer.getTrack(data.nextTrack);
-          if (track) {
-            this.props.syncTrack(track)
-            this.props.setSuggestedNextTracks([])
-            let nextTrack = await TrackPlayer.getTrack(data.nextTrack)
-            this.getSuggestedNextTracks(nextTrack.originID, 7)
-            this.props.syncPaused(false)
-          } else {
-            this.props.syncPaused(true)
-          }
+            console.log('track changed')
+            let track = await TrackPlayer.getTrack(data.nextTrack);
+            if (track) {
+                this.props.syncTrack(track)
+                this.props.setSuggestedNextTracks([])
+                let nextTrack = await TrackPlayer.getTrack(data.nextTrack)
+                this.getSuggestedNextTracks(nextTrack.originID, 7)
+                this.props.syncPaused(false)
+            } else {
+                this.props.syncPaused(true)
+            }
         });
         this.onQueueEnded = TrackPlayer.addEventListener('playback-queue-ended', async (data) => {
-          if (!this.shouldQueueEndedEventRun)
-            return;
-          let currentPos = await TrackPlayer.getPosition();
-          let duration = await this.props.track.duration;
-    
-          if ( duration - currentPos > 1) {
-            let buffered = await TrackPlayer.getBufferedPosition();
-            currentPos = await TrackPlayer.getPosition()
-            while (buffered < currentPos) {
-              console.log('auto re-buffering')
-              TrackPlayer.play();
-              this.shouldQueueEndedEventRun = false;
-              TrackPlayer.play();
-              await timeout(20000);
-              TrackPlayer.play();
-              this.shouldQueueEndedEventRun = true;
-              buffered = await TrackPlayer.getBufferedPosition();
-              currentPos = await TrackPlayer.getPosition()
+            if (!this.shouldQueueEndedEventRun)
+                return;
+            let currentPos = await TrackPlayer.getPosition();
+            let duration = await this.props.track.duration;
+
+            //   if ( duration - currentPos > 1) {
+            //     let buffered = await TrackPlayer.getBufferedPosition();
+            //     currentPos = await TrackPlayer.getPosition()
+            //     while (buffered < currentPos) {
+            //       console.log('auto re-buffering')
+            //       TrackPlayer.play();
+            //       this.shouldQueueEndedEventRun = false;
+            //       TrackPlayer.play();
+            //       await timeout(20000);
+            //       TrackPlayer.play();
+            //       this.shouldQueueEndedEventRun = true;
+            //       buffered = await TrackPlayer.getBufferedPosition();
+            //       currentPos = await TrackPlayer.getPosition()
+            //     }
+            //     return;
+            //   }
+            if (this.props.repeatOn) {
+                console.log('repeat on')
+                TrackPlayer.seekTo(0);
+                this.onPressPlay()
+                return;
             }
-            return;
-          }
-          if (this.props.repeatOn) {
-            TrackPlayer.seekTo(0);
-            this.onPressPlay()
-            return;
-          }
-          if (this.props.autoOn) {
-            this.playSuggestedNextVideo()
-            return;
-          }
-          this.props.syncPaused(true)
+            if (this.props.autoOn) {
+                console.log('auto on')
+                this.playSuggestedNextVideo()
+                return;
+            }
+            this.props.syncPaused(true)
         });
         this.onPlaybackStateChange = TrackPlayer.addEventListener('playback-state', async (playbackState) => {
-          getTrackPlayerState()
-          switch (playbackState.state) {
-            case TrackPlayer.STATE_NONE:
-              // this.onPressPlay()
-              break;
-            case TrackPlayer.STATE_PLAYING:
-              this.props.syncLoading(false)
-            break;
-            default:
-              break;
-          }
-          this.prevPlaybackState = playbackState.state;
+            // getTrackPlayerState()
+            switch (playbackState.state) {
+                case TrackPlayer.STATE_NONE:
+                    // this.onPressPlay()
+                    break;
+                case TrackPlayer.STATE_PLAYING:
+                    this.props.syncLoading(false)
+                    break;
+                default:
+                    break;
+            }
+            this.prevPlaybackState = playbackState.state;
         })
         this.onRemotePause = TrackPlayer.addEventListener('remote-pause'), () => {
-          console.log('remote pause')
+            console.log('remote pause')
         }
-        this.playFromYoutube()
-    
-      }
-      componentDidUpdate(){
-        this.playFromYoutube()
-      }
-      componentWillUnmount() {
+        // this.playFromYoutube()
+
+    }
+    // componentDidUpdate() {
+    //     this.playFromYoutube()
+    // }
+    componentWillUnmount() {
         this.onTrackChange.remove();
         this.onQueueEnded.remove();
         this.onPlaybackStateChange.remove();
-      }
-      
+    }
+
     render() {
         const { textStyle, containerStyle, upButtonStyle, playButtonStyle, miniPlayerStyle,
             textContainerStyle

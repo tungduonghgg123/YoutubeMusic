@@ -23,6 +23,7 @@ class PlayScreen extends Component {
   }
   componentDidMount() {
     this.props.miniPlayerOff();
+    this.playFromYoutube()
   }
 
   onPressPause() {
@@ -54,7 +55,10 @@ class PlayScreen extends Component {
     await TrackPlayer.skipToPrevious();
   }
   playSuggestedNextVideo() {
+    console.log('called')
+    console.log(this.props.listItem[0])
     if (this.props.listItem[0] && this.props.listItem[0].id) {
+      console.log('inside playSuggestedNextVideo nested if-statement')
       let videoId = this.props.listItem[0].id;
       this.memoizedLoad(videoId)
     }
@@ -65,6 +69,7 @@ class PlayScreen extends Component {
     /**
      * pause Track Player before loading and playing new Track.
      *  */
+    console.log('called from memoized load')
     this.onPressPause()
     this.props.syncLoading(true)
     let track = await getTrackDetails(videoId)
@@ -76,7 +81,7 @@ class PlayScreen extends Component {
         let numTrack = tracks.length;
         /**
          * `track.originID` this is the real VIDEO ID from youtube.
-         * It will be used for fetching `lelated videos `  from youtube
+         * It will be used for fetching `related videos `  from youtube
          */
         track.originID = track.id;
         /**
@@ -92,10 +97,11 @@ class PlayScreen extends Component {
   }
 
   playFromYoutube(videoId) {
+
     if (videoId) {
       this.memoizedLoad(videoId)
     } else {
-      this.memoizedLoad(this.props.trackID);
+      this.memoizedLoad(this.props.navigation.getParam('videoId'));
     }
   }
   async getSuggestedNextTracks(relatedToVideoId, maxResults, pageToken) {

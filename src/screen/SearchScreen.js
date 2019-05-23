@@ -36,9 +36,9 @@ class SearchScreen extends Component {
     };
     this.offset = 0;
   }
-  // componentDidMount(){
-  //   this.onSearch("to the moon", 7)
-  // }
+  componentDidMount(){
+    this.onSearch("to the moon soundtrack", 7)
+  }
   onScroll = (event) => {
     // var currentOffset = event.nativeEvent.contentOffset.y;
     // var direction = currentOffset > this.offset ? 'down' : 'up';
@@ -163,8 +163,9 @@ class SearchScreen extends Component {
                 item={item}
                 key={itemKey}
                 onPress={() => {
-                  this.props.syncTrackID(item.id);
-                  this.props.navigation.navigate('Play')
+                  // this.props.syncTrackID(item.id);
+                  // this.props.syncTrack({id: item.id})
+                  this.props.navigation.navigate('Play', { videoId: item.id })
 
                 }}
               />

@@ -23,11 +23,6 @@ export default class QueueScreen extends Component {
                             {track.artist}
                         </Text>
                     </CardSection>
-                    <CardSection>
-                        <Text style={styles.artistStyle}>
-                            {track.id}
-                        </Text>
-                    </CardSection>
                 </Card>
             )
         })
@@ -38,7 +33,7 @@ export default class QueueScreen extends Component {
         return (
             <SafeAreaView style={styles.containerStyle}>
                 <QueueHeader
-                    message="Played Musics"
+                    message="History"
                     onBackPress={() => { this.props.navigation.goBack() }}
                 />
                 <ScrollView style={{ marginTop: 20 }}>

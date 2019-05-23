@@ -5,7 +5,6 @@ import syncPausedReducer from './syncPausedReducer'
 import syncLoadingReducer from './syncLoadingReducer'
 import syncNextTrackListReducer from './syncNextTrackListReducer'
 import { syncRepeatModeReducer, syncAutoModeReducer} from './syncMode'
-import syncTrackIDReducer from './syncTrackIDReducer'
 export default combineReducers({
   miniPlayerReducer,
   syncTrackReducer,
@@ -14,5 +13,4 @@ export default combineReducers({
   syncNextTrackListReducer,
   syncRepeatModeReducer,
   syncAutoModeReducer,
-  syncTrackIDReducer
   });
