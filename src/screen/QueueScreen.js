@@ -8,7 +8,6 @@ export default class QueueScreen extends Component {
 
     async componentDidMount() { let queue = await getTrackQueue(); this.setState({ queue }) }
     renderQueue() {
-        console.log(this.state.queue)
         let trackQueue = this.state.queue.map(track => {
             return (
                 <Card key={track.id} style={{backgroundColor: BACKGROUND_COLOR}}>

@@ -67,7 +67,18 @@ class PlayScreen extends Component {
       this.playFromYoutube(videoId)
     }
   }
-  memoizedLoad = memoize(async (videoId) => {
+  // memoizedLoad = memoize(async (videoId) => {
+  //   if (!videoId)
+  //     return;
+  //   /**
+  //    * pause Track Player before loading and playing new Track.
+  //    *  */
+  //   this.onPressPause()
+  //   this.props.syncLoading(true)
+  //   let track = await getTrackDetails(videoId)
+  //   this.addAndPlay(track)
+  // })
+  async memoizedLoad (videoId)  {
     if (!videoId)
       return;
     /**
@@ -77,7 +88,7 @@ class PlayScreen extends Component {
     this.props.syncLoading(true)
     let track = await getTrackDetails(videoId)
     this.addAndPlay(track)
-  })
+  }
   addAndPlay(track) {
     if (track && track.id) {
       getTrackQueue().then(async (tracks) => {
@@ -183,6 +194,7 @@ class PlayScreen extends Component {
                   style={{ marginBottom: 10 }}
                   onPress={() => {
                     this.playFromYoutube(item.id);
+                    // if(item.id === )
                     this.props.setSuggestedNextTracks([])
                   }}
                 />
