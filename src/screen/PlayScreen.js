@@ -23,7 +23,7 @@ class PlayScreen extends Component {
   }
   componentDidMount() {
     this.props.miniPlayerOff();
-    this.playFromYoutube()
+    this.playFromYoutube(this.props.navigation.getParam('videoId'))
   }
 
   onPressPause() {
@@ -55,12 +55,9 @@ class PlayScreen extends Component {
     await TrackPlayer.skipToPrevious();
   }
   playSuggestedNextVideo() {
-    console.log('called')
-    console.log(this.props.listItem[0])
     if (this.props.listItem[0] && this.props.listItem[0].id) {
-      console.log('inside playSuggestedNextVideo nested if-statement')
       let videoId = this.props.listItem[0].id;
-      this.memoizedLoad(videoId)
+      this.playFromYoutube(videoId)
     }
   }
   memoizedLoad = memoize(async (videoId) => {
@@ -69,7 +66,6 @@ class PlayScreen extends Component {
     /**
      * pause Track Player before loading and playing new Track.
      *  */
-    console.log('called from memoized load')
     this.onPressPause()
     this.props.syncLoading(true)
     let track = await getTrackDetails(videoId)
@@ -89,31 +85,24 @@ class PlayScreen extends Component {
          * Example: When there are two `identical track`.
          */
         track.id = numTrack + '_' + track.id;
-        console.log(track)
         await TrackPlayer.add(track)
-        console.log(await getTrackQueue())
         await TrackPlayer.skip(track.id)
-        this.onPressPlay();
+        // this.onPressPlay();
       })
     }
   }
 
   playFromYoutube(videoId) {
-
-    if (videoId) {
-      this.memoizedLoad(videoId)
-    } else {
-      this.memoizedLoad(this.props.navigation.getParam('videoId'));
-    }
+    this.memoizedLoad(videoId);
   }
   async getSuggestedNextTracks(relatedToVideoId, maxResults, pageToken) {
-    this.props.syncLoading(true)
+    this.props.syncLoadingNextTracks(true)
     let { nextVideos, nextPageToken } = await getNextVideos(relatedToVideoId, maxResults, pageToken);
     this.props.appendNextTracks(nextVideos);
     this.setState({
       nextPageToken: nextPageToken,
     })
-    this.props.syncLoading(false)
+    this.props.syncLoadingNextTracks(false)
   }
   render() {
     return (
@@ -163,7 +152,7 @@ class PlayScreen extends Component {
           {this.props.loading ?
             <Spinner /> : <View style={{ flex: 1 }} />
           }
-          <Button
+          {/* <Button
             title='get current position'
             onPress={async () => {
               let position = await TrackPlayer.getPosition()
@@ -171,8 +160,8 @@ class PlayScreen extends Component {
               console.log(bufferedPosition)
               console.log(position)
             }} />
-          <Button title='stop' onPress={() => { TrackPlayer.stop() }} />
-          <ItemsListHorizontal isLoading={this.state.isLoading}>
+          <Button title='stop' onPress={() => { TrackPlayer.stop() }} /> */}
+          <ItemsListHorizontal isLoading={this.state.nextTracksLoading}>
             {this.props.listItem.map((item, itemKey) => {
               return (
                 <SquareItem
@@ -196,6 +185,7 @@ const mapStateToProps = state => ({
   paused: state.syncPausedReducer,
   track: state.syncTrackReducer,
   loading: state.syncLoadingReducer,
+  nextTracksLoading: state.syncLoadingNextTracks,
   listItem: state.syncNextTrackListReducer,
   autoOn: state.syncAutoModeReducer,
   repeatOn: state.syncRepeatModeReducer,

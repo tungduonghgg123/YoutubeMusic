@@ -48,7 +48,7 @@ class MiniPlayer extends PlayScreen {
                 this.props.setSuggestedNextTracks([])
                 let nextTrack = await TrackPlayer.getTrack(data.nextTrack)
                 this.getSuggestedNextTracks(nextTrack.originID, 7)
-                this.props.syncPaused(false)
+                // this.props.syncPaused(false)
             } else {
                 this.props.syncPaused(true)
             }
@@ -89,15 +89,24 @@ class MiniPlayer extends PlayScreen {
             this.props.syncPaused(true)
         });
         this.onPlaybackStateChange = TrackPlayer.addEventListener('playback-state', async (playbackState) => {
-            // getTrackPlayerState()
+            getTrackPlayerState()
             switch (playbackState.state) {
+                case TrackPlayer.STATE_PLAYING:
+                    this.props.syncPaused(false)
+                    this.props.syncLoading(false)
+                    break;
+                case TrackPlayer.STATE_PAUSED:
+                    break;
+                case TrackPlayer.STATE_BUFFERING:
+                    break;
                 case TrackPlayer.STATE_NONE:
                     // this.onPressPlay()
                     break;
-                case TrackPlayer.STATE_PLAYING:
-                    this.props.syncLoading(false)
+                case TrackPlayer.STATE_STOPPED:
+                    this.props.syncPaused(true)
                     break;
                 default:
+                    this.onPressPlay()
                     break;
             }
             this.prevPlaybackState = playbackState.state;
