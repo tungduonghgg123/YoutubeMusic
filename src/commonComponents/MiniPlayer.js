@@ -13,7 +13,7 @@ import {
 import { Icon } from 'react-native-elements'
 import { MiniPlayerSlider } from '../commonComponents'
 import { PlayScreen } from '../screen/PlayScreen'
-import { getTrackPlayerState } from '../utils'
+import { getTrackPlayerState, getTrackOriginID } from '../utils'
 
 
 
@@ -40,19 +40,6 @@ class MiniPlayer extends PlayScreen {
             return true;
         }
         );
-        this.onTrackChange = TrackPlayer.addEventListener('playback-track-changed', async (data) => {
-            console.log('track changed')
-            let track = await TrackPlayer.getTrack(data.nextTrack);
-            if (track) {
-                this.props.syncTrack(track)
-                this.props.setSuggestedNextTracks([])
-                let nextTrack = await TrackPlayer.getTrack(data.nextTrack)
-                this.getSuggestedNextTracks(nextTrack.originID, 7)
-                // this.props.syncPaused(false)
-            } else {
-                this.props.syncPaused(true)
-            }
-        });
         this.onQueueEnded = TrackPlayer.addEventListener('playback-queue-ended', async (data) => {
             if (!this.shouldQueueEndedEventRun)
                 return;

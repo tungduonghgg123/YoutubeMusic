@@ -1,3 +1,4 @@
+const SEPERATOR = '_';
 import axios from 'axios';
 import moment from 'moment';
 import TrackPlayer from 'react-native-track-player';
@@ -65,7 +66,8 @@ export function getTrackDetails(videoId) {
       resolve(track);
     })
       .catch(error => {
-        console.log(error)})
+        console.log(error)
+      })
   })
 }
 /**
@@ -154,12 +156,46 @@ export function getVideosHomeScreen(maxResults, pageToken) {
       })
     }).catch((error) => {
       console.log(error)
-    }) 
+    })
 
   })
 }
-export function removeTrack(id) {
-
+export function getTrackOriginID(id) {
+  const indexOfSeperator = id.indexOf(SEPERATOR);
+  return id.slice(indexOfSeperator + 1);
+}
+export async function getPreviousTrack() {
+  let current = await TrackPlayer.getCurrentTrack();
+  let queue = await TrackPlayer.getQueue();
+  let indexOfCurrent = -1;
+  for (let i = 0; i < queue.length; i++) {
+    let track = queue[i];
+    if (track.id === current) {
+      indexOfCurrent = i;
+      break;
+    }
+  }
+  switch (indexOfCurrent) {
+    case -1:
+      console.log('current track is not found in queue');
+      return {
+        eligible: false,
+        id: -1
+      };
+    case 0:
+      console.log('there is no previous track');
+      return {
+        eligible: false,
+        id: -1
+      };
+    default:
+      console.log('you can go back')
+      let id = queue[indexOfCurrent - 1].id;
+      return {
+        eligible: true,
+        id
+      };
+  }
 }
 function formatDuration(duration) {
   const durationObj = moment.duration(duration);

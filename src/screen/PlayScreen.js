@@ -10,7 +10,7 @@ import { BACKGROUND_COLOR } from '../style'
 //redux
 import { connect } from 'react-redux';
 import * as actions from '../redux/actions'
-import { isCloseToEdge, getTrackDetails, getNextVideos, getTrackQueue } from '../utils'
+import { isCloseToEdge, getTrackDetails, getNextVideos, getTrackQueue, getPreviousTrack, getTrackOriginID } from '../utils'
 
 class PlayScreen extends Component {
   constructor(props) {
@@ -52,7 +52,14 @@ class PlayScreen extends Component {
     return true;
   }
   async onPressBack() {
-    await TrackPlayer.skipToPrevious();
+    let { eligible, id } = await getPreviousTrack();
+    if (eligible) {
+      let prevTrack = await TrackPlayer.getTrack(id);
+      this.onPlaybackTrackChanged(getTrackOriginID(id), prevTrack)
+      await TrackPlayer.skipToPrevious();
+    } else {
+      Alert.alert('Oop', 'There is no previous track!')
+    }
   }
   playSuggestedNextVideo() {
     if (this.props.listItem[0] && this.props.listItem[0].id) {
@@ -86,10 +93,16 @@ class PlayScreen extends Component {
          */
         track.id = numTrack + '_' + track.id;
         await TrackPlayer.add(track)
+        this.onPlaybackTrackChanged( track.originID, track)
         await TrackPlayer.skip(track.id)
-        // this.onPressPlay();
       })
     }
+  }
+  onPlaybackTrackChanged(id, track) {
+    console.log('track changed')
+    this.props.syncTrack(track)
+    this.props.setSuggestedNextTracks([])
+    this.getSuggestedNextTracks(id, 7)
   }
 
   playFromYoutube(videoId) {
