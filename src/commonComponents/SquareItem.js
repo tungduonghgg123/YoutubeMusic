@@ -43,7 +43,6 @@ const styles = StyleSheet.create({
     // marginBottom: 10,
     padding: 0,
     paddingLeft: 24,
-    paddingRight: 24,
     // borderWidth: 1,
     // // borderBottomWidth: 1,
     // borderColor: ITEM_CONTAINER_COLOR

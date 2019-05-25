@@ -25,10 +25,9 @@ class SeekBar extends TrackPlayer.ProgressComponent {
 
   render() {
     const { trackLength, currentPosition, onSeek, onSlidingStart} = this.props;
-      const position = Math.round(this.state.position);
+    const position = Math.round(this.state.position);
       const elapsed = minutesAndSecondsAndHours(position);
       const total = minutesAndSecondsAndHours(trackLength);
-
       return (
         <View style={styles.container}>
           <View style={{flexDirection: 'row'}}>

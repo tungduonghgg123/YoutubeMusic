@@ -200,6 +200,10 @@ export async function getPreviousTrack() {
 export async function getComingTrackInQueue(){
   
 }
+export async function resetSeekBar(){
+  return TrackPlayer.seekTo(0);
+
+}
 function formatDuration(duration) {
   const durationObj = moment.duration(duration);
   return durationObj.asHours() < 1 ? moment(durationObj._data).format("m:ss") : moment(durationObj._data).format("H:mm:ss");

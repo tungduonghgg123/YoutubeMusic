@@ -1,5 +1,7 @@
 import React from 'react';
-import { ScrollView, ActivityIndicator } from 'react-native';
+import { ScrollView } from 'react-native';
+import { Spinner} from '../commonComponents'
+import {  COMMON_COMPONENTS_COLOR } from '../style'
 
 function isCloseToEdge({ layoutMeasurement, contentOffset, contentSize }) {
   console.log(layoutMeasurement)
@@ -27,7 +29,7 @@ const ItemsListHorizontal = ({ children, isLoading, onCloseToEdge,
       onScrollEndDrag={onScrollEndDrag}
     >
       {children}
-      <ActivityIndicator size='large' animating={isLoading} />
+      <Spinner size='large' animating={isLoading} color={COMMON_COMPONENTS_COLOR} />
     </ScrollView>
   )
 }

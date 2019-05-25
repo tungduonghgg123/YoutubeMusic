@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import TrackPlayer from 'react-native-track-player';
-import { View, BackHandler, TouchableOpacity, Keyboard, Dimensions } from 'react-native';
+import { View, BackHandler, TouchableOpacity, Keyboard, Dimensions, Platform } from 'react-native';
 import NavigationService from '../service/NavigationService';
 import { connect } from 'react-redux';
 import * as actions from '../redux/actions'
@@ -11,7 +11,7 @@ import {
     TITLE_FONT_SIZE
 } from '../style'
 import { Icon } from 'react-native-elements'
-import { MiniPlayerSlider } from '../commonComponents'
+import { MiniPlayerSlider, Spinner } from '../commonComponents'
 import { PlayScreen } from '../screen/PlayScreen'
 import { getTrackPlayerState, getTrackOriginID } from '../utils'
 
@@ -63,13 +63,11 @@ class MiniPlayer extends PlayScreen {
             //     return;
             //   }
             if (this.props.repeatOn) {
-                console.log('repeat on')
                 TrackPlayer.seekTo(0);
                 this.onPressPlay()
                 return;
             }
             if (this.props.autoOn) {
-                console.log('auto on')
                 this.playSuggestedNextVideo()
                 return;
             }
@@ -83,17 +81,28 @@ class MiniPlayer extends PlayScreen {
                     this.props.syncLoading(false)
                     break;
                 case TrackPlayer.STATE_PAUSED:
+                    if (Platform.OS === 'android') {
+                        if (this.prevPlaybackState === TrackPlayer.STATE_NONE) {
+                            this.onPressPlay()
+                        }
+                    }
                     break;
                 case TrackPlayer.STATE_BUFFERING:
+                    this.props.syncPaused(true)
                     break;
                 case TrackPlayer.STATE_NONE:
-                    // this.onPressPlay()
+                    if (Platform.OS === 'android') {
+                        if (this.prevPlaybackState === TrackPlayer.STATE_BUFFERING) {
+                            this.onPressPlay()
+                        }
+                    }
                     break;
                 case TrackPlayer.STATE_STOPPED:
                     this.props.syncPaused(true)
                     break;
                 default:
-                    this.onPressPlay()
+                    if (Platform.OS === "ios")
+                        this.onPressPlay()
                     break;
             }
             this.prevPlaybackState = playbackState.state;
@@ -101,7 +110,6 @@ class MiniPlayer extends PlayScreen {
         this.onRemotePause = TrackPlayer.addEventListener('remote-pause'), () => {
             console.log('remote pause')
         }
-
     }
     componentWillUnmount() {
         this.onTrackChange.remove();
@@ -110,7 +118,7 @@ class MiniPlayer extends PlayScreen {
     }
 
     render() {
-        const { textStyle, containerStyle, upButtonStyle, playButtonStyle, miniPlayerStyle,
+        const { textStyle, containerStyle, loadingButtonStyle, playButtonStyle, miniPlayerStyle,
             textContainerStyle
         } = styles;
         const { duration, title } = this.props.track ? this.props.track : {};
@@ -145,27 +153,36 @@ class MiniPlayer extends PlayScreen {
                                     </TextTicker>
                                 </View>
                             </TouchableOpacity>
-
-                            {!this.props.paused ?
-                                <TouchableOpacity onPress={this.onPressPause.bind(this)} >
-                                    <View style={playButtonStyle}>
-                                        <Icon
-                                            name='pause'
-                                            size={MINI_BUTTON_SIZE}
-                                            color={COMMON_COMPONENTS_COLOR}
-                                        />
+                            {
+                                this.props.loading ?
+                                    <View style={loadingButtonStyle}>
+                                        <Spinner size='small' color={COMMON_COMPONENTS_COLOR} animating={this.props.loading} />
                                     </View>
-                                </TouchableOpacity> :
-                                <TouchableOpacity onPress={this.onPressPlay.bind(this)}>
-                                    <View style={playButtonStyle}>
-                                        <Icon
-                                            name='play-arrow'
-                                            size={MINI_BUTTON_SIZE}
-                                            color={COMMON_COMPONENTS_COLOR}
-                                        />
+                                    :
+                                    <View>
+                                        {!this.props.paused ?
+                                            <TouchableOpacity onPress={this.onPressPause.bind(this)} >
+                                                <View style={playButtonStyle}>
+                                                    <Icon
+                                                        name='pause'
+                                                        size={MINI_BUTTON_SIZE}
+                                                        color={COMMON_COMPONENTS_COLOR}
+                                                    />
+                                                </View>
+                                            </TouchableOpacity> :
+                                            <TouchableOpacity onPress={this.onPressPlay.bind(this)}>
+                                                <View style={playButtonStyle}>
+                                                    <Icon
+                                                        name='play-arrow'
+                                                        size={MINI_BUTTON_SIZE}
+                                                        color={COMMON_COMPONENTS_COLOR}
+                                                    />
+                                                </View>
+                                            </TouchableOpacity>
+                                        }
                                     </View>
-                                </TouchableOpacity>
                             }
+
                         </View>
                     </View>
                 }</View>
@@ -207,6 +224,12 @@ const styles = {
         borderWidth: 1,
         borderColor: BUTTON_BORDER_COLOR,
         borderRadius: 36 / 2,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    loadingButtonStyle: {
+        height: 30,
+        width: 30,
         alignItems: 'center',
         justifyContent: 'center',
     },

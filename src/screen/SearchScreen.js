@@ -37,7 +37,7 @@ class SearchScreen extends Component {
     this.offset = 0;
   }
   componentDidMount(){
-    this.onSearch("trailer", 7)
+    this.onSearch("stranger things", 7)
   }
   onScroll = (event) => {
     // var currentOffset = event.nativeEvent.contentOffset.y;

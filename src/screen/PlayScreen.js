@@ -1,16 +1,17 @@
 import React, { Component } from 'react';
-import { StatusBar, Button, SafeAreaView, Text, View, ScrollView, Alert } from 'react-native';
+import { Platform, Button, SafeAreaView, Text, View, ScrollView, Alert } from 'react-native';
 import TrackPlayer from 'react-native-track-player';
 import memoize from "memoize-one";
 import {
   Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl, Spinner,
   SquareItem, ItemsListHorizontal
 } from '../commonComponents'
-import { BACKGROUND_COLOR } from '../style'
+import { BACKGROUND_COLOR, COMMON_COMPONENTS_COLOR } from '../style'
 //redux
 import { connect } from 'react-redux';
 import * as actions from '../redux/actions'
-import { isCloseToEdge, getTrackDetails, getNextVideos, getTrackQueue, getPreviousTrack, getTrackOriginID } from '../utils'
+import { isCloseToEdge, getTrackDetails, getNextVideos, getTrackQueue, 
+  getPreviousTrack, getTrackOriginID, resetSeekBar } from '../utils'
 
 class PlayScreen extends Component {
   constructor(props) {
@@ -36,15 +37,9 @@ class PlayScreen extends Component {
   }
   onPressRepeat() {
     this.props.repeatReverse();
-    // if(this.props.repeatOn){
-    //   this.props.autoModeOff()
-    // }
   }
   onPressAuto() {
     this.props.autoReverse();
-    // if(this.props.autoOn){
-    //   this.props.repeatModeOff()
-    // }
   }
   onDownPress() {
     this.props.navigation.goBack();
@@ -67,28 +62,6 @@ class PlayScreen extends Component {
       this.playFromYoutube(videoId)
     }
   }
-  // memoizedLoad = memoize(async (videoId) => {
-  //   if (!videoId)
-  //     return;
-  //   /**
-  //    * pause Track Player before loading and playing new Track.
-  //    *  */
-  //   this.onPressPause()
-  //   this.props.syncLoading(true)
-  //   let track = await getTrackDetails(videoId)
-  //   this.addAndPlay(track)
-  // })
-  async memoizedLoad (videoId)  {
-    if (!videoId)
-      return;
-    /**
-     * pause Track Player before loading and playing new Track.
-     *  */
-    this.onPressPause()
-    this.props.syncLoading(true)
-    let track = await getTrackDetails(videoId)
-    this.addAndPlay(track)
-  }
   addAndPlay(track) {
     if (track && track.id) {
       getTrackQueue().then(async (tracks) => {
@@ -110,14 +83,26 @@ class PlayScreen extends Component {
     }
   }
   onPlaybackTrackChanged(id, track) {
-    console.log('track changed')
+    // console.log('track changed')
     this.props.syncTrack(track)
     this.props.setSuggestedNextTracks([])
     this.getSuggestedNextTracks(id, 7)
   }
 
-  playFromYoutube(videoId) {
-    this.memoizedLoad(videoId);
+  async playFromYoutube(videoId) {
+    if (!videoId)
+      return;
+    /**
+     * pause Track Player before loading and playing new Track.
+     *  */
+    if(Platform.OS === 'ios'){
+      this.onPressPause()
+    } else {
+      this.props.syncPaused(true)
+    }
+    this.props.syncLoading(true)
+    let track = await getTrackDetails(videoId)
+    this.addAndPlay(track)
   }
   async getSuggestedNextTracks(relatedToVideoId, maxResults, pageToken) {
     this.props.syncLoadingNextTracks(true)
@@ -173,9 +158,8 @@ class PlayScreen extends Component {
               onBack={this.onPressBack.bind(this)}
             />
           </View>
-          {this.props.loading ?
-            <Spinner /> : <View style={{ flex: 1 }} />
-          }
+
+            <Spinner color={COMMON_COMPONENTS_COLOR} animating={this.props.loading}/> 
           {/* <Button
             title='get current position'
             onPress={async () => {
@@ -184,7 +168,10 @@ class PlayScreen extends Component {
               console.log(bufferedPosition)
               console.log(position)
             }} />
-          <Button title='stop' onPress={() => { TrackPlayer.stop() }} /> */}
+          <Button title='force update' onPress={() => { 
+            this.forceUpdate() 
+            resetSeekBar()
+          }} /> */}
           <ItemsListHorizontal isLoading={this.state.nextTracksLoading}>
             {this.props.listItem.map((item, itemKey) => {
               return (
@@ -194,7 +181,6 @@ class PlayScreen extends Component {
                   style={{ marginBottom: 10 }}
                   onPress={() => {
                     this.playFromYoutube(item.id);
-                    // if(item.id === )
                     this.props.setSuggestedNextTracks([])
                   }}
                 />

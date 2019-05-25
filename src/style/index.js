@@ -44,6 +44,7 @@ export const HEADER_FONT_SIZE = calFontSize(12)
  * `../commonComponents/TrackDetails.js`
  */
 export const TRACKDETAILS_FONT_SIZE = calFontSize(12)
+export const TEXT_WIDTH = Dimensions.get('window').width*4/5;
 
 /**
  * `../commonComponents/PlaybackControl.js`
