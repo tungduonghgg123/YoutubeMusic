@@ -21,6 +21,7 @@ class PlayScreen extends Component {
     this.state = {
       mode: 'youtube',
       nextPageToken: '',
+      isGetNextVideoLoading: false
     };
     this.shouldQueueEndedEventRun = true;
   }
@@ -85,7 +86,6 @@ class PlayScreen extends Component {
     }
   }
   onPlaybackTrackChanged(id, track) {
-    // console.log('track changed')
     this.props.syncTrack(track)
     this.props.setSuggestedNextTracks([])
     this.getSuggestedNextTracks(id, 7)
@@ -107,6 +107,7 @@ class PlayScreen extends Component {
     this.addAndPlay(track)
   }
   async getSuggestedNextTracks(relatedToVideoId, maxResults, pageToken) {
+    this.setState({ isGetNextVideoLoading: true })
     this.props.syncLoadingNextTracks(true)
     let { nextVideos, nextPageToken } = await getNextVideos(relatedToVideoId, maxResults, pageToken);
     this.props.appendNextTracks(nextVideos);
@@ -114,19 +115,12 @@ class PlayScreen extends Component {
       nextPageToken: nextPageToken,
     })
     this.props.syncLoadingNextTracks(false)
+    this.setState({ isGetNextVideoLoading: false })
   }
   render() {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: BACKGROUND_COLOR }}>
-        <ScrollView 
-          onScroll={({ nativeEvent }) => {
-            if (!this.state.isLoading && isCloseToEdge(nativeEvent) &&
-              this.props.listItem.length < 30 && this.props.listItem.length != 0) {
-              this.getSuggestedNextTracks(this.props.track.originID, 1, this.state.nextPageToken)
-            }
-          }}
-          scrollEventThrottle={5000}
-        >
+        <ScrollView>
           <Header
             message="playing from Youtube"
             onQueuePress={() => {
@@ -162,7 +156,14 @@ class PlayScreen extends Component {
           />
 
           <Spinner color={COMMON_COMPONENTS_COLOR} animating={this.props.loading} />
-          <ItemsListHorizontal isLoading={this.state.nextTracksLoading}>
+          <ItemsListHorizontal
+            isLoading={this.state.isGetNextVideoLoading}
+            onCloseToEdge={() => {
+              if (!this.state.isGetNextVideoLoading && this.props.listItem.length < 30 && this.props.listItem.length != 0) {
+                this.getSuggestedNextTracks(this.props.track.originID, 5, this.state.nextPageToken)
+              }
+            }}
+          >
             {this.props.listItem.map((item, itemKey) => {
               return (
                 <SquareItem
