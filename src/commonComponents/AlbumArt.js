@@ -11,7 +11,6 @@ class AlbumArt extends Component{
     this.state = {shouldSetStaticHeight:false};
   }
   render(){
-    console.log('re-render')
     const { url, description } = this.props;
     return (
       <View style={styles.container}>

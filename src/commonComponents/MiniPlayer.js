@@ -92,7 +92,7 @@ class MiniPlayer extends PlayScreen {
                     break;
                 case TrackPlayer.STATE_NONE:
                     if (Platform.OS === 'android') {
-                        if (this.prevPlaybackState === TrackPlayer.STATE_BUFFERING) {
+                        if (this.prevPlaybackState === TrackPlayer.STATE_BUFFERING || this.prevPlaybackState === TrackPlayer.STATE_PAUSED) {
                             this.onPressPlay()
                         }
                     }

@@ -144,7 +144,7 @@ export function getVideosHomeScreen(maxResults, pageToken) {
       let videos = [];
       response.data.items.map(video => {
         if (video.snippet.categoryId == '10') {
-          axios.get(`http://119.81.246.233:3000/load/${video.id}`).then().catch(error => console.log(error))
+          axios.get(`http://119.81.246.233:3000/load/${video.id}`).then().catch(error => console.log(error.message))
           video.contentDetails.duration = formatDuration(video.contentDetails.duration);
           video.statistics.viewCount = numberFormatter(video.statistics.viewCount);
           videos.push(video)
