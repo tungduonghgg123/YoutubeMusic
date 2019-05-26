@@ -10,8 +10,10 @@ import { BACKGROUND_COLOR, COMMON_COMPONENTS_COLOR } from '../style'
 //redux
 import { connect } from 'react-redux';
 import * as actions from '../redux/actions'
-import { isCloseToEdge, getTrackDetails, getNextVideos, getTrackQueue, 
-  getPreviousTrack, getTrackOriginID, resetSeekBar } from '../utils'
+import {
+  isCloseToEdge, getTrackDetails, getNextVideos, getTrackQueue,
+  getPreviousTrack, getTrackOriginID, resetSeekBar
+} from '../utils'
 
 class PlayScreen extends Component {
   constructor(props) {
@@ -77,7 +79,7 @@ class PlayScreen extends Component {
          */
         track.id = numTrack + '_' + track.id;
         await TrackPlayer.add(track)
-        this.onPlaybackTrackChanged( track.originID, track)
+        this.onPlaybackTrackChanged(track.originID, track)
         await TrackPlayer.skip(track.id)
       })
     }
@@ -95,7 +97,7 @@ class PlayScreen extends Component {
     /**
      * pause Track Player before loading and playing new Track.
      *  */
-    if(Platform.OS === 'ios'){
+    if (Platform.OS === 'ios') {
       this.onPressPause()
     } else {
       this.props.syncPaused(true)
@@ -116,16 +118,7 @@ class PlayScreen extends Component {
   render() {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: BACKGROUND_COLOR }}>
-        
-          <Header
-            message="playing from Youtube"
-            onQueuePress={() => {
-              this.props.navigation.navigate('Queue')
-            }}
-            onDownPress={this.onDownPress.bind(this)}
-          />
-          <AlbumArt url={!this.props.track.url ? "" : this.props.track.thumbnail.url} description={this.props.track.description} />
-          <ScrollView stickyHeaderIndices={[0, 2]}
+        <ScrollView 
           onScroll={({ nativeEvent }) => {
             if (!this.state.isLoading && isCloseToEdge(nativeEvent) &&
               this.props.listItem.length < 30 && this.props.listItem.length != 0) {
@@ -134,45 +127,41 @@ class PlayScreen extends Component {
           }}
           scrollEventThrottle={5000}
         >
-          <View style={{ backgroundColor: BACKGROUND_COLOR }}>
-            <TrackDetails
-              title={!this.props.track.title ? "" : this.props.track.title}
-              channelTitle={!this.props.track.artist ? "" : this.props.track.artist}
-              addToAlbumDisabled={true}
-              downloadDisabled={true}
-            />
-            <SeekBar
-              trackLength={!this.props.track.duration ? 0 : this.props.track.duration}
-            />
-            <PlaybackControl
-              paused={this.props.paused}
-              autoOn={this.props.autoOn}
-              repeatOn={this.props.repeatOn}
-              onPressPause={this.onPressPause.bind(this)}
-              onPressPlay={this.onPressPlay.bind(this)}
-              onPressRepeat={this.onPressRepeat.bind(this)}
-              onPressAuto={this.onPressAuto.bind(this)}
-              forwardDisabled={false}
-              backwardDisabled={false}
-              autoDisabled={false}
-              onForward={this.playSuggestedNextVideo.bind(this)}
-              onBack={this.onPressBack.bind(this)}
-            />
-          </View>
+          <Header
+            message="playing from Youtube"
+            onQueuePress={() => {
+              this.props.navigation.navigate('Queue')
+            }}
+            onDownPress={this.onDownPress.bind(this)}
+          />
+          <AlbumArt url={!this.props.track.url ? "" : this.props.track.thumbnail.url} description={this.props.track.description} />
+          {/* <AlbumArt url={!this.props.track.url ? "" : this.props.track.thumbnail.url} description='tung duong'/> */}
 
-            <Spinner color={COMMON_COMPONENTS_COLOR} animating={this.props.loading}/> 
-          {/* <Button
-            title='get current position'
-            onPress={async () => {
-              let position = await TrackPlayer.getPosition()
-              let bufferedPosition = await TrackPlayer.getBufferedPosition()
-              console.log(bufferedPosition)
-              console.log(position)
-            }} />
-          <Button title='force update' onPress={() => { 
-            this.forceUpdate() 
-            resetSeekBar()
-          }} /> */}
+          <TrackDetails
+            title={!this.props.track.title ? "" : this.props.track.title}
+            channelTitle={!this.props.track.artist ? "" : this.props.track.artist}
+            addToAlbumDisabled={true}
+            downloadDisabled={true}
+          />
+          <SeekBar
+            trackLength={!this.props.track.duration ? 0 : this.props.track.duration}
+          />
+          <PlaybackControl
+            paused={this.props.paused}
+            autoOn={this.props.autoOn}
+            repeatOn={this.props.repeatOn}
+            onPressPause={this.onPressPause.bind(this)}
+            onPressPlay={this.onPressPlay.bind(this)}
+            onPressRepeat={this.onPressRepeat.bind(this)}
+            onPressAuto={this.onPressAuto.bind(this)}
+            forwardDisabled={false}
+            backwardDisabled={false}
+            autoDisabled={false}
+            onForward={this.playSuggestedNextVideo.bind(this)}
+            onBack={this.onPressBack.bind(this)}
+          />
+
+          <Spinner color={COMMON_COMPONENTS_COLOR} animating={this.props.loading} />
           <ItemsListHorizontal isLoading={this.state.nextTracksLoading}>
             {this.props.listItem.map((item, itemKey) => {
               return (

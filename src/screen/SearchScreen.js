@@ -37,9 +37,9 @@ class SearchScreen extends Component {
     };
     this.offset = 0;
   }
-  componentDidMount(){
-    this.onSearch("stranger things", 7)
-  }
+  // componentDidMount(){
+  //   this.onSearch("duc phuc", 1)
+  // }
   onScroll = (event) => {
     // var currentOffset = event.nativeEvent.contentOffset.y;
     // var direction = currentOffset > this.offset ? 'down' : 'up';
