@@ -116,15 +116,7 @@ class PlayScreen extends Component {
   render() {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: BACKGROUND_COLOR }}>
-        <ScrollView stickyHeaderIndices={[0, 2]}
-          onScroll={({ nativeEvent }) => {
-            if (!this.state.isLoading && isCloseToEdge(nativeEvent) &&
-              this.props.listItem.length < 30 && this.props.listItem.length != 0) {
-              this.getSuggestedNextTracks(this.props.track.originID, 1, this.state.nextPageToken)
-            }
-          }}
-          scrollEventThrottle={5000}
-        >
+        
           <Header
             message="playing from Youtube"
             onQueuePress={() => {
@@ -133,6 +125,15 @@ class PlayScreen extends Component {
             onDownPress={this.onDownPress.bind(this)}
           />
           <AlbumArt url={!this.props.track.url ? "" : this.props.track.thumbnail.url} description={this.props.track.description} />
+          <ScrollView stickyHeaderIndices={[0, 2]}
+          onScroll={({ nativeEvent }) => {
+            if (!this.state.isLoading && isCloseToEdge(nativeEvent) &&
+              this.props.listItem.length < 30 && this.props.listItem.length != 0) {
+              this.getSuggestedNextTracks(this.props.track.originID, 1, this.state.nextPageToken)
+            }
+          }}
+          scrollEventThrottle={5000}
+        >
           <View style={{ backgroundColor: BACKGROUND_COLOR }}>
             <TrackDetails
               title={!this.props.track.title ? "" : this.props.track.title}

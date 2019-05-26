@@ -20,6 +20,7 @@ function numberFormatter(num, digits) {
       break;
     }
   }
+
   var rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
   return (num / si[i].value).toFixed(digits).replace(rx, "$1") + si[i].symbol;
 }

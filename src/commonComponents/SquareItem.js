@@ -25,11 +25,9 @@ const SquareItem = ({ item, style, onPress }) => {
           </Text>
         }
       </ImageBackground>
-      <Text style={{ color: TITLE_COLOR, width: 160, fontSize: TITLE_FONT_SIZE}} numberOfLines={3}>{item.snippet.title}</Text>
-      <View style={{ color: 'black', fontSize: 11 }}>
-        <Text numberOfLines={1} style={styles.channelTitleStyle}>{item.snippet.channelTitle}</Text>
-        <Text style={styles.viewCountStyle}>{item.statistics.viewCount + ' views'}</Text>
-      </View>
+      <Text style={styles.titleStyle} numberOfLines={3}>{item.snippet.title}</Text>
+      <Text numberOfLines={1} style={styles.channelTitleStyle}>{item.snippet.channelTitle}</Text>
+      <Text style={styles.viewCountStyle}>{item.statistics.viewCount + ' views'}</Text>
     </TouchableOpacity>
   )
 }
@@ -40,12 +38,8 @@ const styles = StyleSheet.create({
   containerStyle: {
     alignItems: 'flex-start',
     backgroundColor: null,
-    // marginBottom: 10,
     padding: 0,
-    paddingLeft: 24,
-    // borderWidth: 1,
-    // // borderBottomWidth: 1,
-    // borderColor: ITEM_CONTAINER_COLOR
+    marginLeft: 10,
   },
   durationStyle: {
     position: 'absolute',
@@ -73,14 +67,18 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: 'bold',
   },
+  titleStyle: {
+    width: 160,
+    color: TITLE_COLOR,
+    fontSize: TITLE_FONT_SIZE
+  },
   channelTitleStyle: {
+    width: 160,
     color: CHANNEL_TITLE_COLOR,
     fontSize: CHANNEL_TITLE_FONT_SIZE
-
   },
   viewCountStyle: {
     color: VIEWS_COUNT_COLOR,
     fontSize: VIEWS_COUNT_COLOR_FONT_SIZE
-
   }
 })

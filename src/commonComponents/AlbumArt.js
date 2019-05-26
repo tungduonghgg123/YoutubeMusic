@@ -17,9 +17,9 @@ const AlbumArt = ({ url, description }) => {
         </TouchableOpacity>
         
         <TouchableOpacity activeOpacity = {1} style={styles.image} onPress={() => { this.card.flip() }}>
-          <NestedScrollView>
+          <ScrollView>
             <Text style={{ color: TEXT_COLOR }} >{description}</Text>
-          </NestedScrollView>
+          </ScrollView>
         </TouchableOpacity>
 
       </CardFlip>
