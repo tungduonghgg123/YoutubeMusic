@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Platform, Button, SafeAreaView, Text, View, ScrollView, Alert } from 'react-native';
 import TrackPlayer from 'react-native-track-player';
-import memoize from "memoize-one";
 import {
   Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl, Spinner,
   SquareItem, ItemsListHorizontal
@@ -11,8 +10,8 @@ import { BACKGROUND_COLOR, COMMON_COMPONENTS_COLOR } from '../style'
 import { connect } from 'react-redux';
 import * as actions from '../redux/actions'
 import {
-  isCloseToEdge, getTrackDetails, getNextVideos, getTrackQueue,
-  getPreviousTrack, getTrackOriginID, resetSeekBar
+getTrackDetails, getNextVideos, getTrackQueue,
+  getPreviousTrack, getTrackOriginID, 
 } from '../utils'
 
 class PlayScreen extends Component {
@@ -85,7 +84,6 @@ class PlayScreen extends Component {
     }
   }
   onPlaybackTrackChanged(id, track) {
-    // console.log('track changed')
     this.props.syncTrack(track)
     this.props.setSuggestedNextTracks([])
     this.getSuggestedNextTracks(id, 7)
@@ -119,15 +117,7 @@ class PlayScreen extends Component {
   render() {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: BACKGROUND_COLOR }}>
-        <ScrollView 
-          onScroll={({ nativeEvent }) => {
-            if (!this.state.isLoading && isCloseToEdge(nativeEvent) &&
-              this.props.listItem.length < 30 && this.props.listItem.length != 0) {
-              this.getSuggestedNextTracks(this.props.track.originID, 1, this.state.nextPageToken)
-            }
-          }}
-          scrollEventThrottle={5000}
-        >
+        <ScrollView>
           <Header
             message="playing from Youtube"
             onQueuePress={() => {
@@ -136,8 +126,6 @@ class PlayScreen extends Component {
             onDownPress={this.onDownPress.bind(this)}
           />
           <AlbumArt url={!this.props.track.url ? "" : this.props.track.thumbnail.url} description={this.props.track.description} />
-          {/* <AlbumArt url={!this.props.track.url ? "" : this.props.track.thumbnail.url} description='tung duong'/> */}
-
           <TrackDetails
             title={!this.props.track.title ? "" : this.props.track.title}
             channelTitle={!this.props.track.artist ? "" : this.props.track.artist}
@@ -163,7 +151,14 @@ class PlayScreen extends Component {
           />
 
           <Spinner color={COMMON_COMPONENTS_COLOR} animating={this.props.loading} />
-          <ItemsListHorizontal isLoading={this.state.nextTracksLoading}>
+          <ItemsListHorizontal
+            isLoading={this.props.nextTracksLoading}
+            onCloseToEdge={() => {
+              if (!this.props.nextTracksLoading && this.props.listItem.length < 30 && this.props.listItem.length != 0) {
+                this.getSuggestedNextTracks(this.props.track.originID, 5, this.state.nextPageToken)
+              }
+            }}
+          >
             {this.props.listItem.map((item, itemKey) => {
               return (
                 <SquareItem

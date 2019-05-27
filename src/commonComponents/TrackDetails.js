@@ -86,7 +86,7 @@ const styles = {
     },
     off: {
         color: SECOND_COMMON_COMPONENTS_COLOR,
-        opacity: 0.3
+        opacity: 0.5
     },
     on: {
         color: COMMON_COMPONENTS_COLOR
