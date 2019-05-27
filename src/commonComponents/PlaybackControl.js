@@ -7,7 +7,7 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import { TEXT_COLOR, COMMON_COMPONENTS_COLOR, HEADER_BUTTON_SIZE, 
+import { SECOND_COMMON_COMPONENTS_COLOR, COMMON_COMPONENTS_COLOR, HEADER_BUTTON_SIZE, 
   PLAY_BUTTON_SIZE, BUTTON_BORDER_COLOR, DISABLED_OPACITY  } from '../style'
 import { Icon} from 'react-native-elements'
 
@@ -36,7 +36,7 @@ class PlaybackControl extends TrackPlayer.ProgressComponent {
           activeOpacity={0.0}
           onPress={onPressAuto}
           disabled={autoDisabled}>
-          <Text style={[{ color: COMMON_COMPONENTS_COLOR }, autoOn ? [] : styles.off]}>
+          <Text style={[ autoOn ? styles.on : styles.off]}>
             AUTO
           </Text>
         </TouchableOpacity>
@@ -126,6 +126,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   off: {
-    opacity: DISABLED_OPACITY,
+    color: SECOND_COMMON_COMPONENTS_COLOR
+  },
+  on: {
+    color: COMMON_COMPONENTS_COLOR
   }
 })

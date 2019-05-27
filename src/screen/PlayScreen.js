@@ -94,6 +94,7 @@ class PlayScreen extends Component {
   async playFromYoutube(videoId) {
     if (!videoId)
       return;
+    console.log('----------')
     /**
      * pause Track Player before loading and playing new Track.
      *  */

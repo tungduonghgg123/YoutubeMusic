@@ -27,6 +27,7 @@ export const TITLE_FONT_SIZE = calFontSize(10)
  */
 
 const COMMON_COMPONENTS_COLOR = '#FF665A'
+export const SECOND_COMMON_COMPONENTS_COLOR = 'white'
 const THUMP_COLOR = COMMON_COMPONENTS_COLOR
 /**
  * `../commonComponents/MiniPlayer.js` style
