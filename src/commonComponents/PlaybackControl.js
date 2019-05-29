@@ -1,15 +1,9 @@
 import React from 'react';
 import TrackPlayer from 'react-native-track-player';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-} from 'react-native';
-import { TEXT_COLOR, COMMON_COMPONENTS_COLOR, HEADER_BUTTON_SIZE, 
-  PLAY_BUTTON_SIZE, BUTTON_BORDER_COLOR, DISABLED_OPACITY  } from '../style'
-import { Icon} from 'react-native-elements'
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Icon } from 'react-native-elements'
+import { COMMON_COMPONENTS_COLOR, HEADER_BUTTON_SIZE, PLAY_BUTTON_SIZE, BUTTON_BORDER_COLOR, DISABLED_OPACITY } from '../style'
+import { Spinner } from '../commonComponents'
 
 class PlaybackControl extends TrackPlayer.ProgressComponent {
   async repeatAndPlay() {
@@ -28,7 +22,8 @@ class PlaybackControl extends TrackPlayer.ProgressComponent {
       onPressRepeat,
       forwardDisabled,
       backwardDisabled,
-      autoDisabled } = this.props;
+      autoDisabled,
+      loading } = this.props;
     return (
       <View style={styles.container}>
         {/* Auto */}
@@ -48,7 +43,7 @@ class PlaybackControl extends TrackPlayer.ProgressComponent {
           onPress={() => { this.state.position > 3 ? this.repeatAndPlay() : onBack() }}
           disabled={backwardDisabled}>
           <Icon
-            color= {COMMON_COMPONENTS_COLOR}
+            color={COMMON_COMPONENTS_COLOR}
             size={HEADER_BUTTON_SIZE}
             name='skip-previous' />
         </TouchableOpacity>
@@ -56,25 +51,31 @@ class PlaybackControl extends TrackPlayer.ProgressComponent {
         <View style={{ width: 20 }} />
 
         {/* Play/pause */}
-        {!paused ?
-          <TouchableOpacity onPress={onPressPause}>
-            <View style={styles.playButton}>
-              <Icon 
-                name='pause'
-                size={PLAY_BUTTON_SIZE}
-                color= {COMMON_COMPONENTS_COLOR}
-              />
+        {
+          loading ?
+            <View style={styles.loadingButtonStyle}>
+              <Spinner size='large' color={COMMON_COMPONENTS_COLOR} animating={loading} />
             </View>
-          </TouchableOpacity> :
-          <TouchableOpacity onPress={onPressPlay}>
-            <View style={styles.playButton}>
-            <Icon 
-                name='play-arrow'
-                size={PLAY_BUTTON_SIZE}
-                color= {COMMON_COMPONENTS_COLOR}
-              />
-            </View>
-          </TouchableOpacity>
+            :
+            !paused ?
+              <TouchableOpacity onPress={onPressPause}>
+                <View style={styles.playButton}>
+                  <Icon
+                    name='pause'
+                    size={PLAY_BUTTON_SIZE}
+                    color={COMMON_COMPONENTS_COLOR}
+                  />
+                </View>
+              </TouchableOpacity> :
+              <TouchableOpacity onPress={onPressPlay}>
+                <View style={styles.playButton}>
+                  <Icon
+                    name='play-arrow'
+                    size={PLAY_BUTTON_SIZE}
+                    color={COMMON_COMPONENTS_COLOR}
+                  />
+                </View>
+              </TouchableOpacity>
         }
 
         <View style={{ width: 20 }} />
@@ -83,7 +84,7 @@ class PlaybackControl extends TrackPlayer.ProgressComponent {
         <TouchableOpacity onPress={onForward}
           disabled={forwardDisabled}>
           <Icon
-            color= {COMMON_COMPONENTS_COLOR}
+            color={COMMON_COMPONENTS_COLOR}
             size={HEADER_BUTTON_SIZE}
             name='skip-next' />
         </TouchableOpacity>
@@ -91,16 +92,13 @@ class PlaybackControl extends TrackPlayer.ProgressComponent {
         <View style={{ width: 40 }} />
 
         {/* Repeat */}
-        <TouchableOpacity
-            onPress={onPressRepeat} 
-        >
+        <TouchableOpacity onPress={onPressRepeat}>
           <Icon
             iconStyle={repeatOn ? [] : styles.off}
-            color= {COMMON_COMPONENTS_COLOR}
+            color={COMMON_COMPONENTS_COLOR}
             size={18}
             name='repeat'
-
-            />
+          />
         </TouchableOpacity>
       </View>
     )
@@ -127,5 +125,11 @@ const styles = StyleSheet.create({
   },
   off: {
     opacity: DISABLED_OPACITY,
+  },
+  loadingButtonStyle: {
+    height: 72,
+    width: 72,
+    alignItems: 'center',
+    justifyContent: 'center',
   }
 })
