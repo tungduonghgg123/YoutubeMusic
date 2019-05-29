@@ -132,19 +132,21 @@ export function getNextVideos(relatedToVideoId, maxResults, pageToken) {
   })
 };
 
-export function getVideosHomeScreen(maxResults, pageToken) {
+export function getVideosHomeScreen(maxResults, regionCode, pageToken) {
   return new Promise((resolve, reject) => {
+    let params = {
+      part: 'snippet,statistics,contentDetails',
+      fields: 'pageInfo,nextPageToken,items(id,snippet,statistics(viewCount),contentDetails(duration))',
+      chart: 'mostPopular',
+      maxResults: maxResults,
+      pageToken: pageToken,
+      key: process.env.YOUTUBE_API_KEY
+    }
+    if (regionCode != '') params.regionCode = regionCode
+    
     axios.get('https://content.googleapis.com/youtube/v3/videos', {
       headers: { "X-Origin": "https://explorer.apis.google.com" },
-      params: {
-        part: 'snippet,statistics,contentDetails',
-        fields: 'pageInfo,nextPageToken,items(id,snippet,statistics(viewCount),contentDetails(duration))',
-        chart: 'mostPopular',
-        regionCode: 'VN',
-        maxResults: maxResults,
-        pageToken: pageToken,
-        key: process.env.YOUTUBE_API_KEY
-      }
+      params: params
     }).then(response => {
       let videos = [{
         categoryId: '10',
