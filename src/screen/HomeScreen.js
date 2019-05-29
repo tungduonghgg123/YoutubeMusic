@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
-import { SafeAreaView, Text, StatusBar, View } from 'react-native';
-import axios from 'axios';
-import moment from 'moment';
+import { StatusBar, View, ScrollView, Text, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import * as actions from '../redux/actions'
-import { BACKGROUND_COLOR } from '../style'
-import { Item, ItemsListVertical } from '../commonComponents'
-import {getVideosHomeScreen} from '../utils'
+import { Item, ItemsListVertical, ItemsListHorizontal, SquareItem, Card, CardSection } from '../commonComponents'
+import { getVideosHomeScreen } from '../utils'
+import { BACKGROUND_COLOR, TEXT_COLOR } from '../style'
 
 class HomeScreen extends Component {
   constructor(props) {
@@ -18,11 +16,14 @@ class HomeScreen extends Component {
     };
     this.offset = 0;
   }
-  getVideos(maxResults, pageToken){
+
+  getVideos(maxResults, pageToken) {
     this.setState({ isLoading: true })
     getVideosHomeScreen(maxResults, pageToken).then((result) => {
-      const {videos,nextPageToken } = result;
-      this.setState({ listItem: this.state.listItem.concat(videos) })
+      const { videos, nextPageToken } = result;
+      this.setState({
+        listItem: videos
+      })
       this.setState({
         nextPageToken: nextPageToken,
         isLoading: false
@@ -31,31 +32,45 @@ class HomeScreen extends Component {
       console.log(error)
     });
   }
+
   componentDidMount() {
     this.getVideos(30);
   }
 
-  onScroll = (event) => {
-    // var currentOffset = event.nativeEvent.contentOffset.y;
-    // var direction = currentOffset > this.offset ? 'down' : 'up';
-    // console.log('current: ', currentOffset);
-    // console.log('previou: ', this.offset) 
-    // this.offset = currentOffset;
-
-    // console.log(direction);
-    // console.log('-------------')
-  }
   render() {
     return (
-      <View style={{ flex: 1, backgroundColor: BACKGROUND_COLOR, height: '100%' }}>
+      <ScrollView style={{ flex: 1, backgroundColor: BACKGROUND_COLOR, height: '100%' }}>
         <StatusBar backgroundColor={BACKGROUND_COLOR} barStyle="light-content" />
-        <ItemsListVertical
+        {this.state.listItem.map((element, elementKey) => {
+          if (element.list && element.list.length > 0)
+            return (
+              <Card key={elementKey}>
+                <CardSection>
+                  <Text style={styles.cardTitleStyle}>{element.title}</Text>
+                </CardSection>
+                <ItemsListHorizontal>
+                  {element.list.map((item, itemKey) => {
+                    return (
+                      <SquareItem
+                        item={item}
+                        key={itemKey}
+                        style={{ marginBottom: 5 }}
+                        onPress={() => {
+                          this.props.navigation.navigate('Play', { videoId: item.id })
+                        }}
+                      />
+                    )
+                  })}
+                </ItemsListHorizontal>
+              </Card>
+            )
+        })}
+        {/* <ItemsListVertical
           isLoading={this.state.isLoading}
           onCloseToEdge={() => {
             if (!this.state.isLoading && this.state.listItem.length < 50 && this.state.listItem.length != 0)
               this.getVideos(25, this.state.nextPageToken)
           }}
-          onScroll={this.onScroll.bind(this)}
         >
           {this.state.listItem.map((item, itemKey) => {
             return (
@@ -68,9 +83,18 @@ class HomeScreen extends Component {
               />
             )
           })}
-        </ItemsListVertical>
-      </View>
+        </ItemsListVertical> */}
+      </ScrollView >
     );
   }
 }
 export default connect(null, actions)(HomeScreen)
+
+const styles = StyleSheet.create({
+  cardTitleStyle: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    color: TEXT_COLOR,
+    backgroundColor: BACKGROUND_COLOR
+  }
+})
