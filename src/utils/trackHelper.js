@@ -201,6 +201,12 @@ export function getVideosHomeScreen(maxResults, pageToken) {
             break;
         }
       })
+
+      // remove element with empty list
+      for (var i = 0; i < videos.length; i++) {
+        if (videos[i].list.length == 0)
+          videos.splice(i, 1);
+      }
       resolve({
         videos,
         nextPageToken: response.data.nextPageToken,
