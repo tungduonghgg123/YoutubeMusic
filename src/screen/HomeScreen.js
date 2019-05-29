@@ -145,15 +145,13 @@ const pickerSelectStyles = StyleSheet.create({
     fontSize: 16,
     paddingVertical: 12,
     paddingHorizontal: 10,
-    color: 'black',
-    right: 24
+    color: 'black'
   },
   inputAndroid: {
     fontSize: 16,
     paddingHorizontal: 10,
     paddingVertical: 8,
-    color: 'black',
-    right: 24
+    color: 'black'
   },
 });
 
