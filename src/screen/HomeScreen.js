@@ -12,7 +12,41 @@ class HomeScreen extends Component {
     this.state = {
       nextPageToken: '',
       isLoading: false,
-      listItem: []
+      countResults: 0,
+      totalResults: 0,
+      listItem: [{
+        categoryId: '10',
+        title: 'Trending musics',
+        list: []
+      }, {
+        categoryId: '1',
+        title: 'Trending films & animations',
+        list: []
+      }, {
+        categoryId: '17',
+        title: 'Trending sports',
+        list: []
+      }, {
+        categoryId: '18',
+        title: 'Trending short movies',
+        list: []
+      }, {
+        categoryId: '20',
+        title: 'Trending gamings',
+        list: []
+      }, {
+        categoryId: '24',
+        title: 'Trending entertainments',
+        list: []
+      }, {
+        categoryId: '27',
+        title: 'Trending educations',
+        list: []
+      }, {
+        categoryId: '30',
+        title: 'Trending movies',
+        list: []
+      }]
     };
     this.offset = 0;
   }
@@ -20,13 +54,17 @@ class HomeScreen extends Component {
   getVideos(maxResults, pageToken) {
     this.setState({ isLoading: true })
     getVideosHomeScreen(maxResults, pageToken).then((result) => {
-      const { videos, nextPageToken } = result;
-      this.setState({
-        listItem: videos
+      let newListItem = this.state.listItem
+      result.videos.map(element => {
+        let index = this.state.listItem.findIndex(el => el.categoryId === element.categoryId)
+        newListItem[index].list = newListItem[index].list.concat(element.list)
       })
       this.setState({
-        nextPageToken: nextPageToken,
-        isLoading: false
+        listItem: newListItem,
+        nextPageToken: result.nextPageToken,
+        isLoading: false,
+        countResults: this.state.countResults + maxResults,
+        totalResults: result.pageInfo.totalResults
       })
     }).catch((error) => {
       console.log(error)
@@ -34,7 +72,7 @@ class HomeScreen extends Component {
   }
 
   componentDidMount() {
-    this.getVideos(30);
+    this.getVideos(50);
   }
 
   render() {
@@ -48,7 +86,13 @@ class HomeScreen extends Component {
                 <CardSection>
                   <Text style={styles.cardTitleStyle}>{element.title}</Text>
                 </CardSection>
-                <ItemsListHorizontal>
+                <ItemsListHorizontal
+                  isLoading={this.state.isLoading}
+                  onCloseToEdge={() => {
+                    if (!this.state.isLoading && this.state.countResults < this.state.totalResults && this.state.listItem.length != 0)
+                      this.getVideos(50, this.state.nextPageToken)
+                  }}
+                >
                   {element.list.map((item, itemKey) => {
                     return (
                       <SquareItem
@@ -65,25 +109,6 @@ class HomeScreen extends Component {
               </Card>
             )
         })}
-        {/* <ItemsListVertical
-          isLoading={this.state.isLoading}
-          onCloseToEdge={() => {
-            if (!this.state.isLoading && this.state.listItem.length < 50 && this.state.listItem.length != 0)
-              this.getVideos(25, this.state.nextPageToken)
-          }}
-        >
-          {this.state.listItem.map((item, itemKey) => {
-            return (
-              <Item
-                item={item}
-                key={itemKey}
-                onPress={() => {
-                  this.props.navigation.navigate('Play', { videoId: item.id })
-                }}
-              />
-            )
-          })}
-        </ItemsListVertical> */}
       </ScrollView >
     );
   }

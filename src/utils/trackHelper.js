@@ -138,7 +138,7 @@ export function getVideosHomeScreen(maxResults, pageToken) {
       headers: { "X-Origin": "https://explorer.apis.google.com" },
       params: {
         part: 'snippet,statistics,contentDetails',
-        fields: 'nextPageToken,items(id,snippet,statistics(viewCount),contentDetails(duration))',
+        fields: 'pageInfo,nextPageToken,items(id,snippet,statistics(viewCount),contentDetails(duration))',
         chart: 'mostPopular',
         regionCode: 'VN',
         maxResults: maxResults,
@@ -204,6 +204,7 @@ export function getVideosHomeScreen(maxResults, pageToken) {
       resolve({
         videos,
         nextPageToken: response.data.nextPageToken,
+        pageInfo: response.data.pageInfo
       })
     }).catch((error) => {
       console.log(error)
