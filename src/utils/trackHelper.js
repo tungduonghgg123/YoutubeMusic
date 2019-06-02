@@ -2,6 +2,7 @@ const SEPERATOR = '_';
 import axios from 'axios';
 import moment from 'moment';
 import TrackPlayer from 'react-native-track-player';
+import { YOUTUBE_API_KEY } from '../style'
 
 export async function getTrackPlayerState() {
   let state = await TrackPlayer.getState()
@@ -50,7 +51,7 @@ export function getTrackDetails(videoId) {
         part: 'snippet,statistics,contentDetails',
         id: videoId,
         fields: 'items(id,snippet,statistics(viewCount),contentDetails(duration))',
-        key: process.env.YOUTUBE_API_KEY
+        key: YOUTUBE_API_KEY
       }
     }).then(response => {
       let duration = response.data.items[0].contentDetails.duration;
@@ -87,7 +88,7 @@ function getVideoInfo(videoId) {
         part: "snippet,statistics,contentDetails",
         id: videoId,
         fields: 'items(id,snippet,statistics(viewCount),contentDetails(duration))',
-        key: process.env.YOUTUBE_API_KEY
+        key: YOUTUBE_API_KEY
       }
     }).then((response) => {
       resolve(response.data.items)
@@ -110,7 +111,7 @@ export function getNextVideos(relatedToVideoId, maxResults, pageToken) {
         type: 'video',
         relatedToVideoId: relatedToVideoId,
         pageToken: pageToken,
-        key: process.env.YOUTUBE_API_KEY
+        key: YOUTUBE_API_KEY
       }
     }).then(response => {
       const videoIds = response.data.items.map(item => item.id.videoId)
@@ -140,7 +141,7 @@ export function getVideosHomeScreen(maxResults, regionCode, pageToken) {
       chart: 'mostPopular',
       maxResults: maxResults,
       pageToken: pageToken,
-      key: process.env.YOUTUBE_API_KEY
+      key: YOUTUBE_API_KEY
     }
     if (regionCode != '') params.regionCode = regionCode
     
@@ -183,7 +184,7 @@ export function getVideosHomeScreen(maxResults, regionCode, pageToken) {
       }];
 
       pushVideo = (video) => {
-        axios.get(`http://119.81.246.233:3000/load/${video.id}`).then().catch(error => console.log(error))
+        // axios.get(`http://119.81.246.233:3000/load/${video.id}`).then().catch(error => console.log(error))
         video.contentDetails.duration = formatDuration(video.contentDetails.duration);
         video.statistics.viewCount = numberFormatter(video.statistics.viewCount);
         videos.find(el => el.categoryId === video.snippet.categoryId).list.push(video)

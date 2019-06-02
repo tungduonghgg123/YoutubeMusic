@@ -1,4 +1,13 @@
 import { Dimensions } from 'react-native'
+
+export const YOUTUBE_API_KEY = "AIzaSyAa8yy0GdcGPHdtD083HiGGx_S0vMPScDM"
+export const YOUTUBE_API_KEY0 = "AIzaSyDBc-D5Eg0Zn1HmxsG2RM97lABMuvOmN10"
+export const YOUTUBE_API_KEY1 = "AIzaSyDUd6Dfi5DITcIZKpN9QlZFX7tVKwRPddw"
+export const YOUTUBE_API_KEY2 = "AIzaSyAwNobHagPdxveoZMuLD1cT26orRna4fmU"
+export const YOUTUBE_API_KEY3 = "AIzaSyA_i_5vntjc8iFSbp9N3P16w9BZ-YD6ysY"
+export const YOUTUBE_API_KEY4 = "AIzaSyDzP76efMfCi4BrzcEVNg2N4aBNpl_wrmE"
+export const YOUTUBE_API_KEY5 = "AIzaSyAIfkV-l0E-DkPG8TV0dwSDweA0ctTYwKU"
+
 function calFontSize(standardSize) {
     const standardDiagonalLength = 734.3;
     const width = Dimensions.get('window').width;
