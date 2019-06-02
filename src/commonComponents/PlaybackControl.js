@@ -28,7 +28,8 @@ class PlaybackControl extends TrackPlayer.ProgressComponent {
       onPressRepeat,
       forwardDisabled,
       backwardDisabled,
-      autoDisabled } = this.props;
+      autoDisabled,
+      loading } = this.props;
     return (
       <View style={styles.container}>
         {/* Auto */}
@@ -48,7 +49,7 @@ class PlaybackControl extends TrackPlayer.ProgressComponent {
           onPress={() => { this.state.position > 3 ? this.repeatAndPlay() : onBack() }}
           disabled={backwardDisabled}>
           <Icon
-            color= {COMMON_COMPONENTS_COLOR}
+            color={COMMON_COMPONENTS_COLOR}
             size={HEADER_BUTTON_SIZE}
             name='skip-previous' />
         </TouchableOpacity>
@@ -56,25 +57,26 @@ class PlaybackControl extends TrackPlayer.ProgressComponent {
         <View style={{ width: 20 }} />
 
         {/* Play/pause */}
-        {!paused ?
-          <TouchableOpacity onPress={onPressPause}>
-            <View style={styles.playButton}>
-              <Icon 
-                name='pause'
-                size={PLAY_BUTTON_SIZE}
-                color= {COMMON_COMPONENTS_COLOR}
-              />
-            </View>
-          </TouchableOpacity> :
-          <TouchableOpacity onPress={onPressPlay}>
-            <View style={styles.playButton}>
-            <Icon 
-                name='play-arrow'
-                size={PLAY_BUTTON_SIZE}
-                color= {COMMON_COMPONENTS_COLOR}
-              />
-            </View>
-          </TouchableOpacity>
+        {
+            !paused ?
+              <TouchableOpacity onPress={onPressPause}>
+                <View style={styles.playButton}>
+                  <Icon
+                    name='pause'
+                    size={PLAY_BUTTON_SIZE}
+                    color={COMMON_COMPONENTS_COLOR}
+                  />
+                </View>
+              </TouchableOpacity> :
+              <TouchableOpacity onPress={onPressPlay}>
+                <View style={styles.playButton}>
+                  <Icon
+                    name='play-arrow'
+                    size={PLAY_BUTTON_SIZE}
+                    color={COMMON_COMPONENTS_COLOR}
+                  />
+                </View>
+              </TouchableOpacity>
         }
 
         <View style={{ width: 20 }} />
@@ -83,7 +85,7 @@ class PlaybackControl extends TrackPlayer.ProgressComponent {
         <TouchableOpacity onPress={onForward}
           disabled={forwardDisabled}>
           <Icon
-            color= {COMMON_COMPONENTS_COLOR}
+            color={COMMON_COMPONENTS_COLOR}
             size={HEADER_BUTTON_SIZE}
             name='skip-next' />
         </TouchableOpacity>
@@ -91,16 +93,13 @@ class PlaybackControl extends TrackPlayer.ProgressComponent {
         <View style={{ width: 40 }} />
 
         {/* Repeat */}
-        <TouchableOpacity
-            onPress={onPressRepeat} 
-        >
+        <TouchableOpacity onPress={onPressRepeat}>
           <Icon
             iconStyle={repeatOn ? [] : styles.off}
-            color= {COMMON_COMPONENTS_COLOR}
+            color={COMMON_COMPONENTS_COLOR}
             size={18}
             name='repeat'
-
-            />
+          />
         </TouchableOpacity>
       </View>
     )

@@ -2,6 +2,8 @@ const SEPERATOR = '_';
 import axios from 'axios';
 import moment from 'moment';
 import TrackPlayer from 'react-native-track-player';
+import { YOUTUBE_API_KEY } from '../style'
+
 export async function getTrackPlayerState() {
   let state = await TrackPlayer.getState()
   switch (state) {
@@ -25,6 +27,7 @@ export async function getTrackPlayerState() {
       break;
   }
 }
+
 export function getTrackQueue() {
   return new Promise((resolve, reject) => {
     TrackPlayer.getQueue().then((tracks) => {
@@ -34,6 +37,7 @@ export function getTrackQueue() {
     })
   })
 }
+
 /**
  * 
  * @param {videoId of track} videoId 
@@ -47,7 +51,7 @@ export function getTrackDetails(videoId) {
         part: 'snippet,statistics,contentDetails',
         id: videoId,
         fields: 'items(id,snippet,statistics(viewCount),contentDetails(duration))',
-        key: process.env.YOUTUBE_API_KEY
+        key: YOUTUBE_API_KEY
       }
     }).then(response => {
       let duration = response.data.items[0].contentDetails.duration;
@@ -70,6 +74,7 @@ export function getTrackDetails(videoId) {
       })
   })
 }
+
 /**
  * 
  * @param {*} videoId 
@@ -83,7 +88,7 @@ function getVideoInfo(videoId) {
         part: "snippet,statistics,contentDetails",
         id: videoId,
         fields: 'items(id,snippet,statistics(viewCount),contentDetails(duration))',
-        key: process.env.YOUTUBE_API_KEY
+        key: YOUTUBE_API_KEY
       }
     }).then((response) => {
       resolve(response.data.items)
@@ -92,10 +97,10 @@ function getVideoInfo(videoId) {
     })
   })
 }
+
 /**
  * get next videos related to video id. 
  */
-
 export function getNextVideos(relatedToVideoId, maxResults, pageToken) {
   return new Promise((resolve, reject) => {
     axios.get('https://content.googleapis.com/youtube/v3/search', {
@@ -106,7 +111,7 @@ export function getNextVideos(relatedToVideoId, maxResults, pageToken) {
         type: 'video',
         relatedToVideoId: relatedToVideoId,
         pageToken: pageToken,
-        key: process.env.YOUTUBE_API_KEY
+        key: YOUTUBE_API_KEY
       }
     }).then(response => {
       const videoIds = response.data.items.map(item => item.id.videoId)
@@ -127,43 +132,100 @@ export function getNextVideos(relatedToVideoId, maxResults, pageToken) {
     })
   })
 };
-export function getVideosHomeScreen(maxResults, pageToken) {
+
+export function getVideosHomeScreen(maxResults, regionCode, pageToken) {
   return new Promise((resolve, reject) => {
+    let params = {
+      part: 'snippet,statistics,contentDetails',
+      fields: 'pageInfo,nextPageToken,items(id,snippet,statistics(viewCount),contentDetails(duration))',
+      chart: 'mostPopular',
+      maxResults: maxResults,
+      pageToken: pageToken,
+      key: YOUTUBE_API_KEY
+    }
+    if (regionCode != '') params.regionCode = regionCode
+    
     axios.get('https://content.googleapis.com/youtube/v3/videos', {
       headers: { "X-Origin": "https://explorer.apis.google.com" },
-      params: {
-        part: 'snippet,statistics,contentDetails',
-        fields: 'nextPageToken,items(id,snippet,statistics(viewCount),contentDetails(duration))',
-        chart: 'mostPopular',
-        regionCode: 'VN',
-        maxResults: maxResults,
-        pageToken: pageToken,
-        key: process.env.YOUTUBE_API_KEY
-      }
+      params: params
     }).then(response => {
-      let videos = [];
+      let videos = [{
+        categoryId: '10',
+        title: 'Trending musics',
+        list: []
+      }, {
+        categoryId: '1',
+        title: 'Trending films & animations',
+        list: []
+      }, {
+        categoryId: '17',
+        title: 'Trending sports',
+        list: []
+      }, {
+        categoryId: '18',
+        title: 'Trending short movies',
+        list: []
+      }, {
+        categoryId: '20',
+        title: 'Trending gamings',
+        list: []
+      }, {
+        categoryId: '24',
+        title: 'Trending entertainments',
+        list: []
+      }, {
+        categoryId: '27',
+        title: 'Trending educations',
+        list: []
+      }, {
+        categoryId: '30',
+        title: 'Trending movies',
+        list: []
+      }];
+
+      pushVideo = (video) => {
+        // axios.get(`http://119.81.246.233:3000/load/${video.id}`).then().catch(error => console.log(error))
+        video.contentDetails.duration = formatDuration(video.contentDetails.duration);
+        video.statistics.viewCount = numberFormatter(video.statistics.viewCount);
+        videos.find(el => el.categoryId === video.snippet.categoryId).list.push(video)
+      }
+
       response.data.items.map(video => {
-        if (video.snippet.categoryId == '10') {
-          axios.get(`http://119.81.246.233:3000/load/${video.id}`).then().catch(error => console.log(error.message))
-          video.contentDetails.duration = formatDuration(video.contentDetails.duration);
-          video.statistics.viewCount = numberFormatter(video.statistics.viewCount);
-          videos.push(video)
+        switch (video.snippet.categoryId) {
+          case '10':
+          case '1':
+          case '17':
+          case '18':
+          case '20':
+          case '24':
+          case '27':
+          case '30':
+            pushVideo(video)
+            break;
         }
       })
+
+      // remove element with empty list
+      for (var i = 0; i < videos.length; i++) {
+        if (videos[i].list.length == 0)
+          videos.splice(i, 1);
+      }
       resolve({
         videos,
         nextPageToken: response.data.nextPageToken,
+        pageInfo: response.data.pageInfo
       })
     }).catch((error) => {
       console.log(error)
     })
-
   })
 }
+
 export function getTrackOriginID(id) {
   const indexOfSeperator = id.indexOf(SEPERATOR);
   return id.slice(indexOfSeperator + 1);
 }
+
 export async function getPreviousTrack() {
   let current = await TrackPlayer.getCurrentTrack();
   let queue = await TrackPlayer.getQueue();
@@ -197,17 +259,19 @@ export async function getPreviousTrack() {
       };
   }
 }
-export async function getComingTrackInQueue(){
-  
-}
-export async function resetSeekBar(){
-  return TrackPlayer.seekTo(0);
 
+export async function getComingTrackInQueue() {
 }
+
+export async function resetSeekBar() {
+  return TrackPlayer.seekTo(0);
+}
+
 function formatDuration(duration) {
   const durationObj = moment.duration(duration);
   return durationObj.asHours() < 1 ? moment(durationObj._data).format("m:ss") : moment(durationObj._data).format("H:mm:ss");
 }
+
 function numberFormatter(num, digits) {
   var si = [
     { value: 1, symbol: "" },
@@ -223,6 +287,7 @@ function numberFormatter(num, digits) {
   var rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
   return (num / si[i].value).toFixed(digits).replace(rx, "$1") + si[i].symbol;
 }
+
 /**
  * not working at the moment.
  */

@@ -6,18 +6,15 @@ function isCloseToEdge({ layoutMeasurement, contentOffset, contentSize }) {
     return layoutMeasurement.height + contentOffset.y >=
         contentSize.height - paddingToBottom;
 };
-function onScroll(event) {
-    onScroll123
-}
+
 const ItemsListVertical = ({ children, isLoading, onCloseToEdge,
-    onScrollEndDrag, onScrollBeginDrag, onScroll}) => {
+    onScrollEndDrag, onScrollBeginDrag }) => {
 
     return (
         <ScrollView
             style={{ paddingTop: 7 }}
             onScroll={(event) => {
-                onScroll(event)
-                if(isCloseToEdge(event.nativeEvent)) {
+                if (isCloseToEdge(event.nativeEvent)) {
                     onCloseToEdge()
                 }
             }}

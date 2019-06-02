@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { View, Button, BackHandler } from 'react-native';
+import { View } from 'react-native';
 import { SearchBar } from "react-native-elements";
 import { Item, ItemsListVertical } from '../commonComponents'
 import axios from 'axios';
 import moment from 'moment';
-import { BACKGROUND_COLOR, COMMON_COMPONENTS_COLOR, TEXT_COLOR } from '../style'
+import { BACKGROUND_COLOR, TEXT_COLOR, YOUTUBE_API_KEY } from '../style'
 import { connect } from 'react-redux';
 import * as actions from '../redux/actions'
 
@@ -35,48 +35,8 @@ class SearchScreen extends Component {
       listItem: [],
       showSearchBar: true
     };
-    this.offset = 0;
   }
-  // componentDidMount(){
-  //   this.onSearch("duc phuc", 1)
-  // }
-  onScroll = (event) => {
-    // var currentOffset = event.nativeEvent.contentOffset.y;
-    // var direction = currentOffset > this.offset ? 'down' : 'up';
-    // this.offset = currentOffset;
-    // console.log(direction);
-    // switch (direction) {
-    //   case 'down':
-    //     this.setState({ showSearchBar: false }, ()=>{
-    //       console.log('down')
-    //     })
-    //     break;
-    //   case 'up':
-    //     this.setState({ showSearchBar: true }, () => {
-    //       console.log('up')
-    //     })
-    //     break;
-    //   default:
-    //     this.setState({ showSearchBar: true }, () => {
-    //       console.log('default')
-    //     });
-    //     break;
 
-    // }
-    const currentOffset = event.nativeEvent.contentOffset.y;
-    const dif = currentOffset - (this.offset || 0);
-
-    if (Math.abs(dif) < 3) {
-      console.log('unclear');
-    } else if (dif < 0) {
-      console.log('up123');
-    } else {
-      console.log('down');
-    }
-    console.log('current: ', currentOffset);
-    console.log('previous: ', this.offset) 
-    this.offset = currentOffset;
-  }
   getVideoDetails(videoId) {
     return axios.get('https://content.googleapis.com/youtube/v3/videos', {
       headers: { "X-Origin": "https://explorer.apis.google.com" },
@@ -84,7 +44,7 @@ class SearchScreen extends Component {
         part: "snippet,statistics,contentDetails",
         id: videoId,
         fields: 'items(id,snippet,statistics(viewCount),contentDetails(duration))',
-        key: process.env.YOUTUBE_API_KEY
+        key: YOUTUBE_API_KEY
       }
     }).then((response) => {
       return response.data.items
@@ -106,7 +66,7 @@ class SearchScreen extends Component {
         type: "video",
         maxResults: maxResults,
         pageToken: pageToken,
-        key: process.env.YOUTUBE_API_KEY
+        key: YOUTUBE_API_KEY
       }
     }).then((response) => {
       const videoIds = response.data.items.map(item => item.id.videoId)
@@ -138,9 +98,6 @@ class SearchScreen extends Component {
             inputStyle={{ color: TEXT_COLOR }}
             placeholderTextColor={TEXT_COLOR}
             round={true}
-            /**
-            this line leads to bug!!!!!!! 
-             */
             // autoFocus={true}
             autoCorrect={false}
             autoCapitalize="none"
@@ -156,7 +113,6 @@ class SearchScreen extends Component {
             if (!this.state.isLoading && this.state.listItem.length < 50 && this.state.listItem.length != 0)
               this.onSearch(this.state.searchInput, 5, this.state.nextPageToken)
           }}
-          onScroll={() => {}}
         >
           {this.state.listItem.map((item, itemKey) => {
             return (

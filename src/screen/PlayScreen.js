@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Platform, Button, SafeAreaView, Text, View, ScrollView, Alert } from 'react-native';
+import { Platform, SafeAreaView, ScrollView, Alert } from 'react-native';
 import TrackPlayer from 'react-native-track-player';
 import {
   Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl, Spinner,
@@ -148,8 +148,8 @@ class PlayScreen extends Component {
             autoDisabled={false}
             onForward={this.playSuggestedNextVideo.bind(this)}
             onBack={this.onPressBack.bind(this)}
+            loading={this.props.loading}
           />
-
           <Spinner color={COMMON_COMPONENTS_COLOR} animating={this.props.loading} />
           <ItemsListHorizontal
             isLoading={this.props.nextTracksLoading}
