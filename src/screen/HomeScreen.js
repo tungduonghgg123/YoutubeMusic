@@ -74,14 +74,15 @@ class HomeScreen extends Component {
             onValueChange={value => {
               this.setState({
                 picker: value
-              });
-              if (Platform.OS === 'android') {
-                if (this.state.regionCode != this.state.picker) {
-                  this.setState({ listItem: [], countResults: 0, regionCode: this.state.picker }, () => {
-                    this.getVideos(50, this.state.regionCode)
-                  })
+              }, () => {
+                if (Platform.OS === 'android') {
+                  if (this.state.regionCode != this.state.picker) {
+                    this.setState({ listItem: [], countResults: 0, regionCode: this.state.picker }, () => {
+                      this.getVideos(50, this.state.regionCode)
+                    })
+                  }
                 }
-              }
+              });
             }}
             style={{
               ...pickerSelectStyles,
