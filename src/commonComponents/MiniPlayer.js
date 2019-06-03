@@ -13,7 +13,7 @@ import {
 import { Icon } from 'react-native-elements'
 import { MiniPlayerSlider, Spinner } from '../commonComponents'
 import { PlayScreen } from '../screen/PlayScreen'
-import { getTrackPlayerState, getTrackOriginID } from '../utils'
+import { getTrackPlayerState, onPressPlay, onPressPause, playSuggestedNextVideo } from '../utils'
 
 
 
@@ -48,12 +48,12 @@ class MiniPlayer extends PlayScreen {
             if (this.props.repeatOn) {
                 console.log('repeat')
                 TrackPlayer.seekTo(0);
-                this.onPressPlay()
+                onPressPlay()
                 return;
             }
             if (this.props.autoOn) {
                 console.log('auto')
-                this.playSuggestedNextVideo()
+                playSuggestedNextVideo()
                 return;
             }
             this.props.syncPaused(true)
@@ -68,7 +68,7 @@ class MiniPlayer extends PlayScreen {
                 case TrackPlayer.STATE_PAUSED:
                     if (Platform.OS === 'android') {
                         if (this.prevPlaybackState === TrackPlayer.STATE_NONE) {
-                            this.onPressPlay()
+                            onPressPlay()
                         }
                     }
                     break;
@@ -81,7 +81,7 @@ class MiniPlayer extends PlayScreen {
                             case TrackPlayer.STATE_BUFFERING:
                             case TrackPlayer.STATE_PAUSED:
                             case TrackPlayer.STATE_STOPPED:
-                                this.onPressPlay()
+                                onPressPlay()
                                 break;
                             default:
                                 console.log('stuck at state none')
@@ -94,7 +94,7 @@ class MiniPlayer extends PlayScreen {
                     break;
                 default:
                     if (Platform.OS === "ios")
-                        this.onPressPlay()
+                        onPressPlay()
                     break;
             }
             this.prevPlaybackState = playbackState.state;
@@ -150,7 +150,9 @@ class MiniPlayer extends PlayScreen {
                                     :
                                     <View>
                                         {!this.props.paused ?
-                                            <TouchableOpacity onPress={this.onPressPause.bind(this)} >
+                                            <TouchableOpacity onPress={() => {
+                                                onPressPause()
+                                            }} >
                                                 <View style={playButtonStyle}>
                                                     <Icon
                                                         name='pause'
@@ -159,7 +161,9 @@ class MiniPlayer extends PlayScreen {
                                                     />
                                                 </View>
                                             </TouchableOpacity> :
-                                            <TouchableOpacity onPress={this.onPressPlay.bind(this)}>
+                                            <TouchableOpacity onPress={() => {
+                                                onPressPlay()
+                                            }}>
                                                 <View style={playButtonStyle}>
                                                     <Icon
                                                         name='play-arrow'

@@ -1,11 +1,11 @@
 const SEPERATOR = '_';
-import { Alert} from 'react-native'
+import { Alert, Platform } from 'react-native'
 import axios from 'axios';
 import moment from 'moment';
 import TrackPlayer from 'react-native-track-player';
 import { YOUTUBE_API_KEY } from '../style'
 import store from '../redux/store';
-import {syncLoadingNextTracks, appendNextTracks, setSuggestedNextTracks, syncTrack} from '../redux/actions'
+import { syncLoading, syncLoadingNextTracks, appendNextTracks, setSuggestedNextTracks, syncTrack, syncPaused } from '../redux/actions'
 
 export async function getTrackPlayerState() {
   let state = await TrackPlayer.getState()
@@ -31,7 +31,7 @@ export async function getTrackPlayerState() {
   }
 }
 
-export function getTrackQueue() {
+function getTrackQueue() {
   return new Promise((resolve, reject) => {
     TrackPlayer.getQueue().then((tracks) => {
       resolve(tracks)
@@ -46,7 +46,7 @@ export function getTrackQueue() {
  * @param {videoId of track} videoId 
  * get required properties to play a track
  */
-export function getTrackDetails(videoId) {
+function getTrackDetails(videoId) {
   return new Promise((resolve, reject) => {
     axios.get('https://content.googleapis.com/youtube/v3/videos', {
       headers: { "X-Origin": "https://explorer.apis.google.com" },
@@ -148,7 +148,7 @@ export function getVideosHomeScreen(maxResults, regionCode, pageToken) {
       key: YOUTUBE_API_KEY
     }
     if (regionCode != '') params.regionCode = regionCode
-    
+
     axios.get('https://content.googleapis.com/youtube/v3/videos', {
       headers: { "X-Origin": "https://explorer.apis.google.com" },
       params: params
@@ -293,9 +293,9 @@ function numberFormatter(num, digits) {
   var rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
   return (num / si[i].value).toFixed(digits).replace(rx, "$1") + si[i].symbol;
 }
- async function getSuggestedNextTracks(relatedToVideoId, maxResults, pageToken) {
+async function getSuggestedNextTracks(relatedToVideoId, maxResults, pageToken) {
   store.dispatch(syncLoadingNextTracks(true))
-  let {nextVideos, nextPageToken} = await getNextVideos(relatedToVideoId, maxResults, pageToken);
+  let { nextVideos, nextPageToken } = await getNextVideos(relatedToVideoId, maxResults, pageToken);
   store.dispatch(appendNextTracks(nextVideos, nextPageToken));
   store.dispatch(syncLoadingNextTracks(false))
 }
@@ -315,7 +315,72 @@ async function onPressBack() {
     Alert.alert('Oop', 'There is no previous track!')
   }
 }
-function removeTrack(id){
+function removeTrack(id) {
   TrackPlayer.remove(id)
 }
-export {getSuggestedNextTracks, onPlaybackTrackChanged, getPreviousTrack, onPressBack}
+function addAndPlay(track) {
+  if (track && track.id) {
+    getTrackQueue().then(async (tracks) => {
+      let numTrack = tracks.length;
+      /**
+       * `track.originID` this is the real VIDEO ID from youtube.
+       * It will be used for fetching `related videos `  from youtube
+       */
+      track.originID = track.id;
+      /**
+       * `Modify track ID's PURPOSE:` Because each `video ID` on `Track Player` is needed to be `unique`.
+       * Example: When there are two `identical track`.
+       */
+      track.id = numTrack + '_' + track.id;
+      await TrackPlayer.add(track)
+      onPlaybackTrackChanged(track.originID, track)
+      await TrackPlayer.skip(track.id)
+    })
+  }
+}
+async function playFromYoutube(videoId) {
+  if (!videoId)
+    return;
+  console.log('----------')
+  /**
+   * pause Track Player before loading and playing new Track.
+   *  */
+  if (Platform.OS === 'ios') {
+    onPressPause()
+  } else {
+    store.dispatch(syncPaused(true))
+  }
+  store.dispatch(syncLoading(true))
+  let track = await getTrackDetails(videoId)
+  addAndPlay(track)
+}
+function onPressPause() {
+  TrackPlayer.pause();
+  store.dispatch(syncPaused(true))
+}
+function onPressPlay() {
+  TrackPlayer.play();
+  store.dispatch(syncPaused(false))
+}
+function playSuggestedNextVideo() {
+  let state = store.getState()
+  console.log(state.syncNextTrackListReducer)
+  let listItem = state.syncNextTrackListReducer.nextVideos;
+  if (listItem[0] && listItem[0].id) {
+    let videoId = listItem[0].id;
+    playFromYoutube(videoId)
+  }
+}
+export {
+  getSuggestedNextTracks,
+  onPlaybackTrackChanged,
+  getPreviousTrack,
+  getTrackDetails,
+  onPressBack,
+  getTrackQueue,
+  addAndPlay,
+  onPressPause,
+  onPressPlay,
+  playFromYoutube,
+  playSuggestedNextVideo
+}

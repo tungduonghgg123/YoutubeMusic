@@ -10,8 +10,8 @@ import { BACKGROUND_COLOR, COMMON_COMPONENTS_COLOR } from '../style'
 import { connect } from 'react-redux';
 import * as actions from '../redux/actions'
 import {
-getTrackDetails, getNextVideos, getTrackQueue,
-  getPreviousTrack, getTrackOriginID, getSuggestedNextTracks, onPlaybackTrackChanged, onPressBack
+  getSuggestedNextTracks, onPressBack, playSuggestedNextVideo, onPressPause,
+  onPressPlay, playFromYoutube
 } from '../utils'
 
 class PlayScreen extends Component {
@@ -24,15 +24,7 @@ class PlayScreen extends Component {
   }
   componentDidMount() {
     this.props.miniPlayerOff();
-    this.playFromYoutube(this.props.navigation.getParam('videoId'))
-  }
-  onPressPause() {
-    TrackPlayer.pause();
-    this.props.syncPaused(true)
-  }
-  onPressPlay() {
-    TrackPlayer.play();
-    this.props.syncPaused(false)
+    playFromYoutube(this.props.navigation.getParam('videoId'))
   }
   onPressRepeat() {
     this.props.repeatReverse();
@@ -44,49 +36,6 @@ class PlayScreen extends Component {
     this.props.navigation.goBack();
     this.props.miniPlayerOn();
     return true;
-  }
-  playSuggestedNextVideo() {
-    if (this.props.listItem[0] && this.props.listItem[0].id) {
-      let videoId = this.props.listItem[0].id;
-      this.playFromYoutube(videoId)
-    }
-  }
-  addAndPlay(track) {
-    if (track && track.id) {
-      getTrackQueue().then(async (tracks) => {
-        let numTrack = tracks.length;
-        /**
-         * `track.originID` this is the real VIDEO ID from youtube.
-         * It will be used for fetching `related videos `  from youtube
-         */
-        track.originID = track.id;
-        /**
-         * `Modify track ID's PURPOSE:` Because each `video ID` on `Track Player` is needed to be `unique`.
-         * Example: When there are two `identical track`.
-         */
-        track.id = numTrack + '_' + track.id;
-        await TrackPlayer.add(track)
-        onPlaybackTrackChanged(track.originID, track)
-        await TrackPlayer.skip(track.id)
-      })
-    }
-  }
-
-  async playFromYoutube(videoId) {
-    if (!videoId)
-      return;
-    console.log('----------')
-    /**
-     * pause Track Player before loading and playing new Track.
-     *  */
-    if (Platform.OS === 'ios') {
-      this.onPressPause()
-    } else {
-      this.props.syncPaused(true)
-    }
-    this.props.syncLoading(true)
-    let track = await getTrackDetails(videoId)
-    this.addAndPlay(track)
   }
   render() {
     return (
@@ -113,14 +62,20 @@ class PlayScreen extends Component {
             paused={this.props.paused}
             autoOn={this.props.autoOn}
             repeatOn={this.props.repeatOn}
-            onPressPause={this.onPressPause.bind(this)}
-            onPressPlay={this.onPressPlay.bind(this)}
+            onPressPause={() => {
+              onPressPause()
+            }}
+            onPressPlay={() => {
+              onPressPlay()
+            }}
             onPressRepeat={this.onPressRepeat.bind(this)}
             onPressAuto={this.onPressAuto.bind(this)}
             forwardDisabled={false}
             backwardDisabled={false}
             autoDisabled={false}
-            onForward={this.playSuggestedNextVideo.bind(this)}
+            onForward={() => {
+              playSuggestedNextVideo()
+            }}
             onBack={() => {
               onPressBack()
             }}
@@ -142,7 +97,7 @@ class PlayScreen extends Component {
                   key={itemKey}
                   style={{ marginBottom: 10 }}
                   onPress={() => {
-                    this.playFromYoutube(item.id);
+                    playFromYoutube(item.id);
                     this.props.setSuggestedNextTracks([])
                   }}
                 />
