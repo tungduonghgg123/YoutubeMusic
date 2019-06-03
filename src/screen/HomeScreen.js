@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StatusBar, View, Text, StyleSheet } from 'react-native';
+import { StatusBar, View, Text, StyleSheet, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import RNPickerSelect from 'react-native-picker-select';
 import { Icon } from 'react-native-elements'
@@ -18,10 +18,9 @@ class HomeScreen extends Component {
       countResults: 0,
       totalResults: 0,
       listItem: [],
-      regionCode: '',
-      picker: '',
+      regionCode: 'VN',
+      picker: 'VN',
     };
-    this.offset = 0;
   }
 
   getVideos(maxResults, regionCode, pageToken) {
@@ -58,37 +57,6 @@ class HomeScreen extends Component {
     return (
       <View style={{ flex: 1, backgroundColor: BACKGROUND_COLOR, height: '100%' }}>
         <StatusBar backgroundColor={BACKGROUND_COLOR} barStyle="light-content" />
-
-        <RNPickerSelect
-          items={regions}
-          onClose={() => {
-            if (this.state.regionCode != this.state.picker) {
-              this.setState({ listItem: [], countResults: 0, regionCode: this.state.picker }, () => {
-                this.getVideos(50, this.state.regionCode)
-              })
-            }
-          }}
-          onValueChange={value => {
-            this.setState({
-              picker: value
-            });
-          }}
-          style={{
-            ...pickerSelectStyles,
-            iconContainer: {
-              top: 10,
-              right: 12,
-            },
-          }}
-          value={this.state.picker}
-          doneText={"Select"}
-          useNativeAndroidPickerStyle={false}
-          textInputProps={{ underlineColor: 'yellow' }}
-          Icon={() => {
-            return <Icon color={"gray"} size={24} name='skip-next' />
-          }}
-        />
-
         <ItemsListVertical
           isLoading={this.state.isLoading}
           onCloseToEdge={() => {
@@ -96,6 +64,43 @@ class HomeScreen extends Component {
               this.getVideos(50, this.state.regionCode, this.state.nextPageToken)
           }}
         >
+          <RNPickerSelect
+            items={regions}
+            onClose={() => {
+              if (this.state.regionCode != this.state.picker) {
+                this.setState({ listItem: [], countResults: 0, regionCode: this.state.picker }, () => {
+                  this.getVideos(50, this.state.regionCode)
+                })
+              }
+            }}
+            onValueChange={value => {
+              this.setState({
+                picker: value
+              });
+              if (Platform.OS === 'android') {
+                if (this.state.regionCode != this.state.picker) {
+                  this.setState({ listItem: [], countResults: 0, regionCode: this.state.picker }, () => {
+                    this.getVideos(50, this.state.regionCode)
+                  })
+                }
+              }
+            }}
+            style={{
+              ...pickerSelectStyles,
+              iconContainer: {
+                top: 10,
+                right: 12,
+              },
+            }}
+            value={this.state.picker}
+            doneText={"Select"}
+            useNativeAndroidPickerStyle={false}
+            textInputProps={{ underlineColor: 'yellow' }}
+            Icon={() => {
+              return <Icon color={"gray"} size={24} name='menu-down' type='material-community' />
+            }}
+          />
+
           {this.state.listItem.map((element, elementKey) => {
             if (element.list && element.list.length > 0)
               return (
@@ -145,21 +150,21 @@ const styles = StyleSheet.create({
 const pickerSelectStyles = StyleSheet.create({
   inputIOS: {
     fontSize: 16,
-    paddingVertical: 12,
-    paddingHorizontal: 10,
+    paddingTop: 12,
+    paddingRight: 35, // to ensure the text is never behind the icon
+    textAlign: 'right',
     color: 'black'
   },
   inputAndroid: {
     fontSize: 16,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
+    paddingTop: 12,
+    paddingRight: 35, // to ensure the text is never behind the icon
+    textAlign: 'right',
     color: 'black'
   },
 });
 
 const regions = [
-  { label: 'Global', value: '' },
-  { label: 'Viet Nam', value: 'VN' },
   { label: 'Afghanistan', value: 'AF' },
   { label: 'Åland Islands', value: 'AX' },
   { label: 'Albania', value: 'AL' },
