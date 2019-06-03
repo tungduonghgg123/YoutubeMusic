@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 import * as actions from '../redux/actions'
 import {
 getTrackDetails, getNextVideos, getTrackQueue,
-  getPreviousTrack, getTrackOriginID, 
+  getPreviousTrack, getTrackOriginID, getSuggestedNextTracks, onPlaybackTrackChanged, onPressBack
 } from '../utils'
 
 class PlayScreen extends Component {
@@ -45,16 +45,6 @@ class PlayScreen extends Component {
     this.props.miniPlayerOn();
     return true;
   }
-  async onPressBack() {
-    let { eligible, id } = await getPreviousTrack();
-    if (eligible) {
-      let prevTrack = await TrackPlayer.getTrack(id);
-      this.onPlaybackTrackChanged(getTrackOriginID(id), prevTrack)
-      await TrackPlayer.skipToPrevious();
-    } else {
-      Alert.alert('Oop', 'There is no previous track!')
-    }
-  }
   playSuggestedNextVideo() {
     if (this.props.listItem[0] && this.props.listItem[0].id) {
       let videoId = this.props.listItem[0].id;
@@ -76,15 +66,10 @@ class PlayScreen extends Component {
          */
         track.id = numTrack + '_' + track.id;
         await TrackPlayer.add(track)
-        this.onPlaybackTrackChanged(track.originID, track)
+        onPlaybackTrackChanged(track.originID, track)
         await TrackPlayer.skip(track.id)
       })
     }
-  }
-  onPlaybackTrackChanged(id, track) {
-    this.props.syncTrack(track)
-    this.props.setSuggestedNextTracks([])
-    this.getSuggestedNextTracks(id, 7)
   }
 
   async playFromYoutube(videoId) {
@@ -102,15 +87,6 @@ class PlayScreen extends Component {
     this.props.syncLoading(true)
     let track = await getTrackDetails(videoId)
     this.addAndPlay(track)
-  }
-  async getSuggestedNextTracks(relatedToVideoId, maxResults, pageToken) {
-    this.props.syncLoadingNextTracks(true)
-    let {nextVideos, nextPageToken} = await getNextVideos(relatedToVideoId, maxResults, pageToken);
-    this.props.appendNextTracks(nextVideos, nextPageToken);
-    // this.setState({
-    //   nextPageToken: nextPageToken,
-    // })
-    this.props.syncLoadingNextTracks(false)
   }
   render() {
     return (
@@ -145,7 +121,9 @@ class PlayScreen extends Component {
             backwardDisabled={false}
             autoDisabled={false}
             onForward={this.playSuggestedNextVideo.bind(this)}
-            onBack={this.onPressBack.bind(this)}
+            onBack={() => {
+              onPressBack()
+            }}
             loading={this.props.loading}
           />
           <Spinner color={COMMON_COMPONENTS_COLOR} animating={this.props.loading} />
@@ -153,7 +131,7 @@ class PlayScreen extends Component {
             isLoading={this.props.nextTracksLoading}
             onCloseToEdge={() => {
               if (!this.props.nextTracksLoading && this.props.listItem.length < 30 && this.props.listItem.length != 0) {
-                this.getSuggestedNextTracks(this.props.track.originID, 5, this.props.nextPageToken)
+                getSuggestedNextTracks(this.props.track.originID, 5, this.props.nextPageToken)
               }
             }}
           >

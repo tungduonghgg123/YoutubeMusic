@@ -1,8 +1,11 @@
 const SEPERATOR = '_';
+import { Alert} from 'react-native'
 import axios from 'axios';
 import moment from 'moment';
 import TrackPlayer from 'react-native-track-player';
 import { YOUTUBE_API_KEY } from '../style'
+import store from '../redux/store';
+import {syncLoadingNextTracks, appendNextTracks, setSuggestedNextTracks, syncTrack} from '../redux/actions'
 
 export async function getTrackPlayerState() {
   let state = await TrackPlayer.getState()
@@ -227,7 +230,7 @@ export function getTrackOriginID(id) {
   return id.slice(indexOfSeperator + 1);
 }
 
-export async function getPreviousTrack() {
+async function getPreviousTrack() {
   let current = await TrackPlayer.getCurrentTrack();
   let queue = await TrackPlayer.getQueue();
   let indexOfCurrent = -1;
@@ -243,19 +246,22 @@ export async function getPreviousTrack() {
       console.log('current track is not found in queue');
       return {
         eligible: false,
-        id: -1
+        id: -1,
+        current
       };
     case 0:
       console.log('there is no previous track');
       return {
         eligible: false,
-        id: -1
+        id: -1,
+        current
       };
     default:
       let id = queue[indexOfCurrent - 1].id;
       return {
         eligible: true,
-        id
+        id,
+        current
       };
   }
 }
@@ -287,13 +293,29 @@ function numberFormatter(num, digits) {
   var rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
   return (num / si[i].value).toFixed(digits).replace(rx, "$1") + si[i].symbol;
 }
-
-/**
- * not working at the moment.
- */
-function playFromLocal() {
-  TrackPlayer.add(localTracks).then(() => {
-    console.log('track added');
-    this.onPressPlay()
-  })
+ async function getSuggestedNextTracks(relatedToVideoId, maxResults, pageToken) {
+  store.dispatch(syncLoadingNextTracks(true))
+  let {nextVideos, nextPageToken} = await getNextVideos(relatedToVideoId, maxResults, pageToken);
+  store.dispatch(appendNextTracks(nextVideos, nextPageToken));
+  store.dispatch(syncLoadingNextTracks(false))
 }
+function onPlaybackTrackChanged(id, track) {
+  store.dispatch(syncTrack(track))
+  store.dispatch(setSuggestedNextTracks([]))
+  getSuggestedNextTracks(id, 7)
+}
+async function onPressBack() {
+  let { eligible, id, current } = await getPreviousTrack();
+  if (eligible) {
+    let prevTrack = await TrackPlayer.getTrack(id);
+    onPlaybackTrackChanged(getTrackOriginID(id), prevTrack)
+    await TrackPlayer.skipToPrevious();
+    removeTrack(current)
+  } else {
+    Alert.alert('Oop', 'There is no previous track!')
+  }
+}
+function removeTrack(id){
+  TrackPlayer.remove(id)
+}
+export {getSuggestedNextTracks, onPlaybackTrackChanged, getPreviousTrack, onPressBack}

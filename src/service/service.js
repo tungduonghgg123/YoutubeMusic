@@ -1,6 +1,7 @@
 import TrackPlayer from 'react-native-track-player';
 import store from '../redux/store';
 import {syncPaused} from '../redux/actions'
+import { onPressBack } from '../utils'
 module.exports = async function() {
 
   TrackPlayer.addEventListener('remote-play', () => {
@@ -18,7 +19,7 @@ module.exports = async function() {
   });
 
   TrackPlayer.addEventListener('remote-previous', () => {
-    TrackPlayer.skipToPrevious()
+    onPressBack()
   });
 
   TrackPlayer.addEventListener('remote-stop', () => {
