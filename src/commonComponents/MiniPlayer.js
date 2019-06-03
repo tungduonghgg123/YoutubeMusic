@@ -46,11 +46,13 @@ class MiniPlayer extends PlayScreen {
         this.onQueueEnded = TrackPlayer.addEventListener('playback-queue-ended', async (data) => {
             console.log('queue ended event')
             if (this.props.repeatOn) {
+                console.log('repeat')
                 TrackPlayer.seekTo(0);
                 this.onPressPlay()
                 return;
             }
             if (this.props.autoOn) {
+                console.log('auto')
                 this.playSuggestedNextVideo()
                 return;
             }
@@ -233,7 +235,8 @@ const mapStateToProps = state => ({
     paused: state.syncPausedReducer,
     tab: state.tabMeasurementReducer,
     loading: state.syncLoadingReducer,
-    listItem: state.syncNextTrackListReducer,
+    listItem: state.syncNextTrackListReducer.nextVideos,
+    nextPageToken: state.syncNextTrackListReducer.nextPageToken,
     autoOn: state.syncAutoModeReducer,
     repeatOn: state.syncRepeatModeReducer,
 });

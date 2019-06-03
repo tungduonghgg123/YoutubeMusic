@@ -1,14 +1,21 @@
 import { SET_NEXTTRACK_LIST, APPEND_NEXTTRACK_LIST} from '../actions/type'
-
-
-const initialState = [];
-
+const initialState = {
+    nextVideos: [],
+    nextPageToken: ''
+};
 export default function (state = initialState, action) {
     switch (action.type) {
         case SET_NEXTTRACK_LIST:
-            return state = action.payload;
+            return state = {
+                nextVideos: action.payload,
+                nextPageToken: ''
+            }
+
         case APPEND_NEXTTRACK_LIST:
-            return state = state.concat(action.payload)
+            return state = {
+                nextVideos: state.nextVideos.concat(action.payload.nextVideos),
+                nextPageToken: action.payload.nextPageToken
+            }
         default:
             return state;
     }

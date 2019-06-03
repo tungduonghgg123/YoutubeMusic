@@ -8,8 +8,8 @@ export const syncPaused = (pauseState) => ({ type: PAUSED, payload: pauseState }
 export const syncLoading = (loadingState) => ({ type: LOADING, payload: loadingState })
 export const syncLoadingNextTracks = (loadingState) => ({ type: LOADING_NEXTTRACK_LIST, payload: loadingState });
 export const syncTrack = (track) => ({ type: SYNCTRACK, payload: track })
-export const setSuggestedNextTracks = (list) => ({type: SET_NEXTTRACK_LIST, payload: list})
-export const appendNextTracks = (list) => ({type: APPEND_NEXTTRACK_LIST, payload: list})
+export const setSuggestedNextTracks = (nextVideos) => ({type: SET_NEXTTRACK_LIST, payload: nextVideos})
+export const appendNextTracks = (nextVideos, nextPageToken) => ({type: APPEND_NEXTTRACK_LIST, payload: {nextVideos, nextPageToken}})
 export const repeatModeOn = () => ({type: REPEAT_ON} )
 export const repeatModeOff = () => ({type: REPEAT_OFF})
 export const repeatReverse = () => ({type: REPEAT_REVERSE})

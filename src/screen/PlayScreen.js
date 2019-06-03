@@ -19,7 +19,6 @@ class PlayScreen extends Component {
     super(props);
     this.state = {
       mode: 'youtube',
-      nextPageToken: '',
     };
     this.shouldQueueEndedEventRun = true;
   }
@@ -106,11 +105,11 @@ class PlayScreen extends Component {
   }
   async getSuggestedNextTracks(relatedToVideoId, maxResults, pageToken) {
     this.props.syncLoadingNextTracks(true)
-    let { nextVideos, nextPageToken } = await getNextVideos(relatedToVideoId, maxResults, pageToken);
-    this.props.appendNextTracks(nextVideos);
-    this.setState({
-      nextPageToken: nextPageToken,
-    })
+    let {nextVideos, nextPageToken} = await getNextVideos(relatedToVideoId, maxResults, pageToken);
+    this.props.appendNextTracks(nextVideos, nextPageToken);
+    // this.setState({
+    //   nextPageToken: nextPageToken,
+    // })
     this.props.syncLoadingNextTracks(false)
   }
   render() {
@@ -154,7 +153,7 @@ class PlayScreen extends Component {
             isLoading={this.props.nextTracksLoading}
             onCloseToEdge={() => {
               if (!this.props.nextTracksLoading && this.props.listItem.length < 30 && this.props.listItem.length != 0) {
-                this.getSuggestedNextTracks(this.props.track.originID, 5, this.state.nextPageToken)
+                this.getSuggestedNextTracks(this.props.track.originID, 5, this.props.nextPageToken)
               }
             }}
           >
@@ -182,7 +181,8 @@ const mapStateToProps = state => ({
   track: state.syncTrackReducer,
   loading: state.syncLoadingReducer,
   nextTracksLoading: state.syncLoadingNextTracks,
-  listItem: state.syncNextTrackListReducer,
+  listItem: state.syncNextTrackListReducer.nextVideos,
+  nextPageToken: state.syncNextTrackListReducer.nextPageToken,
   autoOn: state.syncAutoModeReducer,
   repeatOn: state.syncRepeatModeReducer,
   miniPlayerState: state.miniPlayerReducer,
