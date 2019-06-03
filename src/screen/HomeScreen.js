@@ -47,7 +47,9 @@ class HomeScreen extends Component {
       console.log(error)
     });
   }
-
+  componentWillUnmount(){
+    console.log('Home Screen unmount')
+  }
   componentDidMount() {
     this.getVideos(50, this.state.regionCode);
   }

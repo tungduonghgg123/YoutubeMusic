@@ -65,7 +65,8 @@ export function getTrackDetails(videoId) {
         thumbnail: {
           url: response.data.items[0].snippet.thumbnails.medium.url
         },
-        duration: moment.duration(duration).asSeconds()
+        duration: moment.duration(duration).asSeconds(),
+        artwork: response.data.items[0].snippet.thumbnails.medium.url
       };
       resolve(track);
     })
@@ -251,7 +252,6 @@ export async function getPreviousTrack() {
         id: -1
       };
     default:
-      console.log('you can go back')
       let id = queue[indexOfCurrent - 1].id;
       return {
         eligible: true,

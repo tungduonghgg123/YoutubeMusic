@@ -40,28 +40,11 @@ class MiniPlayer extends PlayScreen {
             return true;
         }
         );
+        /**
+         * current bug: when calling TrackPlayer.destroy(), this event will be called
+         */
         this.onQueueEnded = TrackPlayer.addEventListener('playback-queue-ended', async (data) => {
-            if (!this.shouldQueueEndedEventRun)
-                return;
-            let currentPos = await TrackPlayer.getPosition();
-            let duration = await this.props.track.duration;
-
-            //   if ( duration - currentPos > 1) {
-            //     let buffered = await TrackPlayer.getBufferedPosition();
-            //     currentPos = await TrackPlayer.getPosition()
-            //     while (buffered < currentPos) {
-            //       console.log('auto re-buffering')
-            //       TrackPlayer.play();
-            //       this.shouldQueueEndedEventRun = false;
-            //       TrackPlayer.play();
-            //       await timeout(20000);
-            //       TrackPlayer.play();
-            //       this.shouldQueueEndedEventRun = true;
-            //       buffered = await TrackPlayer.getBufferedPosition();
-            //       currentPos = await TrackPlayer.getPosition()
-            //     }
-            //     return;
-            //   }
+            console.log('queue ended event')
             if (this.props.repeatOn) {
                 TrackPlayer.seekTo(0);
                 this.onPressPlay()
@@ -114,9 +97,6 @@ class MiniPlayer extends PlayScreen {
             }
             this.prevPlaybackState = playbackState.state;
         })
-        this.onRemotePause = TrackPlayer.addEventListener('remote-pause'), () => {
-            console.log('remote pause')
-        }
     }
     componentWillUnmount() {
         this.onTrackChange.remove();

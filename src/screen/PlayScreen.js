@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Platform, SafeAreaView, ScrollView, Alert } from 'react-native';
+import { Platform, SafeAreaView, ScrollView, Alert, Button } from 'react-native';
 import TrackPlayer from 'react-native-track-player';
 import {
   Header, AlbumArt, TrackDetails, SeekBar, PlaybackControl, Spinner,
@@ -27,7 +27,6 @@ class PlayScreen extends Component {
     this.props.miniPlayerOff();
     this.playFromYoutube(this.props.navigation.getParam('videoId'))
   }
-
   onPressPause() {
     TrackPlayer.pause();
     this.props.syncPaused(true)

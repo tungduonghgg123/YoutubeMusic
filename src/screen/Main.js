@@ -46,8 +46,8 @@ const TabNavigator = createMaterialTopTabNavigator({
   },
   
 }, {
-    // order: ['Home', 'Search'],
-    order: ['Search', 'Home'],
+    order: ['Home', 'Search'],
+    // order: ['Search', 'Home'],
     navigationOptions: {
       header: null,
       headerLeft: null,
@@ -110,8 +110,14 @@ export default class Main extends Component {
       compactCapabilities: [
         TrackPlayer.CAPABILITY_PLAY,
         TrackPlayer.CAPABILITY_PAUSE
-      ]
+      ],
+      // icon: require('../img/baseline_add_white_18dp.png'),
+      color: 'pink'
     });
+  }
+  componentWillUnmount(){
+    TrackPlayer.destroy();
+    console.log('bye bye see you again')
   }
   render() {
     return (
