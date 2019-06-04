@@ -17,7 +17,7 @@ YellowBox.ignoreWarnings(['Warning: ViewPagerAndroid has been extracted']);
 YellowBox.ignoreWarnings(['Error: Network Error']);
 YellowBox.ignoreWarnings(['Required dispatch_sync to load constants for']);
 YellowBox.ignoreWarnings(['RCTBridge required dispatch_sync']);
-
+console.disableYellowBox = true;
 /**
  * `RedBoxes and YellowBoxes are automatically disabled in release (production) builds.`
 For now, just let yellowBoxes on
@@ -46,8 +46,8 @@ const TabNavigator = createMaterialTopTabNavigator({
   },
   
 }, {
-    // order: ['Home', 'Search'],
-    order: ['Search', 'Home'],
+    order: ['Home', 'Search'],
+    // order: ['Search', 'Home'],
     navigationOptions: {
       header: null,
       headerLeft: null,

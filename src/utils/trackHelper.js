@@ -65,6 +65,7 @@ function getTrackDetails(videoId) {
         artist: response.data.items[0].snippet.channelTitle,
         description: response.data.items[0].snippet.description,
         date: response.data.items[0].snippet.publishedAt,
+        timestamp: moment().format("HH:mm:ss DD-MM-YYYY"),
         thumbnail: {
           url: response.data.items[0].snippet.thumbnails.medium.url
         },
@@ -364,7 +365,6 @@ function onPressPlay() {
 }
 function playSuggestedNextVideo() {
   let state = store.getState()
-  console.log(state.syncNextTrackListReducer)
   let listItem = state.syncNextTrackListReducer.nextVideos;
   if (listItem[0] && listItem[0].id) {
     let videoId = listItem[0].id;

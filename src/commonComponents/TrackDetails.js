@@ -70,7 +70,7 @@ const styles = {
         textAlign: 'center',
         color: TEXT_COLOR,
         fontWeight: 'bold',
-        fontSize: TRACKDETAILS_FONT_SIZE
+        fontSize: TRACKDETAILS_FONT_SIZE,
     },
     titleContainerStyle: {
         width: TEXT_WIDTH,

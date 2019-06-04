@@ -36,9 +36,9 @@ class SearchScreen extends Component {
       showSearchBar: true
     };
   }
-  componentDidMount(){
-    this.onSearch('fish out of water',7)
-  }
+  // componentDidMount(){
+  //   this.onSearch('lac quan',7)
+  // }
   getVideoDetails(videoId) {
     return axios.get('https://content.googleapis.com/youtube/v3/videos', {
       headers: { "X-Origin": "https://explorer.apis.google.com" },

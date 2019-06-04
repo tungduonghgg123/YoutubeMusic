@@ -21,6 +21,11 @@ export default class QueueScreen extends Component {
                             {track.artist}
                         </Text>
                     </CardSection>
+                    <CardSection>
+                        <Text style={styles.artistStyle}>
+                            {track.timestamp}
+                        </Text>
+                    </CardSection>
                 </Card>
             )
         })
