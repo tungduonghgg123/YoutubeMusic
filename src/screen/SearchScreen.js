@@ -37,7 +37,7 @@ class SearchScreen extends Component {
     };
   }
   // componentDidMount(){
-  //   this.onSearch('lac quan',7)
+  //   this.onSearch('dam tien thanh',7)
   // }
   getVideoDetails(videoId) {
     return axios.get('https://content.googleapis.com/youtube/v3/videos', {

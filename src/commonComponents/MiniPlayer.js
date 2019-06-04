@@ -15,8 +15,11 @@ import { MiniPlayerSlider, Spinner } from '../commonComponents'
 import { PlayScreen } from '../screen/PlayScreen'
 import { getTrackPlayerState, onPressPlay, onPressPause, playSuggestedNextVideo } from '../utils'
 
-
-
+function timeout(){
+    return new Promise((resolve) => {
+        setTimeout(() => {resolve()}, 20000)
+    })
+}
 class MiniPlayer extends PlayScreen {
     _keyboardDidShow() {
         this.setState({ keyboardDidShow: true })
@@ -44,7 +47,20 @@ class MiniPlayer extends PlayScreen {
          * current bug: when calling TrackPlayer.destroy(), this event will be called
          */
         this.onQueueEnded = TrackPlayer.addEventListener('playback-queue-ended', async (data) => {
-            console.log('queue ended event')
+            // console.log('queue ended event')
+            // if (!this.shouldQueueEndedEventRun)
+            //     return;
+            
+            if(Platform.OS === 'android' ) {
+                let currentPos = await TrackPlayer.getPosition();
+                let duration = await this.props.track.duration;
+                if (duration - currentPos > 1) {
+                    console.log('havent ended yet!')
+                    this.props.syncPaused(true)
+                    this.props.syncLoading(true)
+                    return;
+                }
+            }
             if (this.props.repeatOn) {
                 console.log('repeat')
                 TrackPlayer.seekTo(0);
