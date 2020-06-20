@@ -8,7 +8,7 @@
     "android": "emulator -avd Pixel_2_XL_API_28"
   },
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.18.1",
     "memoize-one": "^5.0.4",
     "moment": "^2.24.0",
     "native-base": "^2.12.1",
