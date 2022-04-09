@@ -10,7 +10,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "memoize-one": "^5.0.4",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "native-base": "^2.12.1",
     "react": "16.8.3",
     "react-native": "0.59.3",
