@@ -3921,6 +3921,11 @@ locate-path@^3.0.0:
     p-locate "^3.0.0"
     path-exists "^3.0.0"
 
+lodash.isequal@^4.5.0:
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/lodash.isequal/-/lodash.isequal-4.5.0.tgz#415c4478f2bcc30120c22ce10ed3226f7d3e18e0"
+  integrity sha512-pDo3lu8Jhfjqls6GkMgpahsF9kCyayhgykjyLMNFTKWrpVdAQtYyB4muAMWozBB4ig/dtWAmsMxLEI8wuz+DYQ==
+
 lodash.pad@^4.1.0:
   version "4.5.1"
   resolved "https://registry.yarnpkg.com/lodash.pad/-/lodash.pad-4.5.1.tgz#4330949a833a7c8da22cc20f6a26c4d59debba70"
@@ -5237,9 +5242,9 @@ punycode@^2.1.0, punycode@^2.1.1:
   integrity sha512-XRsRjdf+j5ml+y/6GKHPZbrF/8p2Yga0JPtdqTIY2Xe5ohJPD9saDJJLPvp9+NSBprVvevdXZybnj2cv8OEd0A==
 
 qs@~6.5.2:
-  version "6.5.2"
-  resolved "https://registry.yarnpkg.com/qs/-/qs-6.5.2.tgz#cb3ae806e8740444584ef154ce8ee98d403f3e36"
-  integrity sha512-N5ZAX4/LxJmF+7wN74pUD6qAh9/wnvdQcjq9TZjevvXzSUo7bfmw91saqMjzGS2xq91/odN2dW/WOl7qQHNDGA==
+  version "6.5.3"
+  resolved "https://registry.yarnpkg.com/qs/-/qs-6.5.3.tgz#3aeeffc91967ef6e35c0e488ef46fb296ab76aad"
+  integrity sha512-qxXIEh4pCGfHICj1mAJQ2/2XVZkjCDTcEgfoSQxc/fYivUZxTkk7L3bDBJSoNrEzXI17oUO5Dp07ktqE5KzczA==
 
 query-string@^6.4.2:
   version "6.5.0"
@@ -5389,6 +5394,13 @@ react-native-paper@^2.15.2:
     hoist-non-react-statics "^3.1.0"
     react-lifecycles-compat "^3.0.4"
     react-native-safe-area-view "^0.12.0"
+
+react-native-picker-select@^6.1.0:
+  version "6.6.0"
+  resolved "https://registry.yarnpkg.com/react-native-picker-select/-/react-native-picker-select-6.6.0.tgz#a424e2a68dae228c492684a41745c0194cee01f0"
+  integrity sha512-dC+tJc4iv7gjOxXuc2R59rrAAZ/qg8k6HU2xRC65s1uhqflViUPBG1uaHqE/E2D62vntt9+u1qRGbkcYkqOx8g==
+  dependencies:
+    lodash.isequal "^4.5.0"
 
 react-native-ratings@^6.3.0:
   version "6.3.1"
